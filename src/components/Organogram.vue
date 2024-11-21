@@ -1,6 +1,6 @@
 <template>
   <div ref="container" class="organogram-container">
-    <svg ref="svg" :width="width" :height="height">
+    <svg ref="svg" class="organogram-svg">
       <!-- Renderizamos as linhas entre os nós -->
       <g class="links">
         <line
@@ -19,10 +19,8 @@
         <g
           v-for="node in nodes"
           :key="node.id"
-          @mousedown="startDrag(node)"
-          @mouseup="stopDrag"
-          @mousemove="dragging(node, $event)"
           class="node"
+          @mousedown="startDrag(node, $event)"
         >
           <circle :cx="node.x" :cy="node.y" r="20" fill="blue" />
           <text :x="node.x" :y="node.y + 35" text-anchor="middle" fill="black">
@@ -40,12 +38,12 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
 export default {
   setup() {
-    const width = 800;
-    const height = 600;
+    const width = ref(window.innerWidth);
+    const height = ref(window.innerHeight);
 
     const nodes = ref([
       { id: 1, name: "Dono", x: 400, y: 50 },
@@ -63,17 +61,17 @@ export default {
     ]);
 
     const zoomLevel = ref(1);
+    const draggingNode = ref(null);
 
     const addNode = () => {
       const newNode = {
         id: nodes.value.length + 1,
         name: `Novo ${nodes.value.length + 1}`,
-        x: 100 + Math.random() * 600,
-        y: 400,
+        x: Math.random() * width.value,
+        y: Math.random() * height.value,
       };
       nodes.value.push(newNode);
 
-      // Adiciona uma ligação com o último nó
       links.value.push({
         id: `${newNode.id}-${nodes.value.length}`,
         source: nodes.value[0], // Liga ao "dono" por padrão
@@ -89,33 +87,31 @@ export default {
       zoomLevel.value = Math.max(0.1, zoomLevel.value - 0.1);
     };
 
-    const startDrag = (node) => {
-      node.isDragging = true;
+    const startDrag = (node, event) => {
+      draggingNode.value = node;
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", stopDrag);
     };
 
-    const stopDrag = (node) => {
-      node.isDragging = false;
+    const stopDrag = () => {
+      draggingNode.value = null;
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", stopDrag);
     };
 
-    const dragging = (node, event) => {
-      if (node.isDragging) {
-        const rect = event.target.closest("svg").getBoundingClientRect();
-        node.x = event.clientX - rect.left;
-        node.y = event.clientY - rect.top;
-
-        // Atualiza os links
-        links.value = links.value.map((link) => {
-          if (link.source.id === node.id || link.target.id === node.id) {
-            return {
-              ...link,
-              source: link.source,
-              target: link.target,
-            };
-          }
-          return link;
-        });
+    const onMouseMove = (event) => {
+      if (draggingNode.value) {
+        const rect = document.querySelector(".organogram-svg").getBoundingClientRect();
+        draggingNode.value.x = event.clientX - rect.left;
+        draggingNode.value.y = event.clientY - rect.top;
       }
     };
+
+    // Remove event listeners ao desmontar
+    onUnmounted(() => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", stopDrag);
+    });
 
     return {
       width,
@@ -126,8 +122,6 @@ export default {
       zoomIn,
       zoomOut,
       startDrag,
-      stopDrag,
-      dragging,
     };
   },
 };
@@ -135,11 +129,29 @@ export default {
 
 <style>
 .organogram-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* Remove barras de rolagem */
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+}
+
+.organogram-svg {
+  width: 100vw;
+  height: 100vh;
 }
 
 .controls {
-  margin-top: 10px;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 10px;
 }
 
 .node {
