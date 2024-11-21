@@ -14,7 +14,7 @@
 
     <!-- Botão de ação -->
     <button @click="handleClick" class="expand-button">
-      <font-awesome-icon icon="edit" />
+      <font-awesome-icon icon="plus" />
     </button>
   </div>
 </template>
@@ -75,7 +75,6 @@ export default {
   color: #ccc;
 }
 
-/* Informações */
 .person-info h3 {
   margin: 0;
   font-size: 18px;
@@ -89,10 +88,8 @@ export default {
   color: #666;
 }
 
-/* Botão */
 .expand-button {
   position: absolute;
-  bottom: -15px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #007bff;
