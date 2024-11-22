@@ -1,91 +1,110 @@
 <template>
   <div class="person-card">
-    <!-- Foto ou ícone padrão -->
-    <div class="person-photo">
-      <font-awesome-icon v-if="!person.photo" icon="user-circle" class="icon" />
-      <img v-else :src="person.photo" alt="Foto da pessoa" />
+    <div class="person-info-container">
+      <!-- Foto ou ícone -->
+      <div v-if="!person.photo" class="person-photo">
+        <font-awesome-icon icon="user-circle" />
+      </div>
+      <img v-else :src="person.photo" alt="Foto" class="person-photo" />
+
+      <div class="person-header">
+        <div class="person-info">
+          <h3>{{ person.name }}</h3>
+          <p>{{ person.position }}</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Nome e cargo -->
-    <div class="person-info">
-      <h3>{{ person.name }}</h3>
-      <p>{{ person.position }}</p>
-    </div>
-
-    <!-- Botão de ação -->
-    <button @click="handleClick" class="expand-button">
-      <font-awesome-icon icon="plus" />
+    <!-- Botão expand/ocultar -->
+    <button v-if="hasChildren" @click="toggleChildren" class="expand-button">
+      <font-awesome-icon :icon="isExpanded ? 'minus' : 'plus'" />
     </button>
+
+    <!-- Exibir filhos -->
+    <div v-if="isExpanded" class="children">
+      <div v-for="child in person.children" :key="child.id">
+        <Person :person="child" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-export default {
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { defineComponent, ref, computed } from "vue";
+
+export default defineComponent({
+  name: "Person",
+  components: {
+    FontAwesomeIcon,
+  },
   props: {
-    person: {
-      type: Object,
-      default: () => ({
-        name: "João Silva",
-        position: "Desenvolvedor",
-        photo: "", // Sem foto para exibir o ícone
-      }),
-    },
+    person: Object,
   },
-  methods: {
-    handleClick() {
-      alert(`Editando informações de ${this.person.name}`);
-    },
+  setup(props) {
+    const isExpanded = ref(false);
+    const hasChildren = computed(
+      () => props.person.children && props.person.children.length > 0
+    );
+
+    const toggleChildren = () => {
+      isExpanded.value = !isExpanded.value;
+    };
+
+    return {
+      isExpanded,
+      hasChildren,
+      toggleChildren,
+    };
   },
-};
+});
 </script>
 
-<style>
+<style scoped>
 .person-card {
+  position: relative;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 16px;
-  width: 300px;
-  padding: 20px;
+  width: 250px;
+  padding: 16px;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  position: relative;
+  margin: 10px;
 }
 
-/* Foto ou ícone */
+.person-info-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
 .person-photo {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  margin: 0 auto 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f4f4f4;
-  overflow: hidden;
-}
-
-.person-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.person-photo .icon {
-  font-size: 50px;
-  color: #ccc;
+  background-color: #f3f3f3;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 40px;
+  color: #aaa;
+  margin-bottom: 10px; /* Espaçamento entre a foto e o nome */
 }
 
 .person-info h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: bold;
   color: #666;
+  margin-block: 0;
+  line-height: 1.2; /* Controla a altura da linha */
 }
 
 .person-info p {
-  margin: 5px 0 0;
-  font-size: 14px;
   color: #666;
+  margin-block: 0; 
+  font-size: 14px; 
 }
 
 .expand-button {
@@ -95,12 +114,9 @@ export default {
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 20px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 50%;
+  padding: 8px; /* Reduz tamanho do botão */
+  font-size: 12px; /* Reduz o ícone dentro do botão */
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -109,7 +125,10 @@ export default {
   background-color: #0056b3;
 }
 
-.expand-button .icon {
-  font-size: 20px;
+.children {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 </style>
