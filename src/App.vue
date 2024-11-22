@@ -1,15 +1,17 @@
 <template>
   <div class="container">
-    <Person />
+    <Organogram />
   </div>
 </template>
 
 <script>
-import Person from "./components/Person.vue";
+import Organogram from "../dinamyc-organogram/src/components/Organogram.vue";
+import Person from "../dinamyc-organogram/src/components/Person.vue";
 
 export default {
   components: {
     Person,
+    Organogram
   },
 };
 </script>
