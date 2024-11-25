@@ -23,7 +23,7 @@
             >
               <person-card
                 :id="person.id"
-                :parent-id="person.parentId"
+                :parentId="person.parentId"
                 :name="person.name"
                 :jobTitle="person.jobTitle"
                 :photo="person.photo"
@@ -40,14 +40,14 @@
 import { computed } from 'vue';
 import PersonCard from 'components/PersonCard.vue';
 
-// Dados fictícios das pessoas para mostrar no organograma
 const people = [
   { id: 1, name: 'João Silva', jobTitle: 'CEO' },
   { id: 2, name: 'Maria Souza', jobTitle: 'CTO', parentId: 1 },
   { id: 3, name: 'Carlos Pereira', jobTitle: 'Developer', parentId: 1 },
   { id: 4, name: 'Ana Costa', jobTitle: 'Designer', parentId: 2 },
-  { id: 5, name: 'Ana Costa', jobTitle: 'Designer', parentId: 3 },
-  { id: 6, name: 'Ana Costa', jobTitle: 'Designer', parentId: 4 },
+  { id: 5, name: 'Pedro Lima', jobTitle: 'Analyst', parentId: 3 },
+  { id: 6, name: 'Laura Campos', jobTitle: 'Intern', parentId: 4 },
+  { id: 7, name: 'Fernanda Nunes', jobTitle: 'Designer', parentId: 2 },
 ];
 
 const levelHeight = 350;

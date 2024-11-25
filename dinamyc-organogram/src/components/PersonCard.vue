@@ -18,18 +18,11 @@
 import { defineProps } from 'vue';
 
 defineProps({
-  name: {
-    type: String,
-    required: true,
-  },
-  jobTitle: {
-    type: String,
-    required: true,
-  },
-  photo: {
-    type: String,
-    required: false,
-  },
+  name: { type: String, required: true },
+  id: { type: Number, required: true },
+  parentId: { type: Number, required: true },
+  jobTitle: { type: String, required: true },
+  photo: { type: String, required: false },
 });
 </script>
 
