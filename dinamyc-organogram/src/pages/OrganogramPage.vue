@@ -1,41 +1,36 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container>
-      <q-page class="full-height full-width flex flex-center">
-        <div
-          class="organogram full-width full-height flex-center"
-          ref="organogram"
-        >
-          <svg class="connections" xmlns="http://www.w3.org/2000/svg">
-            <line
-              v-for="connection in connections"
-              :key="connection.id"
-              :x1="connection.x1"
-              :y1="connection.y1"
-              :x2="connection.x2"
-              :y2="connection.y2"
-              :stroke="connection.color"
-              stroke-width="2"
-            />
-          </svg>
-          <q-container>
-            <q-row>
-              <q-col
-                v-for="(person, index) in people"
-                :key="index"
-                :style="getPositionStyle(person)"
-              >
-                <person-card
-                  :id="person.id"
-                  :parent-id="person.parentId"
-                  :name="person.name"
-                  :jobTitle="person.jobTitle"
-                  :photo="person.photo"
-                />
-              </q-col>
-            </q-row>
-          </q-container>
-        </div>
+      <q-page class="organogram">
+        <svg class="connections" xmlns="http://www.w3.org/2000/svg">
+          <line
+            v-for="connection in connections"
+            :key="connection.id"
+            :x1="connection.x1"
+            :y1="connection.y1"
+            :x2="connection.x2"
+            :y2="connection.y2"
+            :stroke="connection.color"
+            stroke-width="2"
+          />
+        </svg>
+        <q-container>
+          <q-row>
+            <q-col
+              v-for="(person, index) in people"
+              :key="index"
+              :style="getPositionStyle(person)"
+            >
+              <person-card
+                :id="person.id"
+                :parent-id="person.parentId"
+                :name="person.name"
+                :jobTitle="person.jobTitle"
+                :photo="person.photo"
+              />
+            </q-col>
+          </q-row>
+        </q-container>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -67,10 +62,10 @@ const connections = computed(() => {
       return {
         id: `${parent.id}-${child.id}`,
         x1: getX(parent.id) + nodeWidth / 2,
-        y1: getY(parent.id) + 100, // Ajuste para a base do pai
+        y1: getY(parent.id) + 180,
         x2: getX(child.id) + nodeWidth / 2,
-        y2: getY(child.id) - 10, // Ajuste para o topo do filho
-        color: parent.id === 1 ? 'blue' : 'gray', // Exemplo: cor azul para filhos diretos do CEO
+        y2: getY(child.id),
+        color: 'black', // Exemplo: cor azul para filhos diretos do CEO
       };
     });
 });
@@ -80,9 +75,9 @@ const getX = (id) => {
   const levelNodes = people.filter((p) => getLevel(p.id) === level);
   const totalWidth =
     levelNodes.length * nodeWidth + (levelNodes.length - 1) * 50; // 50px de gap
-  const startX = (screenWidth - totalWidth) / 2; // Centraliza horizontalmente
+  const startX = (screenWidth - totalWidth) / 2;
   const nodeIndex = levelNodes.findIndex((p) => p.id === id);
-  return startX + nodeIndex * (nodeWidth + 50); // 50px de espaçamento
+  return startX + nodeIndex * (nodeWidth + 50);
 };
 const getY = (id) => {
   const level = getLevel(id);
@@ -105,16 +100,13 @@ const getPositionStyle = (person) => ({
 </script>
 
 <style scoped>
-.full-width {
-  width: 100%;
-}
-
-.full-height {
-  height: 100%;
-}
 .organogram {
-  padding: 20px;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+  background-color: #666;
 }
 
 .connections {
@@ -124,9 +116,6 @@ const getPositionStyle = (person) => ({
   pointer-events: none;
 }
 
-.q-page {
-  background-color: #666;
-}
 .q-col {
   text-align: center;
 }
