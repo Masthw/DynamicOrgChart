@@ -20,7 +20,7 @@ import { defineProps } from 'vue';
 defineProps({
   name: { type: String, required: true },
   id: { type: Number, required: true },
-  parentId: { type: Number, required: true },
+  parentId: { type: Number, required: false },
   jobTitle: { type: String, required: true },
   photo: { type: String, required: false },
 });

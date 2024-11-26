@@ -1,7 +1,10 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container>
-      <q-page class="organogram">
+      <q-page
+        class="organogram"
+        :style="{ minHeight: `${minHeight}px`, minWidth: `${minWidth}px` }"
+      >
         <svg class="connections" xmlns="http://www.w3.org/2000/svg">
           <line
             v-for="connection in connections"
@@ -14,23 +17,19 @@
             stroke-width="2"
           />
         </svg>
-        <q-container>
-          <q-row>
-            <q-col
-              v-for="(person, index) in people"
-              :key="index"
-              :style="getPositionStyle(person)"
-            >
-              <person-card
-                :id="person.id"
-                :parentId="person.parentId"
-                :name="person.name"
-                :jobTitle="person.jobTitle"
-                :photo="person.photo"
-              />
-            </q-col>
-          </q-row>
-        </q-container>
+        <div
+          v-for="(person, index) in sortedPeople"
+          :key="index"
+          :style="getPositionStyle(person)"
+        >
+          <person-card
+            :id="person.id"
+            :parentId="person.parentId"
+            :name="person.name"
+            :jobTitle="person.jobTitle"
+            :photo="person.photo"
+          />
+        </div>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -48,54 +47,122 @@ const people = [
   { id: 5, name: 'Pedro Lima', jobTitle: 'Analyst', parentId: 3 },
   { id: 6, name: 'Laura Campos', jobTitle: 'Intern', parentId: 4 },
   { id: 7, name: 'Fernanda Nunes', jobTitle: 'Designer', parentId: 2 },
+  { id: 8, name: 'Fernanda Nunes', jobTitle: 'Designer', parentId: 3 },
 ];
 
-const levelHeight = 350;
+const levelHeight = 300;
 const nodeWidth = 250;
+const spacing = 50;
 const screenWidth = window.innerWidth;
 
-const connections = computed(() => {
-  return people
-    .filter((person) => person.parentId) // Apenas quem tem um pai
-    .map((child) => {
-      const parent = people.find((p) => p.id === child.parentId);
-      return {
-        id: `${parent.id}-${child.id}`,
-        x1: getX(parent.id) + nodeWidth / 2,
-        y1: getY(parent.id) + 180,
-        x2: getX(child.id) + nodeWidth / 2,
-        y2: getY(child.id),
-        color: 'black', // Exemplo: cor azul para filhos diretos do CEO
-      };
+const groupedByParentId = computed(() => {
+  return people.reduce((acc, person) => {
+    const parentId = person.parentId || 'root'; // 'root' para a pessoa sem pai
+    if (!acc[parentId]) acc[parentId] = [];
+    acc[parentId].push(person);
+    return acc;
+  }, {});
+});
+
+// Ordenar as pessoas por grupo, começando pela raiz
+const sortedPeople = computed(() => {
+  const sorted = [];
+
+  const sortGroup = (parentId, yOffset) => {
+    const group = groupedByParentId.value[parentId] || [];
+    let xOffset = (screenWidth - group.length * (nodeWidth + spacing)) / 2;
+
+    group.forEach((person) => {
+      sorted.push({
+        ...person,
+        x: xOffset,
+        y: yOffset,
+      });
+      xOffset += nodeWidth + spacing;
+
+      if (groupedByParentId.value[person.id]) {
+        sortGroup(person.id, yOffset + levelHeight);
+      }
     });
+  };
+
+  sortGroup('root', 0);
+  console.log(sortedPeople);
+  return sorted;
 });
 
 const getX = (id) => {
   const level = getLevel(id);
-  const levelNodes = people.filter((p) => getLevel(p.id) === level);
+  const levelNodes = sortedPeople.value.filter((p) => getLevel(p.id) === level);
   const totalWidth =
-    levelNodes.length * nodeWidth + (levelNodes.length - 1) * 50; // 50px de gap
+    levelNodes.length * nodeWidth + (levelNodes.length - 1) * spacing; // 50px de gap
   const startX = (screenWidth - totalWidth) / 2;
   const nodeIndex = levelNodes.findIndex((p) => p.id === id);
-  return startX + nodeIndex * (nodeWidth + 50);
+  return startX + nodeIndex * (nodeWidth + spacing);
 };
+
 const getY = (id) => {
-  const level = getLevel(id);
-  return level * levelHeight;
+  const person = sortedPeople.value.find((p) => p.id === id);
+  if (person) {
+    return person.y;
+  }
+  return 0;
 };
+
 const getLevel = (id) => {
   let level = 0;
-  let currentNode = people.find((p) => p.id === id);
+  let currentNode = sortedPeople.value.find((p) => p.id === id);
   while (currentNode && currentNode.parentId) {
     level++;
-    currentNode = people.find((p) => p.id === currentNode.parentId);
+    currentNode = sortedPeople.value.find((p) => p.id === currentNode.parentId);
   }
   return level;
 };
+
 const getPositionStyle = (person) => ({
   position: 'absolute',
   left: `${getX(person.id)}px`,
   top: `${getY(person.id)}px`,
+});
+
+const connections = computed(() => {
+  const result = [];
+  sortedPeople.value.forEach((person) => {
+    if (person.parentId) {
+      const parent = sortedPeople.value.find((p) => p.id === person.parentId);
+      result.push({
+        id: `${parent.id}-${person.id}`,
+        x1: getX(parent.id) + nodeWidth / 2,
+        y1: getY(parent.id) + 180,
+        x2: getX(person.id) + nodeWidth / 2,
+        y2: getY(person.id),
+        color: 'black',
+      });
+    }
+  });
+  return result;
+});
+
+const minWidth = computed(() => {
+  const levels = Array.from(
+    {
+      length:
+        Math.max(...sortedPeople.value.map((person) => getLevel(person.id))) +
+        1,
+    },
+    (_, level) =>
+      sortedPeople.value.filter((p) => getLevel(p.id) === level).length
+  );
+
+  const maxNodesInLevel = Math.max(...levels);
+  return maxNodesInLevel * nodeWidth + (maxNodesInLevel - 1) * spacing;
+});
+
+const minHeight = computed(() => {
+  const maxLevel = Math.max(
+    ...sortedPeople.value.map((person) => getLevel(person.id))
+  );
+  return (maxLevel + 2) * levelHeight;
 });
 </script>
 
@@ -104,7 +171,8 @@ const getPositionStyle = (person) => ({
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  min-width: 100vw;
   position: relative;
   background-color: #666;
 }
