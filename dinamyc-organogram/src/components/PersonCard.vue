@@ -12,9 +12,9 @@
       <div class="text-subtitle2">{{ jobTitle }}</div>
       <div v-if="hasChildren" class="toggle-children" @click="toggleChildren">
         <q-icon
+          class="toggle-icon"
           :name="isExpanded ? 'remove' : 'add'"
           size="xs"
-          color="primary"
         />
       </div>
     </q-card-section>
@@ -39,7 +39,7 @@ defineProps({
   width: 250px;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .person-card__image {
@@ -72,9 +72,21 @@ defineProps({
 }
 
 .toggle-children {
-  cursor: pointer;
-  margin-top: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #0a5aa5;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+.toggle-icon {
+  font-size: 18px;
+  color: white;
 }
 </style>
