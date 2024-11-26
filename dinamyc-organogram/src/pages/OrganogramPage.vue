@@ -87,7 +87,6 @@ const sortedPeople = computed(() => {
   };
 
   sortGroup('root', 0);
-  console.log(sortedPeople);
   return sorted;
 });
 

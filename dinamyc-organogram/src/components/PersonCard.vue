@@ -10,6 +10,13 @@
     <q-card-section>
       <div class="text-h6">{{ name }}</div>
       <div class="text-subtitle2">{{ jobTitle }}</div>
+      <div v-if="hasChildren" class="toggle-children" @click="toggleChildren">
+        <q-icon
+          :name="isExpanded ? 'remove' : 'add'"
+          size="xs"
+          color="primary"
+        />
+      </div>
     </q-card-section>
   </q-card>
 </template>
@@ -23,6 +30,7 @@ defineProps({
   parentId: { type: Number, required: false },
   jobTitle: { type: String, required: true },
   photo: { type: String, required: false },
+  hasChildren: { type: Boolean, required: true },
 });
 </script>
 
@@ -61,5 +69,12 @@ defineProps({
 
 .text-subtitle2 {
   color: gray;
+}
+
+.toggle-children {
+  cursor: pointer;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
 }
 </style>
