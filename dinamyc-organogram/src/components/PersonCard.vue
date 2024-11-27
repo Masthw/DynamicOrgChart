@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { watch } from 'vue';
+import {} from 'vue';
 const props = defineProps({
   name: { type: String, required: true },
   id: { type: Number, required: true },
@@ -35,18 +35,8 @@ const props = defineProps({
 
 const emit = defineEmits(['toggle-visibility']);
 
-watch(
-  () => props.isChildrenVisible,
-  (newVal) => {
-    console.log(`Updated isChildrenVisible in PersonCard: ${newVal}`);
-  }
-);
-
 const toggleVisibility = () => {
   emit('toggle-visibility', props.id);
-  console.log(`Person ID: ${props.id}`);
-  console.log(`isVisible: ${props.isVisible}`);
-  console.log(`isChildrenVisible: ${props.isChildrenVisible}`);
 };
 </script>
 

@@ -18,7 +18,7 @@
           />
         </svg>
         <div
-          v-for="(person, index) in sortedPeople"
+          v-for="(person, index) in visibleSortedPeople"
           :key="index"
           :style="getPositionStyle(person)"
         >
@@ -149,25 +149,30 @@ const sortedPeople = computed(() => {
 
     group.forEach((person) => {
       const hasChildren = groupedByParentId.value[person.id]?.length > 0;
-      sorted.push({
-        ...person,
-        hasChildren,
-        isVisible: visiblePeople.value.includes(person.id),
-        isChildrenVisible: true, // Inicializa a visibilidade dos filhos
-        x: xOffset,
-        y: yOffset,
-      });
-      xOffset += nodeWidth + spacing;
-
-      if (groupedByParentId.value[person.id]) {
-        sortGroup(person.id, yOffset + levelHeight);
+      if (visiblePeople.value.includes(person.id)) {
+        sorted.push({
+          ...person,
+          hasChildren,
+          isVisible: visiblePeople.value.includes(person.id),
+          isChildrenVisible: true, // Inicializa a visibilidade dos filhos
+          x: xOffset,
+          y: yOffset,
+        });
+        if (groupedByParentId.value[person.id]) {
+          sortGroup(person.id, yOffset + levelHeight);
+        }
       }
+
+      xOffset += nodeWidth + spacing;
     });
   };
-
   sortGroup('root', 0);
   return sorted;
 });
+
+const visibleSortedPeople = computed(() =>
+  sortedPeople.value.filter((person) => visiblePeople.value.includes(person.id))
+);
 
 const getChildrenVisibility = (id) => {
   const person = people.find((p) => p.id === id);
@@ -177,12 +182,16 @@ const getChildrenVisibility = (id) => {
 };
 
 const toggleChildrenVisibility = (id) => {
-  const isCurrentlyVisible = visiblePeople.value.includes(id);
+  const parentPerson = people.find((person) => person.id === id);
+  if (!parentPerson) return;
   const descendants = getDescendants(id);
+  console.log('Descendants for ID:', id, descendants);
 
-  if (isCurrentlyVisible) {
+  if (parentPerson.isChildrenVisible) {
     descendants.forEach((descendantId) => {
       const index = visiblePeople.value.indexOf(descendantId);
+      console.log('Descendants for ID:', id, descendants);
+
       if (index > -1) {
         visiblePeople.value.splice(index, 1); // Remove do array
       }
@@ -194,14 +203,16 @@ const toggleChildrenVisibility = (id) => {
       }
     });
   }
-  const parentPerson = people.find((person) => person.id === id);
-  if (parentPerson) {
-    parentPerson.isChildrenVisible = !parentPerson.isChildrenVisible;
-  }
+
+  parentPerson.isChildrenVisible = !parentPerson.isChildrenVisible;
+
   console.log(
     `Updated isChildrenVisible for ID ${id}:`,
-    parentPerson?.isChildrenVisible
+    parentPerson.isChildrenVisible
   );
+
+  // Debug para confirmar o estado do visiblePeople
+  console.log('Visible People after toggle:', visiblePeople.value);
 };
 
 const getDescendants = (id) => {
