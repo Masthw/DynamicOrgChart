@@ -10,11 +10,7 @@
     <q-card-section>
       <div class="text-h6">{{ name }}</div>
       <div class="text-subtitle2">{{ jobTitle }}</div>
-      <div
-        v-if="hasChildren"
-        class="toggle-children"
-        @click="$emit('toggle-visibility', id)"
-      >
+      <div v-if="hasChildren" class="toggle-children" @click="toggleVisibility">
         <q-icon class="toggle-icon" :name="isVisible ? 'remove' : 'add'" />
       </div>
     </q-card-section>
@@ -22,9 +18,9 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 
-defineProps({
+const props = defineProps({
   name: { type: String, required: true },
   id: { type: Number, required: true },
   parentId: { type: Number, required: false },
@@ -34,7 +30,12 @@ defineProps({
   isVisible: { type: Boolean, required: false },
 });
 
-defineEmits(['toggle-visibility']);
+const emit = defineEmits(['toggle-visibility']);
+
+const toggleVisibility = () => {
+  emit('toggle-visibility', props.id);
+  console.log('Click mostrar/ocultar filhos');
+};
 </script>
 
 <style scoped>

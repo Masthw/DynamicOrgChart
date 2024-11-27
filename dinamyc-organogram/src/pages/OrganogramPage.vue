@@ -81,12 +81,14 @@ const sortedPeople = computed(() => {
     let xOffset = (screenWidth - group.length * (nodeWidth + spacing)) / 2;
 
     group.forEach((person) => {
-      sorted.push({
-        ...person,
-        hasChildren: groupedByParentId.value[person.id]?.length > 0,
-        x: xOffset,
-        y: yOffset,
-      });
+      if (visiblePeople.value.includes(person.id)) {
+        sorted.push({
+          ...person,
+          hasChildren: groupedByParentId.value[person.id]?.length > 0,
+          x: xOffset,
+          y: yOffset,
+        });
+      }
       xOffset += nodeWidth + spacing;
 
       if (groupedByParentId.value[person.id]) {
@@ -120,18 +122,15 @@ const toggleChildrenVisibility = (id) => {
 };
 
 const getDescendants = (id) => {
-  const stack = [id];
   const descendants = [];
-
-  while (stack.length > 0) {
-    const currentId = stack.pop();
-    const children = groupedByParentId.value[currentId] || [];
+  const findDescendants = (parentId) => {
+    const children = groupedByParentId.value[parentId] || [];
     children.forEach((child) => {
       descendants.push(child.id);
-      stack.push(child.id);
+      findDescendants(child.id);
     });
-  }
-
+  };
+  findDescendants(id);
   return descendants;
 };
 
@@ -153,7 +152,7 @@ const getY = (id) => {
 const getLevel = (id) => {
   let level = 0;
   let currentNode = sortedPeople.value.find((p) => p.id === id);
-  while (currentNode && currentNode.parentId) {
+  while (currentNode?.parentId) {
     level++;
     currentNode = sortedPeople.value.find((p) => p.id === currentNode.parentId);
   }
