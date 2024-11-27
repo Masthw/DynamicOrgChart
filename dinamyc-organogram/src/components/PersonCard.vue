@@ -10,12 +10,12 @@
     <q-card-section>
       <div class="text-h6">{{ name }}</div>
       <div class="text-subtitle2">{{ jobTitle }}</div>
-      <div v-if="hasChildren" class="toggle-children" @click="toggleChildren">
-        <q-icon
-          class="toggle-icon"
-          :name="isExpanded ? 'remove' : 'add'"
-          size="xs"
-        />
+      <div
+        v-if="hasChildren"
+        class="toggle-children"
+        @click="$emit('toggle-visibility', id)"
+      >
+        <q-icon class="toggle-icon" :name="isVisible ? 'remove' : 'add'" />
       </div>
     </q-card-section>
   </q-card>
@@ -31,7 +31,10 @@ defineProps({
   jobTitle: { type: String, required: true },
   photo: { type: String, required: false },
   hasChildren: { type: Boolean, required: true },
+  isVisible: { type: Boolean, required: false },
 });
+
+defineEmits(['toggle-visibility']);
 </script>
 
 <style scoped>

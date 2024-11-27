@@ -28,6 +28,9 @@
             :name="person.name"
             :jobTitle="person.jobTitle"
             :photo="person.photo"
+            :hasChildren="person.hasChildren"
+            :isVisible="visiblePeople.includes(person.id)"
+            @toggle-visibility="toggleChildrenVisibility(person.id)"
           />
         </div>
       </q-page>
@@ -36,11 +39,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import PersonCard from 'components/PersonCard.vue';
 
 const people = [
-  { id: 1, name: 'João Silva', jobTitle: 'CEO' },
+  { id: 1, name: 'João Silva', jobTitle: 'CEO', hasChildren: true },
   { id: 2, name: 'Maria Souza', jobTitle: 'CTO', parentId: 1 },
   { id: 3, name: 'Carlos Pereira', jobTitle: 'Developer', parentId: 1 },
   { id: 4, name: 'Ana Costa', jobTitle: 'Designer', parentId: 2 },
@@ -48,7 +51,12 @@ const people = [
   { id: 6, name: 'Laura Campos', jobTitle: 'Intern', parentId: 4 },
   { id: 7, name: 'Fernanda Nunes', jobTitle: 'Designer', parentId: 2 },
   { id: 8, name: 'Fernanda Nunes', jobTitle: 'Designer', parentId: 3 },
+  { id: 9, name: 'Teu pai', jobTitle: 'Designer', parentId: 1 },
+  { id: 10, name: 'Mago', jobTitle: 'Designer', parentId: 9 },
+  { id: 11, name: 'Fernnes', jobTitle: 'Designer', parentId: 10 },
 ];
+
+const visiblePeople = ref([...people.map((person) => person.id)]);
 
 const levelHeight = 300;
 const nodeWidth = 250;
@@ -75,6 +83,7 @@ const sortedPeople = computed(() => {
     group.forEach((person) => {
       sorted.push({
         ...person,
+        hasChildren: groupedByParentId.value[person.id]?.length > 0,
         x: xOffset,
         y: yOffset,
       });
@@ -90,6 +99,42 @@ const sortedPeople = computed(() => {
   return sorted;
 });
 
+const toggleChildrenVisibility = (id) => {
+  const isCurrentlyVisible = visiblePeople.value.includes(id);
+  const descendants = getDescendants(id);
+
+  if (isCurrentlyVisible) {
+    descendants.forEach((descendantId) => {
+      const index = visiblePeople.value.indexOf(descendantId);
+      if (index > -1) {
+        visiblePeople.value.splice(index, 1); // Remove do array
+      }
+    });
+  } else {
+    descendants.forEach((descendantId) => {
+      if (!visiblePeople.value.includes(descendantId)) {
+        visiblePeople.value.push(descendantId); // Adiciona ao array
+      }
+    });
+  }
+};
+
+const getDescendants = (id) => {
+  const stack = [id];
+  const descendants = [];
+
+  while (stack.length > 0) {
+    const currentId = stack.pop();
+    const children = groupedByParentId.value[currentId] || [];
+    children.forEach((child) => {
+      descendants.push(child.id);
+      stack.push(child.id);
+    });
+  }
+
+  return descendants;
+};
+
 const getX = (id) => {
   const level = getLevel(id);
   const levelNodes = sortedPeople.value.filter((p) => getLevel(p.id) === level);
@@ -102,10 +147,7 @@ const getX = (id) => {
 
 const getY = (id) => {
   const person = sortedPeople.value.find((p) => p.id === id);
-  if (person) {
-    return person.y;
-  }
-  return 0;
+  return person ? person.y : 0;
 };
 
 const getLevel = (id) => {
