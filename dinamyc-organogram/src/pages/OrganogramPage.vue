@@ -29,6 +29,7 @@
             :jobTitle="person.jobTitle"
             :photo="person.photo"
             :hasChildren="person.hasChildren"
+            :isChildrenVisible="getChildrenVisibility(person.id)"
             :isVisible="visiblePeople.includes(person.id)"
             @toggle-visibility="toggleChildrenVisibility(person.id)"
           />
@@ -39,22 +40,88 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import PersonCard from 'components/PersonCard.vue';
 
-const people = [
-  { id: 1, name: 'João Silva', jobTitle: 'CEO', hasChildren: true },
-  { id: 2, name: 'Maria Souza', jobTitle: 'CTO', parentId: 1 },
-  { id: 3, name: 'Carlos Pereira', jobTitle: 'Developer', parentId: 1 },
-  { id: 4, name: 'Ana Costa', jobTitle: 'Designer', parentId: 2 },
-  { id: 5, name: 'Pedro Lima', jobTitle: 'Analyst', parentId: 3 },
-  { id: 6, name: 'Laura Campos', jobTitle: 'Intern', parentId: 4 },
-  { id: 7, name: 'Fernanda Nunes', jobTitle: 'Designer', parentId: 2 },
-  { id: 8, name: 'Fernanda Nunes', jobTitle: 'Designer', parentId: 3 },
-  { id: 9, name: 'Teu pai', jobTitle: 'Designer', parentId: 1 },
-  { id: 10, name: 'Mago', jobTitle: 'Designer', parentId: 9 },
-  { id: 11, name: 'Fernnes', jobTitle: 'Designer', parentId: 10 },
-];
+const people = reactive([
+  {
+    id: 1,
+    name: 'João Silva',
+    jobTitle: 'CEO',
+    hasChildren: true,
+    isChildrenVisible: true,
+  },
+  {
+    id: 2,
+    name: 'Maria Souza',
+    jobTitle: 'CTO',
+    parentId: 1,
+    isChildrenVisible: true,
+  },
+  {
+    id: 3,
+    name: 'Carlos Pereira',
+    jobTitle: 'Developer',
+    parentId: 1,
+    isChildrenVisible: true,
+  },
+  {
+    id: 4,
+    name: 'Ana Costa',
+    jobTitle: 'Designer',
+    parentId: 2,
+    isChildrenVisible: true,
+  },
+  {
+    id: 5,
+    name: 'Pedro Lima',
+    jobTitle: 'Analyst',
+    parentId: 3,
+    isChildrenVisible: true,
+  },
+  {
+    id: 6,
+    name: 'Laura Campos',
+    jobTitle: 'Intern',
+    parentId: 4,
+    isChildrenVisible: true,
+  },
+  {
+    id: 7,
+    name: 'Fernanda Nunes',
+    jobTitle: 'Designer',
+    parentId: 2,
+    isChildrenVisible: true,
+  },
+  {
+    id: 8,
+    name: 'Fernanda Nunes',
+    jobTitle: 'Designer',
+    parentId: 3,
+    isChildrenVisible: true,
+  },
+  {
+    id: 9,
+    name: 'Teu pai',
+    jobTitle: 'Designer',
+    parentId: 1,
+    isChildrenVisible: true,
+  },
+  {
+    id: 10,
+    name: 'Mago',
+    jobTitle: 'Designer',
+    parentId: 9,
+    isChildrenVisible: true,
+  },
+  {
+    id: 11,
+    name: 'Fernnes',
+    jobTitle: 'Designer',
+    parentId: 10,
+    isChildrenVisible: true,
+  },
+]);
 
 const visiblePeople = ref([...people.map((person) => person.id)]);
 
@@ -81,14 +148,15 @@ const sortedPeople = computed(() => {
     let xOffset = (screenWidth - group.length * (nodeWidth + spacing)) / 2;
 
     group.forEach((person) => {
-      if (visiblePeople.value.includes(person.id)) {
-        sorted.push({
-          ...person,
-          hasChildren: groupedByParentId.value[person.id]?.length > 0,
-          x: xOffset,
-          y: yOffset,
-        });
-      }
+      const hasChildren = groupedByParentId.value[person.id]?.length > 0;
+      sorted.push({
+        ...person,
+        hasChildren,
+        isVisible: visiblePeople.value.includes(person.id),
+        isChildrenVisible: true, // Inicializa a visibilidade dos filhos
+        x: xOffset,
+        y: yOffset,
+      });
       xOffset += nodeWidth + spacing;
 
       if (groupedByParentId.value[person.id]) {
@@ -100,6 +168,13 @@ const sortedPeople = computed(() => {
   sortGroup('root', 0);
   return sorted;
 });
+
+const getChildrenVisibility = (id) => {
+  const person = people.find((p) => p.id === id);
+  const visibility = person ? person.isChildrenVisible : true;
+  console.log(`Checked isChildrenVisible for ID ${id}: ${visibility}`);
+  return visibility;
+};
 
 const toggleChildrenVisibility = (id) => {
   const isCurrentlyVisible = visiblePeople.value.includes(id);
@@ -119,6 +194,14 @@ const toggleChildrenVisibility = (id) => {
       }
     });
   }
+  const parentPerson = people.find((person) => person.id === id);
+  if (parentPerson) {
+    parentPerson.isChildrenVisible = !parentPerson.isChildrenVisible;
+  }
+  console.log(
+    `Updated isChildrenVisible for ID ${id}:`,
+    parentPerson?.isChildrenVisible
+  );
 };
 
 const getDescendants = (id) => {
@@ -168,7 +251,11 @@ const getPositionStyle = (person) => ({
 const connections = computed(() => {
   const result = [];
   sortedPeople.value.forEach((person) => {
-    if (person.parentId) {
+    if (
+      person.parentId &&
+      visiblePeople.value.includes(person.id) &&
+      visiblePeople.value.includes(person.parentId)
+    ) {
       const parent = sortedPeople.value.find((p) => p.id === person.parentId);
       result.push({
         id: `${parent.id}-${person.id}`,

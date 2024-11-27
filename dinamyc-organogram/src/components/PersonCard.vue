@@ -1,5 +1,5 @@
 <template>
-  <q-card class="person-card">
+  <q-card v-if="isVisible" class="person-card">
     <q-img
       v-if="photo"
       :src="photo"
@@ -11,15 +11,17 @@
       <div class="text-h6">{{ name }}</div>
       <div class="text-subtitle2">{{ jobTitle }}</div>
       <div v-if="hasChildren" class="toggle-children" @click="toggleVisibility">
-        <q-icon class="toggle-icon" :name="isVisible ? 'remove' : 'add'" />
+        <q-icon
+          class="toggle-icon"
+          :name="isChildrenVisible ? 'remove' : 'add'"
+        />
       </div>
     </q-card-section>
   </q-card>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
-
+import { watch } from 'vue';
 const props = defineProps({
   name: { type: String, required: true },
   id: { type: Number, required: true },
@@ -27,14 +29,24 @@ const props = defineProps({
   jobTitle: { type: String, required: true },
   photo: { type: String, required: false },
   hasChildren: { type: Boolean, required: true },
-  isVisible: { type: Boolean, required: false },
+  isVisible: { type: Boolean, required: true },
+  isChildrenVisible: { type: Boolean, required: true },
 });
 
 const emit = defineEmits(['toggle-visibility']);
 
+watch(
+  () => props.isChildrenVisible,
+  (newVal) => {
+    console.log(`Updated isChildrenVisible in PersonCard: ${newVal}`);
+  }
+);
+
 const toggleVisibility = () => {
   emit('toggle-visibility', props.id);
-  console.log('Click mostrar/ocultar filhos');
+  console.log(`Person ID: ${props.id}`);
+  console.log(`isVisible: ${props.isVisible}`);
+  console.log(`isChildrenVisible: ${props.isChildrenVisible}`);
 };
 </script>
 
