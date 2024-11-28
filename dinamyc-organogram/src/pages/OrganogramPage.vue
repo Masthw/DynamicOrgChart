@@ -1,10 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-page-container>
-      <q-page
-        class="organogram"
-        :style="{ minHeight: `${minHeight}px`, minWidth: `${minWidth}px` }"
-      >
+    <q-page-container class="organogram-container">
+      <q-page class="organogram">
         <svg class="connections" xmlns="http://www.w3.org/2000/svg">
           <line
             v-for="connection in connections"
@@ -48,7 +45,6 @@ const people = reactive([
     id: 1,
     name: 'João Silva',
     jobTitle: 'CEO',
-    hasChildren: true,
     isChildrenVisible: true,
   },
   {
@@ -132,14 +128,13 @@ const screenWidth = window.innerWidth;
 
 const groupedByParentId = computed(() => {
   return people.reduce((acc, person) => {
-    const parentId = person.parentId || 'root'; // 'root' para a pessoa sem pai
+    const parentId = person.parentId || 'root';
     if (!acc[parentId]) acc[parentId] = [];
     acc[parentId].push(person);
     return acc;
   }, {});
 });
 
-// Ordenar as pessoas por grupo, começando pela raiz
 const sortedPeople = computed(() => {
   const sorted = [];
 
@@ -154,7 +149,7 @@ const sortedPeople = computed(() => {
           ...person,
           hasChildren,
           isVisible: visiblePeople.value.includes(person.id),
-          isChildrenVisible: true, // Inicializa a visibilidade dos filhos
+          isChildrenVisible: true,
           x: xOffset,
           y: yOffset,
         });
@@ -192,7 +187,7 @@ const toggleChildrenVisibility = (id) => {
       console.log('Descendants for ID:', id, descendants);
 
       if (index > -1) {
-        visiblePeople.value.splice(index, 1); // Remove do array
+        visiblePeople.value.splice(index, 1);
       }
       const descendant = people.find((person) => person.id === descendantId);
       if (descendant) {
@@ -202,7 +197,7 @@ const toggleChildrenVisibility = (id) => {
   } else {
     descendants.forEach((descendantId) => {
       if (!visiblePeople.value.includes(descendantId)) {
-        visiblePeople.value.push(descendantId); // Adiciona ao array
+        visiblePeople.value.push(descendantId);
       }
       const descendant = people.find((person) => person.id === descendantId);
       if (descendant) {
@@ -212,14 +207,6 @@ const toggleChildrenVisibility = (id) => {
   }
 
   parentPerson.isChildrenVisible = !parentPerson.isChildrenVisible;
-
-  console.log(
-    `Updated isChildrenVisible for ID ${id}:`,
-    parentPerson.isChildrenVisible
-  );
-
-  // Debug para confirmar o estado do visiblePeople
-  console.log('Visible People after toggle:', visiblePeople.value);
 };
 
 const getDescendants = (id) => {
@@ -239,7 +226,7 @@ const getX = (id) => {
   const level = getLevel(id);
   const levelNodes = sortedPeople.value.filter((p) => getLevel(p.id) === level);
   const totalWidth =
-    levelNodes.length * nodeWidth + (levelNodes.length - 1) * spacing; // 50px de gap
+    levelNodes.length * nodeWidth + (levelNodes.length - 1) * spacing;
   const startX = (screenWidth - totalWidth) / 2;
   const nodeIndex = levelNodes.findIndex((p) => p.id === id);
   return startX + nodeIndex * (nodeWidth + spacing);
@@ -287,31 +274,23 @@ const connections = computed(() => {
   });
   return result;
 });
-
-const minWidth = computed(() => {
-  const levels = Array.from(
-    {
-      length:
-        Math.max(...sortedPeople.value.map((person) => getLevel(person.id))) +
-        1,
-    },
-    (_, level) =>
-      sortedPeople.value.filter((p) => getLevel(p.id) === level).length
-  );
-
-  const maxNodesInLevel = Math.max(...levels);
-  return maxNodesInLevel * nodeWidth + (maxNodesInLevel - 1) * spacing;
-});
-
-const minHeight = computed(() => {
-  const maxLevel = Math.max(
-    ...sortedPeople.value.map((person) => getLevel(person.id))
-  );
-  return (maxLevel + 2) * levelHeight;
-});
 </script>
 
 <style scoped>
+.organogram-container {
+  background-color: #666;
+  overflow: hidden;
+  display: flex;
+  position: relative;
+  z-index: 1;
+}
+
+.organogram-container::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 .organogram {
   display: flex;
   justify-content: center;
@@ -319,7 +298,19 @@ const minHeight = computed(() => {
   min-height: 100vh;
   min-width: 100vw;
   position: relative;
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin: 10px;
+  z-index: 2;
   background-color: #666;
+  box-sizing: border-box;
+}
+
+.organogram::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0; /* Chrome, Safari e Edge moderno */
 }
 
 .connections {
