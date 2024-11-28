@@ -10,6 +10,24 @@
     <q-card-section>
       <div class="text-h6">{{ name }}</div>
       <div class="text-subtitle2">{{ jobTitle }}</div>
+      <q-btn
+        class="options-btn"
+        flat
+        icon="more_vert"
+        size="md"
+        ref="menuButton"
+        @click="toggleMenu"
+      />
+      <q-menu v-if="isMenuOpen" anchor="top right" self="top left" fit>
+        <q-list>
+          <q-item clickable @click="handleInfoClick">
+            <q-item-section>Informações</q-item-section>
+          </q-item>
+          <q-item clickable @click="handleAddClick">
+            <q-item-section>Adicionar</q-item-section>
+          </q-item>
+        </q-list>
+      </q-menu>
       <div v-if="hasChildren" class="toggle-children" @click="toggleVisibility">
         <q-icon
           class="toggle-icon"
@@ -21,7 +39,7 @@
 </template>
 
 <script setup>
-import {} from 'vue';
+import { ref } from 'vue';
 const props = defineProps({
   name: { type: String, required: true },
   id: { type: Number, required: true },
@@ -33,10 +51,26 @@ const props = defineProps({
   isChildrenVisible: { type: Boolean, required: true },
 });
 
-const emit = defineEmits(['toggle-visibility']);
+const emit = defineEmits(['toggle-visibility', 'info-click', 'add-click']);
 
 const toggleVisibility = () => {
   emit('toggle-visibility', props.id);
+};
+
+const isMenuOpen = ref(false);
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+
+const handleInfoClick = () => {
+  emit('info-click', props.id);
+  isMenuOpen.value = false;
+};
+
+const handleAddClick = () => {
+  emit('add-click', props.id);
+  isMenuOpen.value = false;
 };
 </script>
 
@@ -75,6 +109,14 @@ const toggleVisibility = () => {
 
 .text-subtitle2 {
   color: gray;
+}
+
+.options-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .toggle-children {
