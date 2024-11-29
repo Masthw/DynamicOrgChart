@@ -42,8 +42,8 @@
 import { ref } from 'vue';
 const props = defineProps({
   name: { type: String, required: true },
-  id: { type: Number, required: true },
-  parentId: { type: Number, required: false },
+  id: { type: String, required: true },
+  parentId: { type: String, required: false },
   jobTitle: { type: String, required: true },
   photo: { type: String, required: false },
   hasChildren: { type: Boolean, required: true },

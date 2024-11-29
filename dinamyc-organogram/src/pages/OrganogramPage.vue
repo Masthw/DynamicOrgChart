@@ -1,7 +1,12 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container class="organogram-container">
-      <q-page class="organogram">
+      <div class="zoom-controls">
+        <q-btn icon="zoom_in" flat round @click="zoomIn" />
+        <q-btn icon="zoom_out" flat round @click="zoomOut" />
+        <q-btn icon="fullscreen_exit" flat round @click="resetZoom" />
+      </div>
+      <q-page class="organogram" :style="organogramStyle">
         <svg class="connections" xmlns="http://www.w3.org/2000/svg">
           <line
             v-for="connection in connections"
@@ -29,6 +34,8 @@
             :isChildrenVisible="getChildrenVisibility(person.id)"
             :isVisible="visiblePeople.includes(person.id)"
             @toggle-visibility="toggleChildrenVisibility(person.id)"
+            @info-click="showInfo"
+            @add-click="addChild"
           />
         </div>
       </q-page>
@@ -42,79 +49,79 @@ import PersonCard from 'components/PersonCard.vue';
 
 const people = reactive([
   {
-    id: 1,
+    id: '1',
     name: 'João Silva',
     jobTitle: 'CEO',
     isChildrenVisible: true,
   },
   {
-    id: 2,
+    id: '2',
     name: 'Maria Souza',
     jobTitle: 'CTO',
-    parentId: 1,
+    parentId: '1',
     isChildrenVisible: true,
   },
   {
-    id: 3,
+    id: '3',
     name: 'Carlos Pereira',
     jobTitle: 'Developer',
-    parentId: 1,
+    parentId: '1',
     isChildrenVisible: true,
   },
   {
-    id: 4,
+    id: '4',
     name: 'Ana Costa',
     jobTitle: 'Designer',
-    parentId: 2,
+    parentId: '2',
     isChildrenVisible: true,
   },
   {
-    id: 5,
+    id: '5',
     name: 'Pedro Lima',
     jobTitle: 'Analyst',
-    parentId: 3,
+    parentId: '3',
     isChildrenVisible: true,
   },
   {
-    id: 6,
+    id: '6',
     name: 'Laura Campos',
     jobTitle: 'Intern',
-    parentId: 4,
+    parentId: '4',
     isChildrenVisible: true,
   },
   {
-    id: 7,
+    id: '7',
     name: 'Fernanda Nunes',
     jobTitle: 'Designer',
-    parentId: 2,
+    parentId: '2',
     isChildrenVisible: true,
   },
   {
-    id: 8,
+    id: '8',
     name: 'Fernanda Nunes',
     jobTitle: 'Designer',
-    parentId: 3,
+    parentId: '3',
     isChildrenVisible: true,
   },
   {
-    id: 9,
+    id: '9',
     name: 'Teu pai',
     jobTitle: 'Designer',
-    parentId: 1,
+    parentId: '1',
     isChildrenVisible: true,
   },
   {
-    id: 10,
+    id: '10',
     name: 'Mago',
     jobTitle: 'Designer',
-    parentId: 9,
+    parentId: '9',
     isChildrenVisible: true,
   },
   {
-    id: 11,
+    id: '11',
     name: 'Fernnes',
     jobTitle: 'Designer',
-    parentId: 10,
+    parentId: '10',
     isChildrenVisible: true,
   },
 ]);
@@ -172,7 +179,6 @@ const visibleSortedPeople = computed(() =>
 const getChildrenVisibility = (id) => {
   const person = people.find((p) => p.id === id);
   const visibility = person ? person.isChildrenVisible : true;
-  console.log(`Checked isChildrenVisible for ID ${id}: ${visibility}`);
   return visibility;
 };
 
@@ -274,15 +280,61 @@ const connections = computed(() => {
   });
   return result;
 });
+
+const showInfo = (id) => {
+  console.log('Mostrar informações do usuário com ID:', id);
+};
+
+const addChild = (id) => {
+  console.log('Adicionar filho ao usuário com ID:', id);
+};
+
+const zoomLevel = ref(1);
+
+const zoomIn = () => {
+  zoomLevel.value += 0.1;
+};
+
+const zoomOut = () => {
+  zoomLevel.value -= 0.1;
+};
+
+const resetZoom = () => {
+  zoomLevel.value = 1;
+};
+
+const organogramStyle = computed(() => {
+  const scaledHeight = window.innerHeight / zoomLevel.value;
+  const scaledWidth = window.innerWidth / zoomLevel.value;
+
+  return {
+    transform: `scale(${zoomLevel.value})`,
+    transformOrigin: 'center top',
+    transition: 'transform 0.2s ease-in-out',
+    height: `${scaledHeight}px`,
+    width: `${scaledWidth}px`,
+    overflow: 'visible',
+  };
+});
 </script>
 
 <style scoped>
 .organogram-container {
   background-color: #666;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   position: relative;
   z-index: 1;
+}
+
+.zoom-controls {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
+  display: flex;
+  gap: 10px;
+  color: white;
 }
 
 .organogram-container::-webkit-scrollbar {
@@ -295,8 +347,8 @@ const connections = computed(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  min-width: 100vw;
+  min-height: 100%;
+  min-width: 100%;
   position: relative;
   overflow: auto;
   scrollbar-width: none;
