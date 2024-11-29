@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, onMounted, onBeforeUnmount } from 'vue';
 import PersonCard from 'components/PersonCard.vue';
 
 const people = reactive([
@@ -291,12 +291,41 @@ const addChild = (id) => {
 
 const zoomLevel = ref(1);
 
+const handleWheelZoom = (event) => {
+  event.preventDefault();
+  const zoomDelta = 0.1;
+  if (event.deltaY < 0 && zoomLevel.value < 2) {
+    // Scroll para cima (zoom in)
+    zoomLevel.value += zoomDelta;
+  } else if (event.deltaY > 0 && zoomLevel.value > 0.2) {
+    zoomLevel.value -= zoomDelta;
+  }
+};
+
+onMounted(() => {
+  const container = document.querySelector('.organogram-container');
+  if (container) {
+    container.addEventListener('wheel', handleWheelZoom);
+  }
+});
+
+onBeforeUnmount(() => {
+  const container = document.querySelector('.organogram-container');
+  if (container) {
+    container.removeEventListener('wheel', handleWheelZoom);
+  }
+});
+
 const zoomIn = () => {
-  zoomLevel.value += 0.1;
+  if (zoomLevel.value < 2) {
+    zoomLevel.value += 0.1;
+  }
 };
 
 const zoomOut = () => {
-  zoomLevel.value -= 0.1;
+  if (zoomLevel.value > 0.2) {
+    zoomLevel.value -= 0.1;
+  }
 };
 
 const resetZoom = () => {
