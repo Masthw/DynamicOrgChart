@@ -293,13 +293,31 @@ const zoomLevel = ref(1);
 
 const handleWheelZoom = (event) => {
   event.preventDefault();
+
+  const container = event.currentTarget;
   const zoomDelta = 0.1;
+
+  const rect = container.getBoundingClientRect();
+  const mouseX = event.clientX - rect.left; // Posição X do mouse
+  const mouseY = event.clientY - rect.top;
+
+  const scrollLeft = container.scrollLeft;
+  const scrollTop = container.scrollTop;
+
+  const previousZoom = zoomLevel.value;
+
   if (event.deltaY < 0 && zoomLevel.value < 2) {
-    // Scroll para cima (zoom in)
     zoomLevel.value += zoomDelta;
   } else if (event.deltaY > 0 && zoomLevel.value > 0.2) {
     zoomLevel.value -= zoomDelta;
   }
+
+  const scaleChange = zoomLevel.value / previousZoom;
+  const newScrollLeft = (mouseX + scrollLeft) * scaleChange - mouseX;
+  const newScrollTop = (mouseY + scrollTop) * scaleChange - mouseY;
+
+  container.scrollLeft = newScrollLeft;
+  container.scrollTop = newScrollTop;
 };
 
 onMounted(() => {
@@ -339,7 +357,7 @@ const organogramStyle = computed(() => {
   return {
     transform: `scale(${zoomLevel.value})`,
     transformOrigin: 'center top',
-    transition: 'transform 0.2s ease-in-out',
+    transition: 'transform 0.1s ease-in-out',
     height: `${scaledHeight}px`,
     width: `${scaledWidth}px`,
     overflow: 'visible',
