@@ -317,6 +317,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   const container = document.querySelector('.organogram-container');
   if (container) {
+    container.scrollLeft = (container.scrollWidth - container.clientWidth) / 2;
+    container.scrollTop = (container.scrollHeight - container.clientHeight) / 2;
+
     container.removeEventListener('wheel', handleWheelZoom);
     container.removeEventListener('mousedown', handleMouseDown);
     container.removeEventListener('mousemove', handleMouseMove);
@@ -341,9 +344,31 @@ const resetZoom = () => {
   zoomLevel.value = 1;
 };
 
+const getMaxLevelWidth = () => {
+  const levelWidths = [];
+
+  // Obter a largura total de cada nível
+  for (let level = 0; level <= getLevel(); level++) {
+    const levelNodes = sortedPeople.value.filter(
+      (p) => getLevel(p.id) === level
+    );
+    const totalWidth =
+      levelNodes.length * nodeWidth + (levelNodes.length - 1) * spacing;
+    levelWidths.push(totalWidth);
+  }
+
+  // Retornar a maior largura
+  return Math.max(...levelWidths);
+};
+
 const organogramStyle = computed(() => {
   const scaledHeight = window.innerHeight / zoomLevel.value;
-  const scaledWidth = window.innerWidth / zoomLevel.value;
+
+  const maxLevelWidth = getMaxLevelWidth();
+  const scaledWidth = Math.max(
+    window.innerWidth / zoomLevel.value,
+    maxLevelWidth
+  );
 
   return {
     transform: `scale(${zoomLevel.value})`,
@@ -433,7 +458,6 @@ const handleMouseUp = () => {
   overflow: visible;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  margin: 10px;
   z-index: 2;
   background-color: #666;
   box-sizing: border-box;
