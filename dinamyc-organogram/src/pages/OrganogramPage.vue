@@ -149,6 +149,8 @@ const sortedPeople = computed(() => {
     const group = groupedByParentId.value[parentId] || [];
     let xOffset = (screenWidth - group.length * (nodeWidth + spacing)) / 2;
 
+    xOffset = Math.max(0, xOffset - 500);
+
     group.forEach((person) => {
       const hasChildren = groupedByParentId.value[person.id]?.length > 0;
       if (visiblePeople.value.includes(person.id)) {
@@ -294,36 +296,21 @@ const zoomLevel = ref(1);
 const handleWheelZoom = (event) => {
   event.preventDefault();
 
-  const container = event.currentTarget;
-  const zoomDelta = 0.1;
-
-  const rect = container.getBoundingClientRect();
-  const mouseX = event.clientX - rect.left; // Posição X do mouse
-  const mouseY = event.clientY - rect.top;
-
-  const scrollLeft = container.scrollLeft;
-  const scrollTop = container.scrollTop;
-
-  const previousZoom = zoomLevel.value;
-
   if (event.deltaY < 0 && zoomLevel.value < 2) {
-    zoomLevel.value += zoomDelta;
+    zoomIn();
   } else if (event.deltaY > 0 && zoomLevel.value > 0.2) {
-    zoomLevel.value -= zoomDelta;
+    zoomOut();
   }
-
-  const scaleChange = zoomLevel.value / previousZoom;
-  const newScrollLeft = (mouseX + scrollLeft) * scaleChange - mouseX;
-  const newScrollTop = (mouseY + scrollTop) * scaleChange - mouseY;
-
-  container.scrollLeft = newScrollLeft;
-  container.scrollTop = newScrollTop;
 };
 
 onMounted(() => {
   const container = document.querySelector('.organogram-container');
   if (container) {
     container.addEventListener('wheel', handleWheelZoom);
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('mouseup', handleMouseUp);
+    container.addEventListener('mouseleave', handleMouseUp);
   }
 });
 
@@ -331,6 +318,10 @@ onBeforeUnmount(() => {
   const container = document.querySelector('.organogram-container');
   if (container) {
     container.removeEventListener('wheel', handleWheelZoom);
+    container.removeEventListener('mousedown', handleMouseDown);
+    container.removeEventListener('mousemove', handleMouseMove);
+    container.removeEventListener('mouseup', handleMouseUp);
+    container.removeEventListener('mouseleave', handleMouseUp);
   }
 });
 
@@ -363,15 +354,57 @@ const organogramStyle = computed(() => {
     overflow: 'visible',
   };
 });
+
+const isDragging = ref(false);
+const startX = ref(0);
+const startY = ref(0);
+const scrollLeft = ref(0);
+const scrollTop = ref(0);
+
+const handleMouseDown = (event) => {
+  isDragging.value = true;
+
+  const container = event.currentTarget;
+  startX.value = event.pageX - container.offsetLeft;
+  startY.value = event.pageY - container.offsetTop;
+  scrollLeft.value = container.scrollLeft;
+  scrollTop.value = container.scrollTop;
+};
+
+const handleMouseMove = (event) => {
+  if (!isDragging.value) return;
+
+  const container = document.querySelector('.organogram-container');
+  const x = event.pageX - container.offsetLeft;
+  const y = event.pageY - container.offsetTop;
+
+  const walkX = (x - startX.value) * -1; // Inverter para mover na direção certa
+  const walkY = (y - startY.value) * -1;
+
+  container.scrollLeft = scrollLeft.value + walkX;
+  container.scrollTop = scrollTop.value + walkY;
+};
+
+const handleMouseUp = () => {
+  isDragging.value = false;
+};
 </script>
 
 <style scoped>
 .organogram-container {
   background-color: #666;
   overflow: auto;
+  min-width: 100vw;
+  min-height: 100vh;
+  padding: 0;
   display: flex;
   position: relative;
   z-index: 1;
+  cursor: grab;
+}
+
+.organogram-container:active {
+  cursor: grabbing;
 }
 
 .zoom-controls {
@@ -380,7 +413,7 @@ const organogramStyle = computed(() => {
   right: 10px;
   z-index: 100;
   display: flex;
-  gap: 10px;
+  gap: 5px;
   color: white;
 }
 
@@ -394,10 +427,10 @@ const organogramStyle = computed(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100%;
-  min-width: 100%;
+  min-height: max-content;
+  min-width: max-content;
   position: relative;
-  overflow: auto;
+  overflow: visible;
   scrollbar-width: none;
   -ms-overflow-style: none;
   margin: 10px;
