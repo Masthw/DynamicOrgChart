@@ -35,7 +35,7 @@
             :isVisible="visiblePeople.includes(person.id)"
             @toggle-visibility="toggleChildrenVisibility(person.id)"
             @info-click="showInfo"
-            @add-click="addChild"
+            @add-click="openAddChildDrawer"
           />
         </div>
       </q-page>
@@ -64,6 +64,26 @@
           <q-input v-model="selectedPerson.jobTitle" label="Cargo" />
           <div class="q-mt-md">
             <q-btn type="submit" label="Salvar alterações" color="secondary" />
+          </div>
+        </q-form>
+      </div>
+    </q-drawer>
+    <q-drawer v-model="addChildDrawer" side="right" overlay>
+      <div class="add-child-form">
+        <div class="child-photo">
+          <q-img
+            v-if="newChild.photo"
+            :src="newChild.photo"
+            alt="Foto do novo filho"
+            class="photo-img"
+          />
+          <q-icon v-else name="account_circle" class="default-photo-icon" />
+        </div>
+        <q-form @submit.prevent="addChild">
+          <q-input v-model="newChild.name" label="Nome" />
+          <q-input v-model="newChild.jobTitle" label="Cargo" />
+          <div class="q-mt-md">
+            <q-btn type="submit" label="Adicionar Filho" color="secondary" />
           </div>
         </q-form>
       </div>
@@ -481,6 +501,7 @@ const connections = computed(() => {
 });
 
 const infoDrawer = ref(false);
+const addChildDrawer = ref(false);
 const isEditing = ref(false);
 const selectedPerson = ref({
   id: null,
@@ -488,25 +509,44 @@ const selectedPerson = ref({
   jobTitle: '',
   photo: '',
 });
+const newChild = ref({
+  name: '',
+  jobTitle: '',
+  photo: '',
+});
 
 const showInfo = (id) => {
-  console.log('Mostrar informações do usuário com ID:', id);
   selectedPerson.value = people.find((person) => person.id === id);
   infoDrawer.value = true;
 };
 
-const addChild = (parentId) => {
-  console.log('Adicionar filho ao usuário com ID:', parentId);
+const openAddChildDrawer = (id) => {
+  selectedPerson.value = people.find((person) => person.id === id);
+  addChildDrawer.value = true;
+};
+
+const addChild = () => {
+  const newId = `person-${Date.now()}`; // Gerar um id único para o novo filho
   const newPerson = {
-    id: Date.now().toString(), // Gerar ID único
-    name: 'Novo Filho', // Nome inicial
-    jobTitle: 'Cargo', // Cargo inicial
-    photo: '', // Foto inicial
-    parentId, // Associar ao pai
-    hasChildren: false,
+    ...newChild.value,
+    id: newId,
+    parentId: selectedPerson.value.id, // Associando o filho ao pai
+    hasChildren: false, // Inicialmente sem filhos
+    photo: newChild.value.photo || '',
+    isChildrenVisible: true,
   };
 
+  // Adiciona a nova pessoa à lista de pessoas
   people.push(newPerson);
+  visiblePeople.value.push(newId);
+
+  // Limpar o formulário e fechar o drawer
+  newChild.value = {
+    name: '',
+    jobTitle: '',
+    photo: '',
+  };
+  addChildDrawer.value = false; // Fec/ Fechar o drawer
 };
 
 const updateInfo = () => {
@@ -757,6 +797,28 @@ const handleMouseUp = () => {
 .person-job {
   font-size: 14px;
   color: gray;
+}
+
+.add-child-form {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.child-photo {
+  margin-bottom: 16px;
+}
+.default-photo-icon {
+  font-size: 80px;
+  color: #bbb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+  background-color: #f0f0f0;
+  margin-bottom: 16px;
 }
 
 .q-btn {
