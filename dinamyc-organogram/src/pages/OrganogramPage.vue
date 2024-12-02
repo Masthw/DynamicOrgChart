@@ -8,12 +8,14 @@
       </div>
       <q-page class="organogram" :style="organogramStyle">
         <svg class="connections" xmlns="http://www.w3.org/2000/svg">
-          <path
+          <line
             v-for="connection in connections"
             :key="connection.id"
-            :d="`M${connection.x1},${connection.y1} Q${connection.cx},${connection.cy} ${connection.x2},${connection.y2}`"
+            :x1="connection.x1"
+            :y1="connection.y1"
+            :x2="connection.x2"
+            :y2="connection.y2"
             :stroke="connection.color"
-            fill="none"
             stroke-width="2"
           />
         </svg>
@@ -435,17 +437,12 @@ const connections = computed(() => {
     ) {
       const parent = sortedPeople.value.find((p) => p.id === person.parentId);
 
-      const controlX = getX(parent.id) + getX(person.id) / 2;
-      const controlY = getY(parent.id) + levelHeight;
-
       const color = getColorForParent(person.parentId);
 
       result.push({
         id: `${parent.id}-${person.id}`,
         x1: getX(parent.id) + nodeWidth / 2,
         y1: getY(parent.id) + levelHeight / 2,
-        cx: controlX,
-        cy: controlY,
         x2: getX(person.id) + nodeWidth / 2,
         y2: getY(person.id),
         color,
