@@ -8,14 +8,12 @@
       </div>
       <q-page class="organogram" :style="organogramStyle">
         <svg class="connections" xmlns="http://www.w3.org/2000/svg">
-          <line
+          <path
             v-for="connection in connections"
             :key="connection.id"
-            :x1="connection.x1"
-            :y1="connection.y1"
-            :x2="connection.x2"
-            :y2="connection.y2"
+            :d="`M${connection.x1},${connection.y1} Q${connection.cx},${connection.cy} ${connection.x2},${connection.y2}`"
             :stroke="connection.color"
+            fill="none"
             stroke-width="2"
           />
         </svg>
@@ -48,12 +46,7 @@ import { computed, reactive, ref, onMounted, onBeforeUnmount } from 'vue';
 import PersonCard from 'components/PersonCard.vue';
 
 const people = reactive([
-  {
-    id: '1',
-    name: 'João Silva',
-    jobTitle: 'CEO',
-    isChildrenVisible: true,
-  },
+  { id: '1', name: 'João Silva', jobTitle: 'CEO', isChildrenVisible: true },
   {
     id: '2',
     name: 'Maria Souza',
@@ -64,64 +57,211 @@ const people = reactive([
   {
     id: '3',
     name: 'Carlos Pereira',
-    jobTitle: 'Developer',
+    jobTitle: 'CFO',
     parentId: '1',
     isChildrenVisible: true,
   },
   {
     id: '4',
     name: 'Ana Costa',
-    jobTitle: 'Designer',
+    jobTitle: 'Design Lead',
     parentId: '2',
     isChildrenVisible: true,
   },
   {
     id: '5',
     name: 'Pedro Lima',
-    jobTitle: 'Analyst',
-    parentId: '3',
+    jobTitle: 'Tech Lead',
+    parentId: '2',
     isChildrenVisible: true,
   },
   {
     id: '6',
     name: 'Laura Campos',
-    jobTitle: 'Intern',
-    parentId: '4',
+    jobTitle: 'Software Engineer',
+    parentId: '5',
     isChildrenVisible: true,
   },
   {
     id: '7',
     name: 'Fernanda Nunes',
-    jobTitle: 'Designer',
-    parentId: '2',
+    jobTitle: 'UX Designer',
+    parentId: '4',
     isChildrenVisible: true,
   },
   {
     id: '8',
-    name: 'Fernanda Nunes',
-    jobTitle: 'Designer',
+    name: 'Lucas Martins',
+    jobTitle: 'Data Scientist',
     parentId: '3',
     isChildrenVisible: true,
   },
   {
     id: '9',
-    name: 'Teu pai',
-    jobTitle: 'Designer',
+    name: 'Julia Rocha',
+    jobTitle: 'Marketing Manager',
     parentId: '1',
     isChildrenVisible: true,
   },
   {
     id: '10',
-    name: 'Mago',
-    jobTitle: 'Designer',
+    name: 'Rafael Mendes',
+    jobTitle: 'Social Media Analyst',
     parentId: '9',
     isChildrenVisible: true,
   },
   {
     id: '11',
-    name: 'Fernnes',
-    jobTitle: 'Designer',
-    parentId: '10',
+    name: 'Clara Almeida',
+    jobTitle: 'HR Manager',
+    parentId: '1',
+    isChildrenVisible: true,
+  },
+  {
+    id: '12',
+    name: 'Ricardo Lopes',
+    jobTitle: 'HR Specialist',
+    parentId: '11',
+    isChildrenVisible: true,
+  },
+  {
+    id: '13',
+    name: 'Beatriz Santos',
+    jobTitle: 'Recruiter',
+    parentId: '12',
+    isChildrenVisible: true,
+  },
+  {
+    id: '14',
+    name: 'Eduardo Farias',
+    jobTitle: 'Intern',
+    parentId: '6',
+    isChildrenVisible: true,
+  },
+  {
+    id: '15',
+    name: 'Mariana Oliveira',
+    jobTitle: 'Finance Analyst',
+    parentId: '3',
+    isChildrenVisible: true,
+  },
+  {
+    id: '16',
+    name: 'Gustavo Ribeiro',
+    jobTitle: 'DevOps Engineer',
+    parentId: '5',
+    isChildrenVisible: true,
+  },
+  {
+    id: '17',
+    name: 'Renata Carvalho',
+    jobTitle: 'QA Engineer',
+    parentId: '6',
+    isChildrenVisible: true,
+  },
+  {
+    id: '18',
+    name: 'Bruno Fernandes',
+    jobTitle: 'Product Manager',
+    parentId: '2',
+    isChildrenVisible: true,
+  },
+  {
+    id: '19',
+    name: 'Isabela Souza',
+    jobTitle: 'Graphic Designer',
+    parentId: '4',
+    isChildrenVisible: true,
+  },
+  {
+    id: '20',
+    name: 'Felipe Santos',
+    jobTitle: 'Backend Developer',
+    parentId: '5',
+    isChildrenVisible: true,
+  },
+  {
+    id: '21',
+    name: 'Sofia Lima',
+    jobTitle: 'Frontend Developer',
+    parentId: '5',
+    isChildrenVisible: true,
+  },
+  {
+    id: '22',
+    name: 'Gabriel Costa',
+    jobTitle: 'Machine Learning Engineer',
+    parentId: '8',
+    isChildrenVisible: true,
+  },
+  {
+    id: '23',
+    name: 'Alice Ribeiro',
+    jobTitle: 'Content Strategist',
+    parentId: '9',
+    isChildrenVisible: true,
+  },
+  {
+    id: '24',
+    name: 'Thiago Nunes',
+    jobTitle: 'Customer Success Manager',
+    parentId: '11',
+    isChildrenVisible: true,
+  },
+  {
+    id: '25',
+    name: 'Victor Amaral',
+    jobTitle: 'Sales Manager',
+    parentId: '1',
+    isChildrenVisible: true,
+  },
+  {
+    id: '26',
+    name: 'Carolina Vieira',
+    jobTitle: 'Account Executive',
+    parentId: '25',
+    isChildrenVisible: true,
+  },
+  {
+    id: '27',
+    name: 'Roberto Cruz',
+    jobTitle: 'Sales Representative',
+    parentId: '25',
+    isChildrenVisible: true,
+  },
+  {
+    id: '28',
+    name: 'Debora Torres',
+    jobTitle: 'UI Designer',
+    parentId: '4',
+    isChildrenVisible: true,
+  },
+  {
+    id: '29',
+    name: 'André Rocha',
+    jobTitle: 'Marketing Analyst',
+    parentId: '9',
+    isChildrenVisible: true,
+  },
+  {
+    id: '30',
+    name: 'Patricia Barros',
+    jobTitle: 'PR Specialist',
+    parentId: '9',
+    isChildrenVisible: true,
+  },
+  {
+    id: '31',
+    name: 'Joana Neves',
+    jobTitle: 'Scrum Master',
+    parentId: '2',
+    isChildrenVisible: true,
+  },
+  {
+    id: '32',
+    name: 'Vinicius Guedes',
+    jobTitle: 'Technical Writer',
+    parentId: '3',
     isChildrenVisible: true,
   },
 ]);
@@ -231,10 +371,16 @@ const getDescendants = (id) => {
 };
 
 const getX = (id) => {
-  const level = getLevel(id);
+  const person = sortedPeople.value.find((p) => p.id === id);
+  if (!person) return 0;
+
+  const level = getLevel(id); // Obter o nível do nó atual
   const levelNodes = sortedPeople.value.filter((p) => getLevel(p.id) === level);
+
+  // Calcular o total de largura necessária para o nível
   const totalWidth =
     levelNodes.length * nodeWidth + (levelNodes.length - 1) * spacing;
+
   const startX = (screenWidth - totalWidth) / 2;
   const nodeIndex = levelNodes.findIndex((p) => p.id === id);
   return startX + nodeIndex * (nodeWidth + spacing);
@@ -261,6 +407,24 @@ const getPositionStyle = (person) => ({
   top: `${getY(person.id)}px`,
 });
 
+const generateRandomColor = () => {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
+const getColorForParent = (parentId) => {
+  if (!parentColors.value[parentId]) {
+    parentColors.value[parentId] = generateRandomColor();
+  }
+  return parentColors.value[parentId];
+};
+
+const parentColors = ref({});
+
 const connections = computed(() => {
   const result = [];
   sortedPeople.value.forEach((person) => {
@@ -270,13 +434,21 @@ const connections = computed(() => {
       visiblePeople.value.includes(person.parentId)
     ) {
       const parent = sortedPeople.value.find((p) => p.id === person.parentId);
+
+      const controlX = getX(parent.id) + getX(person.id) / 2;
+      const controlY = getY(parent.id) + levelHeight;
+
+      const color = getColorForParent(person.parentId);
+
       result.push({
         id: `${parent.id}-${person.id}`,
         x1: getX(parent.id) + nodeWidth / 2,
-        y1: getY(parent.id) + 180,
+        y1: getY(parent.id) + levelHeight / 2,
+        cx: controlX,
+        cy: controlY,
         x2: getX(person.id) + nodeWidth / 2,
         y2: getY(person.id),
-        color: 'black',
+        color,
       });
     }
   });
@@ -306,7 +478,7 @@ const handleWheelZoom = (event) => {
 onMounted(() => {
   const container = document.querySelector('.organogram-container');
   if (container) {
-    container.addEventListener('wheel', handleWheelZoom);
+    container.addEventListener('wheel', handleWheelZoom, { passive: false });
     container.addEventListener('mousedown', handleMouseDown);
     container.addEventListener('mousemove', handleMouseMove);
     container.addEventListener('mouseup', handleMouseUp);
@@ -329,7 +501,7 @@ onBeforeUnmount(() => {
 });
 
 const zoomIn = () => {
-  if (zoomLevel.value < 2) {
+  if (zoomLevel.value < 1.1) {
     zoomLevel.value += 0.1;
   }
 };
@@ -357,7 +529,6 @@ const getMaxLevelWidth = () => {
     levelWidths.push(totalWidth);
   }
 
-  // Retornar a maior largura
   return Math.max(...levelWidths);
 };
 
@@ -474,6 +645,7 @@ const handleMouseUp = () => {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  overflow: visible;
 }
 
 .q-col {
