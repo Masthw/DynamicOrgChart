@@ -40,6 +40,34 @@
         </div>
       </q-page>
     </q-page-container>
+    <q-drawer v-model="infoDrawer" side="right" overlay>
+      <div class="person-info">
+        <q-img
+          v-if="selectedPerson.photo"
+          :src="photo"
+          alt="Person's photo"
+          class="selected-person-photo"
+        />
+        <q-icon
+          v-else
+          name="account_circle"
+          class="selected-person-image icon"
+        />
+
+        <div class="person-details">
+          <div class="person-name">{{ selectedPerson.name }}</div>
+          <div class="person-job">{{ selectedPerson.jobTitle }}</div>
+        </div>
+        <q-btn icon="edit" flat @click="isEditing = true" />
+        <q-form v-if="isEditing" @submit.prevent="updateInfo">
+          <q-input v-model="selectedPerson.name" label="Nome" />
+          <q-input v-model="selectedPerson.jobTitle" label="Cargo" />
+          <div class="q-mt-md">
+            <q-btn type="submit" label="Salvar alterações" color="secondary" />
+          </div>
+        </q-form>
+      </div>
+    </q-drawer>
   </q-layout>
 </template>
 
@@ -452,12 +480,50 @@ const connections = computed(() => {
   return result;
 });
 
+const infoDrawer = ref(false);
+const isEditing = ref(false);
+const selectedPerson = ref({
+  id: null,
+  name: '',
+  jobTitle: '',
+  photo: '',
+});
+
 const showInfo = (id) => {
   console.log('Mostrar informações do usuário com ID:', id);
+  selectedPerson.value = people.find((person) => person.id === id);
+  infoDrawer.value = true;
 };
 
-const addChild = (id) => {
-  console.log('Adicionar filho ao usuário com ID:', id);
+const addChild = (parentId) => {
+  console.log('Adicionar filho ao usuário com ID:', parentId);
+  const newPerson = {
+    id: Date.now().toString(), // Gerar ID único
+    name: 'Novo Filho', // Nome inicial
+    jobTitle: 'Cargo', // Cargo inicial
+    photo: '', // Foto inicial
+    parentId, // Associar ao pai
+    hasChildren: false,
+  };
+
+  people.push(newPerson);
+};
+
+const updateInfo = () => {
+  isEditing.value = false;
+  if (selectedPerson.value) {
+    const person = people.find(
+      (person) => person.id === selectedPerson.value.id
+    );
+    if (person) {
+      person.name = selectedPerson.value.name;
+      person.jobTitle = selectedPerson.value.jobTitle;
+      person.photo = selectedPerson.value.photo;
+    }
+  }
+
+  // Fechar o menu lateral
+  infoDrawer.value = false;
 };
 
 const zoomLevel = ref(1);
@@ -647,5 +713,53 @@ const handleMouseUp = () => {
 
 .q-col {
   text-align: center;
+}
+
+.person-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.selected-person-photo {
+  margin-bottom: 16px;
+}
+.selected-person-image {
+  font-size: 80px;
+  color: #bbb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+  background-color: #f0f0f0;
+  margin-bottom: 16px;
+}
+
+.photo-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.person-details {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.person-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.person-job {
+  font-size: 14px;
+  color: gray;
+}
+
+.q-btn {
+  margin-top: 16px;
 }
 </style>
