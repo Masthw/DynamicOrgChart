@@ -424,10 +424,9 @@ const getX = (id) => {
   const person = sortedPeople.value.find((p) => p.id === id);
   if (!person) return 0;
 
-  const level = getLevel(id); // Obter o nível do nó atual
+  const level = getLevel(id);
   const levelNodes = sortedPeople.value.filter((p) => getLevel(p.id) === level);
 
-  // Calcular o total de largura necessária para o nível
   const totalWidth =
     levelNodes.length * nodeWidth + (levelNodes.length - 1) * spacing;
 
@@ -458,12 +457,19 @@ const getPositionStyle = (person) => ({
 });
 
 const generateRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+  const base = 150;
+  const range = 100;
+
+  const randomChannel = () =>
+    Math.min(
+      255,
+      Math.max(0, base + Math.floor(Math.random() * range - range / 2))
+    );
+  const r = randomChannel();
+  const g = randomChannel();
+  const b = randomChannel();
+
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 };
 
 const getColorForParent = (parentId) => {
@@ -526,27 +532,25 @@ const openAddChildDrawer = (id) => {
 };
 
 const addChild = () => {
-  const newId = `person-${Date.now()}`; // Gerar um id único para o novo filho
+  const newId = `person-${Date.now()}`;
   const newPerson = {
     ...newChild.value,
     id: newId,
-    parentId: selectedPerson.value.id, // Associando o filho ao pai
-    hasChildren: false, // Inicialmente sem filhos
+    parentId: selectedPerson.value.id,
+    hasChildren: false,
     photo: newChild.value.photo || '',
     isChildrenVisible: true,
   };
 
-  // Adiciona a nova pessoa à lista de pessoas
   people.push(newPerson);
   visiblePeople.value.push(newId);
 
-  // Limpar o formulário e fechar o drawer
   newChild.value = {
     name: '',
     jobTitle: '',
     photo: '',
   };
-  addChildDrawer.value = false; // Fec/ Fechar o drawer
+  addChildDrawer.value = false;
 };
 
 const updateInfo = () => {
@@ -561,8 +565,6 @@ const updateInfo = () => {
       person.photo = selectedPerson.value.photo;
     }
   }
-
-  // Fechar o menu lateral
   infoDrawer.value = false;
 };
 
@@ -621,8 +623,6 @@ const resetZoom = () => {
 
 const getMaxLevelWidth = () => {
   const levelWidths = [];
-
-  // Obter a largura total de cada nível
   for (let level = 0; level <= getLevel(); level++) {
     const levelNodes = sortedPeople.value.filter(
       (p) => getLevel(p.id) === level
@@ -677,7 +677,7 @@ const handleMouseMove = (event) => {
   const x = event.pageX - container.offsetLeft;
   const y = event.pageY - container.offsetTop;
 
-  const walkX = (x - startX.value) * -1; // Inverter para mover na direção certa
+  const walkX = (x - startX.value) * -1;
   const walkY = (y - startY.value) * -1;
 
   container.scrollLeft = scrollLeft.value + walkX;
@@ -740,7 +740,7 @@ const handleMouseUp = () => {
 .organogram::-webkit-scrollbar {
   display: none;
   width: 0;
-  height: 0; /* Chrome, Safari e Edge moderno */
+  height: 0;
 }
 
 .connections {
