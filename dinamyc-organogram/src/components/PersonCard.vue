@@ -105,10 +105,12 @@ const handleAddClick = () => {
 
 .text-h6 {
   font-weight: bold;
+  user-select: none;
 }
 
 .text-subtitle2 {
   color: gray;
+  user-select: none;
 }
 
 .options-btn {
