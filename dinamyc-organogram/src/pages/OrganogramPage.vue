@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout>
     <q-page-container class="organogram-container">
       <div class="zoom-controls">
         <q-btn icon="zoom_in" flat round @click="zoomIn" />
@@ -693,8 +693,8 @@ const handleMouseUp = () => {
 .organogram-container {
   background-color: #666;
   overflow: auto;
-  min-width: 100vw;
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
   padding: 0;
   display: flex;
   position: relative;
@@ -726,12 +726,8 @@ const handleMouseUp = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: max-content;
-  min-width: max-content;
   position: relative;
-  overflow: visible;
   scrollbar-width: none;
-  -ms-overflow-style: none;
   z-index: 2;
   background-color: #666;
   box-sizing: border-box;
