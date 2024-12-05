@@ -4,7 +4,7 @@
     <iframe
       v-bind:src="orgChartUrl"
       width="100%"
-      height="600px"
+      height="100%"
       frameborder="0"
       title="Org Chart"
     ></iframe>
@@ -23,9 +23,28 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .orgchart-container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+
+iframe {
   width: 100%;
   height: 100%;
+  border: none;
+  margin: 0;
+  padding: 0;
 }
 </style>

@@ -6,6 +6,9 @@
   .hide {
     display: none;
   }
+  svg:not(:root) {
+    overflow: visible !important;
+  }
 
   .drag-enabled:not(.dragging-active) .node.draggable {
     stroke: grey;
