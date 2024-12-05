@@ -1,22 +1,15 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <example-component
-      title="Example component"
-      active
-      :meta="meta"
-    ></example-component>
-  </q-page>
+  <div>
+    <OrgChart2 />
+  </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
-import { Meta } from 'components/models';
+<script>
+import OrgChart2 from 'components/OrgChart2.vue';
 
-defineOptions({
-  name: 'IndexPage',
-});
-
-const meta = ref<Meta>({
-  totalCount: 1200,
-});
+export default {
+  components: {
+    OrgChart2,
+  },
+};
 </script>

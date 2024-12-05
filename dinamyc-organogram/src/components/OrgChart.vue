@@ -47,11 +47,13 @@ export default {
           .compactMarginPair(() => 30)
           .neighbourMargin(() => 20)
           .nodeContent(this.generateContent)
+
           .container(this.$refs.chartContainer)
           .data(data)
           .render();
       });
     },
+
     onDragStart(element, dragEvent) {
       this.dragNode = dragEvent.subject;
       const width = dragEvent.subject.width;
