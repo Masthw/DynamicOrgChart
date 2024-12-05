@@ -44,7 +44,7 @@
   let undoActions = [];
   let redoActions = [];
 
-  // This is the data used - https://github.com/bumbeishvili/sample-data/blob/main/data-oracle.csv
+  // This is the data used
   d3.csv(
     'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
   ).then((data) => {
@@ -78,17 +78,8 @@
         );
       })
       .nodeUpdate(function (d) {
-        if (d.id === '102' || d.id === '120' || d.id === '124') {
-          d3.select(this).classed('droppable', false);
-        } else {
-          d3.select(this).classed('droppable', true);
-        }
-
-        if (d.id === '101') {
-          d3.select(this).classed('draggable', false);
-        } else {
-          d3.select(this).classed('draggable', true);
-        }
+        d3.select(this).classed('droppable', true);
+        d3.select(this).classed('draggable', true);
       })
       .container('.chart-container')
       .data(data)
