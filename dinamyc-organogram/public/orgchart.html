@@ -134,6 +134,91 @@
   #enableDragButton:hover {
     background-color: #218838;
   }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+  }
+  .overlay.active {
+    display: block;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 500px;
+    height: 100%;
+    background-color: #f9f9f9;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #e9ecef;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .sidebar-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .sidebar-footer {
+    padding: 15px;
+    background-color: #e9ecef;
+    border-top: 1px solid #ccc;
+    text-align: right;
+  }
+
+  input[type='text'] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .save-btn {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .save-btn:hover {
+    background-color: #218838;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
 </style>
 
 <script>
@@ -439,26 +524,26 @@
       return;
     }
     const menuHtml = `
-     <div class="options-menu" style="
-    position: absolute;
-    top: 20px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    min-width: 150px;
-    width: auto;
-    z-index: 1000;
-  ">
-    <div style="margin-bottom: 8px;">
-      <button class="info-btn">Informações</button>
+       <div class="options-menu" style="
+      position: absolute;
+      top: 20px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      min-width: 150px;
+      width: auto;
+      z-index: 1000;
+    ">
+      <div style="margin-bottom: 8px;">
+        <button class="info-btn">Informações</button>
+      </div>
+      <div>
+        <button class="add-child-btn">Adicionar</button>
+      </div>
     </div>
-    <div>
-      <button class="add-child-btn">Adicionar</button>
-    </div>
-  </div>
-`;
+  `;
 
     const menuElement = document.createElement('div');
     menuElement.innerHTML = menuHtml;
@@ -498,10 +583,74 @@
       alert('Erro: Node não encontrado!');
       return;
     }
-    alert(
-      `Informações de ${person.name}:\nCargo: ${person.position}\nEmail: ${person.email}`
-    );
+    const sidebar = document.getElementById('person-info-sidebar');
+    const content = document.getElementById('person-info-content');
+    const overlay = document.getElementById('overlay');
+
+    document.getElementById('person-photo').src =
+      person.image || 'https://via.placeholder.com/50';
+    document.getElementById('person-name').textContent = person.name;
+
+    const personInfoHtml = `
+     <input type="hidden" id="id" value="${person.id}" />
+      <div>
+        <label>Nome:</label>
+        <input type="text" id="name" value="${person.name}" />
+      </div>
+      <div>
+        <label>Cargo:</label>
+        <input type="text" id="position" value="${person.position}" />
+      </div>
+      <div>
+        <label>Email:</label>
+        <input type="text" id="email" value="${person.email}" />
+      </div>
+      <div>
+        <label>Telefone:</label>
+        <input type="text" id="phone" value="${person.phone_number}" />
+      </div>
+      <div>
+      </div>
+      `;
+
+    content.innerHTML = personInfoHtml;
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
   }
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('close-sidebar').addEventListener('click', () => {
+      document.getElementById('person-info-sidebar').classList.remove('active');
+      document.getElementById('overlay').classList.remove('active');
+    });
+
+    document.getElementById('save-info').addEventListener('click', () => {
+      const updatedPerson = {
+        id: document.getElementById('id')?.value || '',
+        name: document.getElementById('name')?.value || '',
+        position: document.getElementById('position')?.value || '',
+        email: document.getElementById('email')?.value || '',
+        phone_number: document.getElementById('phone')?.value || '',
+      };
+
+      const chartData = chart.getChartState().data;
+      const personIndex = chartData.findIndex(
+        (node) => node.id === updatedPerson.id
+      );
+      if (personIndex !== -1) {
+        chartData[personIndex] = {
+          ...chartData[personIndex],
+          ...updatedPerson,
+        };
+        chart.data(chartData).render(); // Atualiza o organograma
+        alert('Alterações aplicadas com sucesso!');
+      } else {
+        alert('Erro: Pessoa não encontrada!');
+      }
+
+      document.getElementById('person-info-sidebar').classList.remove('active');
+      document.getElementById('overlay').classList.remove('active');
+    });
+  });
 
   function addChild(nodeId) {
     const newChild = {
@@ -514,55 +663,53 @@
     const chartState = chart.getChartState();
     chartState.data.push(newChild); // Adiciona o novo nó aos dados
     chart.data(chartState.data).render();
-
-    alert(`Adiciona filho`);
   }
 
   function generateContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 25 + 2;
     return `
-      <div class="node-container" style='
-      width:${d.width}px;
-      height:${d.height}px;
-      padding-top:${imageDiffVert - 2}px;
-      padding-left:1px;
-      padding-right:1px'>
-              <div class="content-container" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
-                d.width - 2
-              }px;height:${
+        <div class="node-container" style='
+        width:${d.width}px;
+        height:${d.height}px;
+        padding-top:${imageDiffVert - 2}px;
+        padding-left:1px;
+        padding-right:1px'>
+                <div class="content-container" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
+                  d.width - 2
+                }px;height:${
       d.height - imageDiffVert
     }px;border-radius:10px;border: ${
       d.data._highlighted || d.data._upToTheRootHighlighted
         ? '5px solid #E27396"'
         : '1px solid #E4E2E9"'
     } >
-             <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px;position:relative;">
-       <button class="node-options-btn" data-id="${d.data.id}" style="
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-" onclick="showOptionsMenu('${d.data.id}')">...</button>
-      </div>
-                  <div  style="margin-top:${
-                    -imageDiffVert - 20
-                  }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
-                  <div style="margin-top:${
-                    -imageDiffVert - 20
-                  }px;">   <img src=" ${
+               <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px;position:relative;">
+         <button class="node-options-btn" data-id="${d.data.id}" style="
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+  " onclick="showOptionsMenu('${d.data.id}')">...</button>
+        </div>
+                    <div  style="margin-top:${
+                      -imageDiffVert - 20
+                    }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
+                    <div style="margin-top:${
+                      -imageDiffVert - 20
+                    }px;">   <img src=" ${
       d.data.image
     }" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" /></div>
-                  <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${
-                    d.data.name
-                  } </div>
-                  <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
-                    d.data.position
-                  } </div>
+                    <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${
+                      d.data.name
+                    } </div>
+                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
+                      d.data.position
+                    } </div>
 
-              </div>
-          </div>
-      `;
+                </div>
+            </div>
+        `;
   }
 </script>
 
@@ -583,3 +730,30 @@
   End of adding node functionality
 -->
 <div class="chart-container"></div>
+
+<div id="person-info-sidebar" class="sidebar hidden">
+  <div class="sidebar-header">
+    <div style="display: flex; align-items: center">
+      <img
+        id="person-photo"
+        src=""
+        alt="Foto da Pessoa"
+        style="
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          margin-right: 10px;
+        "
+      />
+      <h3 id="person-name">Nome da Pessoa</h3>
+    </div>
+    <button id="close-sidebar" class="close-btn">&times;</button>
+  </div>
+  <div id="person-info-content" class="sidebar-content">
+    <!-- Informações serão carregadas dinamicamente aqui -->
+  </div>
+  <div class="sidebar-footer">
+    <button id="save-info" class="save-btn">Salvar</button>
+  </div>
+</div>
+<div id="overlay" class="overlay"></div>
