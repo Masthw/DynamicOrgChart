@@ -77,23 +77,47 @@
     transition: background-color 0.3s, transform 0.2s;
   }
 
-  /* Botões com fundo azul */
+  .node-options-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    transition: none;
+  }
+
+  .node-options-btn:not([disabled]) {
+    color: #666;
+  }
+
+  .info-btn:not([disabled]) {
+    background-color: white;
+    color: #333;
+  }
+  .add-child-btn:not([disabled]) {
+    background-color: white;
+    color: #333;
+  }
+
+  .node-options-btn:hover {
+    color: #007bff;
+  }
+
   button:not([disabled]) {
     background-color: #4999ee;
     color: white;
   }
 
   button:hover:not([disabled]) {
-    background-color: #357ab7; /* Cor mais escura no hover */
-    transform: scale(1.05); /* Efeito de aumentar levemente o botão */
+    background-color: #357ab7;
+    transform: scale(1.05);
   }
 
   button:active:not([disabled]) {
-    background-color: #2d5f8a; /* Cor ainda mais escura no clique */
-    transform: scale(0.98); /* Efeito de diminuir ao clicar */
+    background-color: #2d5f8a;
+    transform: scale(0.98);
   }
 
-  /* Botões desabilitados */
   button[disabled] {
     background-color: #ddd;
     color: #aaa;
@@ -109,11 +133,6 @@
 
   #enableDragButton:hover {
     background-color: #218838;
-  }
-
-  /* Botões do drag (done, undo, redo, cancel) */
-  #dragActions button {
-    margin-top: 5px;
   }
 </style>
 
