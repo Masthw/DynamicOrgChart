@@ -67,6 +67,54 @@
     position: relative;
     overflow: visible;
   }
+
+  button {
+    font-size: 14px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  /* Botões com fundo azul */
+  button:not([disabled]) {
+    background-color: #4999ee;
+    color: white;
+  }
+
+  button:hover:not([disabled]) {
+    background-color: #357ab7; /* Cor mais escura no hover */
+    transform: scale(1.05); /* Efeito de aumentar levemente o botão */
+  }
+
+  button:active:not([disabled]) {
+    background-color: #2d5f8a; /* Cor ainda mais escura no clique */
+    transform: scale(0.98); /* Efeito de diminuir ao clicar */
+  }
+
+  /* Botões desabilitados */
+  button[disabled] {
+    background-color: #ddd;
+    color: #aaa;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Estilos para o botão "Organize" */
+  #enableDragButton {
+    background-color: #28a745;
+    margin-right: 10px;
+  }
+
+  #enableDragButton:hover {
+    background-color: #218838;
+  }
+
+  /* Botões do drag (done, undo, redo, cancel) */
+  #dragActions button {
+    margin-top: 5px;
+  }
 </style>
 
 <script>
@@ -397,18 +445,17 @@
     menuElement.innerHTML = menuHtml;
     button.parentNode.appendChild(menuElement);
 
-    // Adiciona eventos aos botões do menu
     const infoButton = menuElement.querySelector('.info-btn');
     const addChildButton = menuElement.querySelector('.add-child-btn');
 
     infoButton.addEventListener('click', () => {
       showPersonInfo(nodeId);
-      menuElement.remove(); // Fecha o menu após a ação
+      menuElement.remove();
     });
 
     addChildButton.addEventListener('click', () => {
       addChild(nodeId);
-      menuElement.remove(); // Fecha o menu após a ação
+      menuElement.remove();
     });
 
     // Fecha o menu ao clicar fora dele
