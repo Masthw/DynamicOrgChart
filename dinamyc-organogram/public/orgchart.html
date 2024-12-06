@@ -30,6 +30,43 @@
   .node.dragging .content-container {
     background-color: #ffffff;
   }
+
+  .node-options-btn {
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .node-options-btn:hover {
+    color: #007bff;
+  }
+
+  .options-menu {
+    z-index: 9999 !important;
+  }
+
+  .options-menu button {
+    width: 100%;
+    padding: 10px;
+    background-color: white;
+    border: none;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .options-menu button:hover {
+    background-color: #4999ee;
+  }
+
+  .node-container {
+    position: relative;
+    overflow: visible;
+  }
 </style>
 
 <script>
@@ -84,7 +121,19 @@
       .container('.chart-container')
       .data(data)
       .render();
+    addNodeEventListeners();
   });
+
+  function addNodeEventListeners() {
+    const buttons = document.querySelectorAll('.node-options-btn');
+    buttons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        const nodeId = event.target.getAttribute('data-id');
+        showOptionsMenu(nodeId);
+      });
+    });
+    chart.render();
+  }
 
   function onDragStart(element, dragEvent, node) {
     dragNode = node;
@@ -299,6 +348,110 @@
     }
   }
 
+  function showOptionsMenu(nodeId) {
+    const nodeData = chart
+      .getChartState()
+      .data.find((node) => node.id === nodeId);
+
+    if (!nodeData) {
+      alert('Erro: Node não encontrado');
+      return;
+    }
+
+    const button = document.querySelector(
+      `.node-options-btn[data-id="${nodeId}"]`
+    );
+    if (!button) {
+      console.error('Botão não encontrado!');
+      return;
+    }
+
+    const existingMenu = button.parentNode.querySelector('.options-menu');
+    if (existingMenu) {
+      existingMenu.remove();
+      return;
+    }
+    const menuHtml = `
+     <div class="options-menu" style="
+    position: absolute;
+    top: 20px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    min-width: 150px;
+    width: auto;
+    z-index: 1000;
+  ">
+    <div style="margin-bottom: 8px;">
+      <button class="info-btn">Informações</button>
+    </div>
+    <div>
+      <button class="add-child-btn">Adicionar</button>
+    </div>
+  </div>
+`;
+
+    const menuElement = document.createElement('div');
+    menuElement.innerHTML = menuHtml;
+    button.parentNode.appendChild(menuElement);
+
+    // Adiciona eventos aos botões do menu
+    const infoButton = menuElement.querySelector('.info-btn');
+    const addChildButton = menuElement.querySelector('.add-child-btn');
+
+    infoButton.addEventListener('click', () => {
+      showPersonInfo(nodeId);
+      menuElement.remove(); // Fecha o menu após a ação
+    });
+
+    addChildButton.addEventListener('click', () => {
+      addChild(nodeId);
+      menuElement.remove(); // Fecha o menu após a ação
+    });
+
+    // Fecha o menu ao clicar fora dele
+    document.addEventListener(
+      'click',
+      (event) => {
+        if (!menuElement.contains(event.target) && event.target !== button) {
+          menuElement.remove();
+        }
+      },
+      { once: true }
+    );
+  }
+
+  function showPersonInfo(nodeId) {
+    const person = chart
+      .getChartState()
+      .data.find((node) => node.id === nodeId);
+
+    if (!person) {
+      alert('Erro: Node não encontrado!');
+      return;
+    }
+    alert(
+      `Informações de ${person.name}:\nCargo: ${person.position}\nEmail: ${person.email}`
+    );
+  }
+
+  function addChild(nodeId) {
+    const newChild = {
+      id: Date.now().toString(), // ID único
+      parentId: nodeId, // Define o ID do pai
+      name: 'Novo Filho',
+      position: 'Cargo Padrão',
+      image: 'https://via.placeholder.com/150', // Imagem padrão
+    };
+    const chartState = chart.getChartState();
+    chartState.data.push(newChild); // Adiciona o novo nó aos dados
+    chart.data(chartState.data).render();
+
+    alert(`Adiciona filho`);
+  }
+
   function generateContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 25 + 2;
@@ -318,9 +471,14 @@
         ? '5px solid #E27396"'
         : '1px solid #E4E2E9"'
     } >
-                  <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px">#${
-                    d.data.id
-                  }</div>
+             <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px;position:relative;">
+       <button class="node-options-btn" data-id="${d.data.id}" style="
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+" onclick="showOptionsMenu('${d.data.id}')">...</button>
+      </div>
                   <div  style="margin-top:${
                     -imageDiffVert - 20
                   }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
