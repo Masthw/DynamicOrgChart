@@ -1,15 +1,15 @@
 <template>
   <div>
-    <OrgChart2 />
+    <OrgChart />
   </div>
 </template>
 
 <script>
-import OrgChart2 from 'components/OrgChart2.vue';
+import OrgChart from 'components/OrgChart.vue';
 
 export default {
   components: {
-    OrgChart2,
+    OrgChart,
   },
 };
 </script>

@@ -1,7 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
-/* import OrganogramPage from 'pages/OrganogramPage.vue'; */
-import NewOrganogramPage from 'src/pages/NewOrganogramPage.vue';
-import IndexPage from 'src/pages/IndexPage.vue';
+import OrganogramPage from 'src/pages/OrganogramPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -9,11 +7,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        component: NewOrganogramPage,
-      },
-      {
-        path: 'novo',
-        component: IndexPage,
+        component: OrganogramPage,
       },
     ],
   },
