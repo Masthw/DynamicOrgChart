@@ -13,7 +13,7 @@
   .drag-enabled:not(.dragging-active) .node.draggable {
     stroke: grey;
     stroke-width: 3px;
-    stroke-dasharray: 2px;
+    stroke-dasharray: 5px;
   }
 
   .drag-enabled.dragging-active .droppable {
@@ -125,6 +125,21 @@
     transform: none;
   }
 
+  .controls {
+    display: flex;
+    justify-content: space-between; /* Espaço entre grupos de botões */
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0 15px;
+  }
+
+  /* Botões relacionados ao Drag */
+  .drag-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaçamento entre o botão "Organize" e os outros */
+  }
+
   /* Estilos para o botão "Organize" */
   #enableDragButton {
     background-color: #28a745;
@@ -219,6 +234,104 @@
     font-size: 24px;
     cursor: pointer;
   }
+
+  /* Filtro */
+  .right-buttons {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .filterButton button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .filterButton button:hover {
+    background-color: #0056b3;
+  }
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+    padding: 20px;
+    width: 300px;
+    display: none;
+  }
+  .modal-content h3 {
+    margin-top: 0;
+  }
+
+  .modal-content select {
+    width: 100%;
+    padding: 8px 12px;
+    margin: 10px 0;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    outline: none;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.2s ease-in-out;
+  }
+
+  .modal-content select:focus {
+    border-color: #007bff;
+    background-color: #fff;
+  }
+
+  .modal .hidden {
+    display: none;
+  }
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: none;
+  }
+  .overlay.hidden {
+    display: none;
+  }
+
+  .applied-filters {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555;
+    padding: 0; /* Remove padding */
+    border: none; /* Remove borda */
+    display: flex;
+    gap: 10px; /* Espaço entre os filtros */
+    flex-wrap: wrap; /* Ajusta os filtros em múltiplas linhas, se necessário */
+  }
+
+  .applied-filters span {
+    display: inline-flex;
+    align-items: center;
+    color: #007bff;
+    font-size: 13px;
+    cursor: default;
+  }
+
+  .applied-filters span i {
+    margin-left: 5px;
+    font-style: normal;
+    font-weight: bold;
+    color: #ff4d4f;
+    cursor: pointer;
+  }
 </style>
 
 <script>
@@ -233,10 +346,16 @@
   let undoActions = [];
   let redoActions = [];
 
+  let originalData = null;
+
   // This is the data used
   d3.csv(
     'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
   ).then((data) => {
+    originalData = data;
+
+    initializeFilters(data);
+
     console.log(data);
     chart = new d3.OrgChart()
       .nodeHeight((d) => 85 + 25)
@@ -690,6 +809,145 @@
     chart.data(chartState.data).render();
   }
 
+  //Filtro
+  function getAncestors(
+    data,
+    nodeId,
+    parentIdField = 'parentId',
+    idField = 'id'
+  ) {
+    const ancestors = [];
+    let currentId = nodeId;
+
+    while (currentId) {
+      const parent = data.find((item) => item[idField] === currentId);
+      if (parent) {
+        ancestors.push(parent);
+        currentId = parent[parentIdField];
+      } else {
+        break; // Sem mais ancestrais
+      }
+    }
+
+    return ancestors;
+  }
+
+  function openFilterDialog() {
+    document.getElementById('filterDialog').style.display = 'block';
+    document.getElementById('modalOverlay').style.display = 'block';
+  }
+
+  function closeFilterDialog() {
+    document.getElementById('filterDialog').style.display = 'none';
+    document.getElementById('modalOverlay').style.display = 'none';
+  }
+
+  function applyFilters() {
+    const positionFilter = document.getElementById('positionFilter').value;
+    const departmentFilter = document.getElementById('departmentFilter').value;
+    const locationFilter = document.getElementById('locationFilter').value;
+
+    // Filtra os nós com base nas seleções
+    const filteredNodes = originalData.filter((item) => {
+      return (
+        (positionFilter === '' || item.position === positionFilter) &&
+        (departmentFilter === '' ||
+          item.department_name === departmentFilter) &&
+        (locationFilter === '' || item.location_state === locationFilter)
+      );
+    });
+
+    // Adiciona ancestrais de cada nó filtrado
+    const ancestors = new Set();
+    filteredNodes.forEach((node) => {
+      const nodeAncestors = getAncestors(originalData, node.id);
+      nodeAncestors.forEach((ancestor) => ancestors.add(ancestor));
+    });
+
+    // Converte o Set para array e renderiza
+    const filteredDataWithAncestors = [...ancestors];
+    chart.data(filteredDataWithAncestors).render();
+
+    const appliedFilters = [];
+    if (positionFilter) appliedFilters.push(`Cargo: ${positionFilter}`);
+    if (departmentFilter)
+      appliedFilters.push(`Departamento: ${departmentFilter}`);
+    if (locationFilter) appliedFilters.push(`Local: ${locationFilter}`);
+
+    const appliedFiltersDiv = document.getElementById('appliedFilters');
+    if (appliedFilters.length > 0) {
+      appliedFiltersDiv.style.display = 'flex'; // Mostra a lista de filtros
+      appliedFiltersDiv.innerHTML = appliedFilters
+        .map(
+          (filter) =>
+            `<span>${filter} <i onclick="clearSpecificFilter('${filter}')">&times;</i></span>`
+        )
+        .join('');
+    } else {
+      appliedFiltersDiv.style.display = 'none'; // Oculta se não houver filtros
+    }
+    closeFilterDialog();
+  }
+
+  // Limpa os filtros e reseta o organograma
+  function clearSpecificFilter(filter) {
+    if (filter.startsWith('Cargo:')) {
+      document.getElementById('positionFilter').value = '';
+    } else if (filter.startsWith('Departamento:')) {
+      document.getElementById('departmentFilter').value = '';
+    } else if (filter.startsWith('Local:')) {
+      document.getElementById('locationFilter').value = '';
+    }
+
+    applyFilters(); // Atualiza o organograma e exibição dos filtros
+  }
+
+  function getUniqueValues(data, field) {
+    return [
+      ...new Set(data.map((item) => item[field]).filter((value) => value)),
+    ];
+  }
+
+  // Popula um select com opções
+  function populateSelect(selectElement, options) {
+    selectElement.innerHTML = '<option value="">Todos</option>'; // Reseta opções
+    options.forEach((option) => {
+      const opt = document.createElement('option');
+      opt.value = option;
+      opt.textContent = option;
+      selectElement.appendChild(opt);
+    });
+  }
+
+  // Inicializa os filtros dinamicamente
+  function initializeFilters(data) {
+    const positionFilter = document.getElementById('positionFilter');
+    const departmentFilter = document.getElementById('departmentFilter');
+    const locationFilter = document.getElementById('locationFilter');
+
+    // Obtém valores únicos para cada filtro
+    const uniquePositions = getUniqueValues(data, 'position');
+    const uniqueDepartments = getUniqueValues(data, 'department_name');
+    const uniqueLocations = getUniqueValues(data, 'location_state');
+
+    // Preenche os selects
+    populateSelect(positionFilter, uniquePositions);
+    populateSelect(departmentFilter, uniqueDepartments);
+    populateSelect(locationFilter, uniqueLocations);
+  }
+
+  function clearSpecificFilter(filter) {
+    if (filter.startsWith('Cargo:')) {
+      document.getElementById('positionFilter').value = '';
+    } else if (filter.startsWith('Departamento:')) {
+      document.getElementById('departmentFilter').value = '';
+    } else if (filter.startsWith('Local:')) {
+      document.getElementById('locationFilter').value = '';
+    }
+
+    applyFilters(); // Atualiza o organograma
+  }
+
   function generateContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 25 + 2;
@@ -743,13 +1001,21 @@
 
 -->
 
-<button id="enableDragButton" onclick="enableDrag()">Organize</button>
-<div id="dragActions" class="hide">
-  <button id="finishDrag" onclick="disableDrag()">Done</button>
-  <button id="undoButton" disabled onclick="undo()">Undo</button>
-  <button id="redoButton" disabled onclick="redo()">Redo</button>
-  <button id="cancelDrag" onclick="cancelDrag()">Cancel</button>
+<div class="controls">
+  <div class="drag-controls">
+    <button id="enableDragButton" onclick="enableDrag()">Organize</button>
+    <div id="dragActions" class="hide">
+      <button id="finishDrag" onclick="disableDrag()">Done</button>
+      <button id="undoButton" disabled onclick="undo()">Undo</button>
+      <button id="redoButton" disabled onclick="redo()">Redo</button>
+      <button id="cancelDrag" onclick="cancelDrag()">Cancel</button>
+    </div>
+  </div>
+  <div class="right-buttons">
+    <button id="filterButton" onclick="openFilterDialog()">Filtros</button>
+  </div>
 </div>
+<div id="appliedFilters" class="applied-filters"></div>
 
 <!--
   End of adding node functionality
@@ -782,3 +1048,32 @@
   </div>
 </div>
 <div id="overlay" class="overlay"></div>
+
+<!-- Filtro -->
+<div id="filterDialog" class="modal hidden">
+  <div class="modal-content">
+    <h3>Aplicar Filtros</h3>
+    <div>
+      <label for="positionFilter">Cargo:</label>
+      <select id="positionFilter">
+        <option value="">Todos</option>
+      </select>
+    </div>
+    <div>
+      <label for="departmentFilter">Departamento:</label>
+      <select id="departmentFilter">
+        <option value="">Todos</option>
+      </select>
+    </div>
+    <div>
+      <label for="locationFilter">Estado:</label>
+      <select id="locationFilter">
+        <option value="">Todos</option>
+      </select>
+    </div>
+    <button onclick="applyFilters()">Aplicar</button>
+    <button onclick="clearFilters()">Limpar Filtros</button>
+    <button onclick="closeFilterDialog()">Fechar</button>
+  </div>
+</div>
+<div id="modalOverlay" class="overlay hidden"></div>
