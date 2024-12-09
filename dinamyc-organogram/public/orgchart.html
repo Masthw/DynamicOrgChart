@@ -64,7 +64,7 @@
   }
 
   .node-container {
-    position: relative;
+    position: absolute;
     overflow: visible;
   }
 
@@ -500,6 +500,8 @@
     }
   }
 
+  let activeMenu = null;
+
   function showOptionsMenu(nodeId) {
     const nodeData = chart
       .getChartState()
@@ -518,15 +520,33 @@
       return;
     }
 
+    if (activeMenu && activeMenu.button === button) {
+      activeMenu.menuElement.remove();
+      activeMenu = null;
+      return;
+    }
+
+    // Remove o menu existente se outro botão foi clicado
+    if (activeMenu) {
+      activeMenu.menuElement.remove();
+      activeMenu = null;
+    }
+
     const existingMenu = button.parentNode.querySelector('.options-menu');
     if (existingMenu) {
       existingMenu.remove();
       return;
     }
+
+    const buttonRect = button.getBoundingClientRect();
+
     const menuHtml = `
        <div class="options-menu" style="
       position: absolute;
-      top: 20px;
+      top: ${
+        buttonRect.bottom + window.scrollY
+      }px; /* Ajusta para posição absoluta */
+      left: ${buttonRect.left + window.scrollX}px;
       background: white;
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -534,7 +554,7 @@
       padding: 10px;
       min-width: 150px;
       width: auto;
-      z-index: 1000;
+      z-index: 9999;
     ">
       <div style="margin-bottom: 8px;">
         <button class="info-btn">Informações</button>
@@ -547,7 +567,9 @@
 
     const menuElement = document.createElement('div');
     menuElement.innerHTML = menuHtml;
-    button.parentNode.appendChild(menuElement);
+    document.body.appendChild(menuElement);
+
+    activeMenu = { menuElement, button };
 
     const infoButton = menuElement.querySelector('.info-btn');
     const addChildButton = menuElement.querySelector('.add-child-btn');
@@ -555,11 +577,13 @@
     infoButton.addEventListener('click', () => {
       showPersonInfo(nodeId);
       menuElement.remove();
+      activeMenu = null;
     });
 
     addChildButton.addEventListener('click', () => {
       addChild(nodeId);
       menuElement.remove();
+      activeMenu = null;
     });
 
     // Fecha o menu ao clicar fora dele
@@ -568,6 +592,7 @@
       (event) => {
         if (!menuElement.contains(event.target) && event.target !== button) {
           menuElement.remove();
+          activeMenu = null;
         }
       },
       { once: true }
