@@ -744,6 +744,10 @@
         <input type="text" id="phone" value="${person.phone_number}" />
       </div>
       <div>
+        <label>Salário:</label>
+        <input type="text" id="phone" value="R$ ${person.salary}" readonly/>
+      </div>
+      <div>
       </div>
       `;
 
@@ -760,7 +764,7 @@
     document.getElementById('save-info').addEventListener('click', () => {
       const updatedPerson = {
         id: document.getElementById('id')?.value || '',
-        name: document.getElementById('name')?.value || '',
+        name: document.getElementById('name')?.value.split(' ')[0] || '',
         position: document.getElementById('position')?.value || '',
         email: document.getElementById('email')?.value || '',
         phone_number: document.getElementById('phone')?.value || '',
@@ -775,12 +779,8 @@
           ...chartData[personIndex],
           ...updatedPerson,
         };
-        chart.data(chartData).render(); // Atualiza o organograma
-        alert('Alterações aplicadas com sucesso!');
-      } else {
-        alert('Erro: Pessoa não encontrada!');
+        chart.data(chartData).render();
       }
-
       document.getElementById('person-info-sidebar').classList.remove('active');
       document.getElementById('overlay').classList.remove('active');
     });
@@ -790,9 +790,10 @@
     const newChild = {
       id: Date.now().toString(), // ID único
       parentId: nodeId, // Define o ID do pai
+      //Adicionar informações sobre a pesoa nova para serem editadas, apenas um exemplo abaixo
       name: 'Novo Filho',
       position: 'Cargo Padrão',
-      image: 'https://via.placeholder.com/150', // Imagem padrão
+      image: 'https://via.placeholder.com/150',
     };
     const chartState = chart.getChartState();
     chartState.data.push(newChild); // Adiciona o novo nó aos dados
@@ -866,7 +867,7 @@
 
     const appliedFiltersDiv = document.getElementById('appliedFilters');
     if (appliedFilters.length > 0) {
-      appliedFiltersDiv.style.display = 'flex'; // Mostra a lista de filtros
+      appliedFiltersDiv.style.display = 'flex';
       appliedFiltersDiv.innerHTML = appliedFilters
         .map(
           (filter) =>
@@ -874,12 +875,11 @@
         )
         .join('');
     } else {
-      appliedFiltersDiv.style.display = 'none'; // Oculta se não houver filtros
+      appliedFiltersDiv.style.display = 'none';
     }
     closeFilterDialog();
   }
 
-  // Limpa os filtros e reseta o organograma
   function clearSpecificFilter(filter) {
     if (filter.startsWith('Cargo:')) {
       document.getElementById('positionFilter').value = '';
@@ -889,7 +889,7 @@
       document.getElementById('locationFilter').value = '';
     }
 
-    applyFilters(); // Atualiza o organograma e exibição dos filtros
+    applyFilters();
   }
 
   function getUniqueValues(data, field) {
@@ -898,9 +898,8 @@
     ];
   }
 
-  // Popula um select com opções
   function populateSelect(selectElement, options) {
-    selectElement.innerHTML = '<option value="">Todos</option>'; // Reseta opções
+    selectElement.innerHTML = '<option value="">Todos</option>';
     options.forEach((option) => {
       const opt = document.createElement('option');
       opt.value = option;
@@ -910,6 +909,7 @@
   }
 
   // Inicializa os filtros dinamicamente
+  //Adicionar informações relevantes conforme os dados que vierem. Salário, Sigla, Tempo no Cargo, etc.
   function initializeFilters(data) {
     const positionFilter = document.getElementById('positionFilter');
     const departmentFilter = document.getElementById('departmentFilter');
