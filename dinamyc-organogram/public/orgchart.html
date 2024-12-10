@@ -292,22 +292,14 @@
   .modal .hidden {
     display: none;
   }
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    display: none;
-  }
   .overlay.hidden {
     display: none;
   }
 
   .applied-filters {
+    justify-content: flex-end;
     margin-top: 5px;
+    margin-right: 5px;
     font-size: 14px;
     color: #555;
     padding: 0; /* Remove padding */
@@ -645,7 +637,6 @@
       return;
     }
 
-    // Remove o menu existente se outro botão foi clicado
     if (activeMenu) {
       activeMenu.menuElement.remove();
       activeMenu = null;
@@ -662,9 +653,7 @@
     const menuHtml = `
        <div class="options-menu" style="
       position: absolute;
-      top: ${
-        buttonRect.bottom + window.scrollY
-      }px; /* Ajusta para posição absoluta */
+      top: ${buttonRect.bottom + window.scrollY}px;
       left: ${buttonRect.left + window.scrollX}px;
       background: white;
       border: 1px solid #ccc;
@@ -733,13 +722,14 @@
 
     document.getElementById('person-photo').src =
       person.image || 'https://via.placeholder.com/50';
-    document.getElementById('person-name').textContent = person.name;
+    const fullName = `${person.name} ${person.lastName || ''}`;
+    document.getElementById('person-name').textContent = fullName;
 
     const personInfoHtml = `
      <input type="hidden" id="id" value="${person.id}" />
       <div>
         <label>Nome:</label>
-        <input type="text" id="name" value="${person.name}" />
+        <input type="text" id="name" value="${fullName.trim()}" />
       </div>
       <div>
         <label>Cargo:</label>
@@ -1076,4 +1066,4 @@
     <button onclick="closeFilterDialog()">Fechar</button>
   </div>
 </div>
-<div id="modalOverlay" class="overlay hidden"></div>
+<div id="modalOverlay" class="overlay"></div>
