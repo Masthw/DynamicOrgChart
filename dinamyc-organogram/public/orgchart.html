@@ -1,10 +1,10 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.js"></script>
-
 <link rel="stylesheet" href="src/css/styles.css" />
 
 <script>
+  // Variáveis principais do gráfico
   var chart = null;
   let dragNode;
   let dropNode;
@@ -15,18 +15,16 @@
 
   let undoActions = [];
   let redoActions = [];
-
   let originalData = null;
 
-  // This is the data used
+  // Carregamento de dados (chamada do back)
   d3.csv(
     'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
   ).then((data) => {
     originalData = data;
-
     initializeFilters(data);
-
     console.log(data);
+    // Configura e renderiza o gráfico de organograma
     chart = new d3.OrgChart()
       .nodeHeight((d) => 85 + 30)
       .nodeWidth((d) => 220 + 35)
@@ -96,14 +94,13 @@
     const state = chart.getChartState();
     const g = d3.select(element);
 
-    // This condition is designed to run at the start of a drag only
     if (isDragStarting) {
       isDragStarting = false;
       document
         .querySelector('.chart-container')
         .classList.add('dragging-active');
 
-      // This sets the Z-Index above all other nodes, by moving the dragged node to be the last-child.
+      // Eleva o nó arrastado para o topo da pilha de renderização (Z-Index)
       g.raise();
 
       const descendants = dragEvent.subject.descendants();
@@ -112,13 +109,11 @@
         (x) => x.data.id !== dragEvent.subject.id
       );
 
-      // Remove all links associated with the dragging node
       state['linksWrapper']
         .selectAll('path.link')
         .data(linksToRemove, (d) => state.nodeId(d))
         .remove();
 
-      // Remove all descendant nodes associated with the dragging node
       if (nodesToRemove) {
         state['nodesWrapper']
           .selectAll('g.node')
@@ -139,7 +134,6 @@
       midY: dragEvent.y + dragEvent.subject.height / 2,
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const allNodes = d3.selectAll('g.node:not(.dragging)');
     allNodes.select('rect').attr('fill', 'none');
 
@@ -186,6 +180,9 @@
       chart.render();
       return;
     }
+
+    /*  const isValidChange = validateChange(dragNode, dropNode); */
+
     if (dragEvent.subject.parent.id === dropNode.id) {
       chart.render();
       return;
@@ -208,7 +205,24 @@
     dragNode = null;
     chart.render();
     updateDragActions();
+
+    /*  if (!isValidChange) {
+      showAlert(
+        'error',
+        'Mudança não está conforme o plano de sucessão. Deseja continuar?',
+
+        chart.render()
+      );
+    } else {
+      showAlert('success', 'Mudança realizada com sucesso!');
+    } */
   }
+
+  /* function validateChange(dragNode, dropNode) {
+    return (
+      dragNode.data.role !== 'Manager' || dropNode.data.role === 'Director'
+    );
+  } */
 
   function enableDrag() {
     dragEnabled = true;
@@ -296,7 +310,6 @@
       .data.find((node) => node.id === nodeId);
 
     if (!nodeData) {
-      alert('Erro: Node não encontrado');
       return;
     }
 
@@ -371,7 +384,6 @@
       activeMenu = null;
     });
 
-    // Fecha o menu ao clicar fora dele
     document.addEventListener(
       'click',
       (event) => {
@@ -390,7 +402,6 @@
       .data.find((node) => node.id === nodeId);
 
     if (!person) {
-      alert('Erro: Node não encontrado!');
       return;
     }
     const sidebar = document.getElementById('person-info-sidebar');
@@ -446,7 +457,6 @@
       </div>
       </div>
       `;
-
     content.innerHTML = personInfoHtml;
     sidebar.classList.add('active');
     overlay.classList.add('active');
@@ -485,15 +495,15 @@
 
   function addChild(nodeId) {
     const newChild = {
-      id: Date.now().toString(), // ID único
-      parentId: nodeId, // Define o ID do pai
+      id: Date.now().toString(),
+      parentId: nodeId,
       //Adicionar informações sobre a pesoa nova para serem editadas, apenas um exemplo abaixo
       name: 'Novo Filho',
       position: 'Cargo Padrão',
       image: 'https://via.placeholder.com/150',
     };
     const chartState = chart.getChartState();
-    chartState.data.push(newChild); // Adiciona o novo nó aos dados
+    chartState.data.push(newChild);
     chart.data(chartState.data).render();
   }
 
@@ -513,10 +523,9 @@
         ancestors.push(parent);
         currentId = parent[parentIdField];
       } else {
-        break; // Sem mais ancestrais
+        break;
       }
     }
-
     return ancestors;
   }
 
@@ -535,7 +544,6 @@
     const departmentFilter = document.getElementById('departmentFilter').value;
     const locationFilter = document.getElementById('locationFilter').value;
 
-    // Filtra os nós com base nas seleções
     const filteredNodes = originalData.filter((item) => {
       return (
         (positionFilter === '' || item.position === positionFilter) &&
@@ -585,7 +593,6 @@
     } else if (filter.startsWith('Local:')) {
       document.getElementById('locationFilter').value = '';
     }
-
     applyFilters();
   }
 
@@ -605,24 +612,71 @@
     });
   }
 
-  // Inicializa os filtros dinamicamente
   //Adicionar informações relevantes conforme os dados que vierem. Salário, Sigla, Tempo no Cargo, etc.
   function initializeFilters(data) {
     const positionFilter = document.getElementById('positionFilter');
     const departmentFilter = document.getElementById('departmentFilter');
     const locationFilter = document.getElementById('locationFilter');
 
-    // Obtém valores únicos para cada filtro
     const uniquePositions = getUniqueValues(data, 'position');
     const uniqueDepartments = getUniqueValues(data, 'department_name');
     const uniqueLocations = getUniqueValues(data, 'location_state');
 
-    // Preenche os selects
     populateSelect(positionFilter, uniquePositions);
     populateSelect(departmentFilter, uniqueDepartments);
     populateSelect(locationFilter, uniqueLocations);
   }
 
+  //alertas
+  /* function showAlert(type, message, onConfirm, onCancel) {
+    const alertBox = document.createElement('div');
+    alertBox.classList.add('alert', type); // 'alert' é uma classe base, 'type' pode ser 'success' ou 'error'
+
+    const alertMessage = document.createElement('p');
+    alertMessage.textContent = message;
+
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.classList.add('alert-buttons');
+
+    if (type === 'success') {
+      const okButton = document.createElement('button');
+      okButton.textContent = 'OK';
+      okButton.onclick = () => {
+        if (onConfirm) onConfirm();
+        alertBox.remove();
+      };
+      buttonsContainer.appendChild(okButton);
+    } else {
+      // Adiciona os botões de Confirmar e Cancelar para o erro
+      const confirmButton = document.createElement('button');
+      confirmButton.textContent = 'Confirmar';
+      confirmButton.onclick = () => {
+        if (onConfirm) onConfirm();
+        alertBox.remove();
+      };
+
+      const cancelButton = document.createElement('button');
+      cancelButton.textContent = 'Cancelar';
+      cancelButton.onclick = () => {
+        if (onCancel) onCancel();
+        alertBox.remove();
+      };
+
+      buttonsContainer.appendChild(confirmButton);
+      buttonsContainer.appendChild(cancelButton);
+    }
+
+    alertBox.appendChild(alertMessage);
+    alertBox.appendChild(buttonsContainer);
+
+    document.body.appendChild(alertBox);
+
+    // Adiciona a classe 'show' após um pequeno delay para animação
+    setTimeout(() => {
+      alertBox.classList.add('show');
+    }, 10);
+  }
+ */
   function generateContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 25 + 2;
@@ -672,12 +726,6 @@
         `;
   }
 </script>
-
-<!--
-  This is the code which is used to show of feature , other parts of the code are part of the boilerplate
-
--->
-
 <div class="controls">
   <div class="drag-controls">
     <button id="enableDragButton" onclick="enableDrag()">Organizar</button>
@@ -694,9 +742,6 @@
 </div>
 <div id="appliedFilters" class="applied-filters"></div>
 
-<!--
-  End of adding node functionality
--->
 <div class="chart-container"></div>
 
 <div id="person-info-sidebar" class="sidebar hidden">
@@ -717,9 +762,7 @@
     </div>
     <button id="close-sidebar" class="close-btn">&times;</button>
   </div>
-  <div id="person-info-content" class="sidebar-content">
-    <!-- Informações serão carregadas dinamicamente aqui -->
-  </div>
+  <div id="person-info-content" class="sidebar-content"></div>
   <div class="sidebar-footer">
     <button id="save-info" class="save-btn">Salvar</button>
   </div>
