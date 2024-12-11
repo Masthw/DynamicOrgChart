@@ -28,8 +28,8 @@
 
     console.log(data);
     chart = new d3.OrgChart()
-      .nodeHeight((d) => 85 + 25)
-      .nodeWidth((d) => 220 + 2)
+      .nodeHeight((d) => 85 + 30)
+      .nodeWidth((d) => 220 + 35)
       .childrenMargin((d) => 50)
       .compactMarginBetween((d) => 35)
       .compactMarginPair((d) => 30)
@@ -186,7 +186,6 @@
       chart.render();
       return;
     }
-
     if (dragEvent.subject.parent.id === dropNode.id) {
       chart.render();
       return;
@@ -403,6 +402,17 @@
     const fullName = `${person.name} ${person.lastName || ''}`;
     document.getElementById('person-name').textContent = fullName;
 
+    const salaryRange = `R$ ${parseFloat(person.job_min_salary).toLocaleString(
+      'pt-BR'
+    )} - R$ ${parseFloat(person.job_max_salary).toLocaleString('pt-BR')}`;
+
+    const hireDate = new Date(person.hire_date);
+    const formattedHireDate = hireDate.toLocaleDateString('pt-BR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
     const personInfoHtml = `
      <input type="hidden" id="id" value="${person.id}" />
       <div>
@@ -423,9 +433,17 @@
       </div>
       <div>
         <label>Salário:</label>
-        <input type="text" id="phone" value="R$ ${person.salary}" readonly/>
+        <input type="text" id="salary" value="${person.salary}" />
       </div>
       <div>
+        <div>
+        <label>Faixa Salarial:</label>
+        <input type="text" id="salaryRange" value="${salaryRange}" readonly />
+      </div>
+      <div>
+        <label>Data de Contratação:</label>
+        <input type="text" id="hireDate" value="${formattedHireDate}" readonly />
+      </div>
       </div>
       `;
 
@@ -446,6 +464,7 @@
         position: document.getElementById('position')?.value || '',
         email: document.getElementById('email')?.value || '',
         phone_number: document.getElementById('phone')?.value || '',
+        salary: document.getElementById('salary')?.value || '',
       };
 
       const chartData = chart.getChartState().data;
@@ -604,18 +623,6 @@
     populateSelect(locationFilter, uniqueLocations);
   }
 
-  function clearSpecificFilter(filter) {
-    if (filter.startsWith('Cargo:')) {
-      document.getElementById('positionFilter').value = '';
-    } else if (filter.startsWith('Departamento:')) {
-      document.getElementById('departmentFilter').value = '';
-    } else if (filter.startsWith('Local:')) {
-      document.getElementById('locationFilter').value = '';
-    }
-
-    applyFilters(); // Atualiza o organograma
-  }
-
   function generateContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 25 + 2;
@@ -628,9 +635,9 @@
         padding-right:1px'>
                 <div class="content-container" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
                   d.width - 2
-                }px;height:${
-      d.height - imageDiffVert
-    }px;border-radius:10px;border: ${
+                }px;height:
+                ${d.height - imageDiffVert}px;border-radius:10px;border:
+    ${
       d.data._highlighted || d.data._upToTheRootHighlighted
         ? '5px solid #E27396"'
         : '1px solid #E4E2E9"'
@@ -649,10 +656,10 @@
                     <div style="margin-top:${-imageDiffVert - 20}px;">
                     <img src="${d.data.image}"
      style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" /></div>
-                    <div style="font-size:15px;color:#08011E;margin-left:10px;margin-top:10px">
+                    <div style="font-size:15px;color:#08011E;margin-left:5px;margin-top:10px">
                       ${d.data.name}
                       </div>
-                      <div style="display: flex; justify-content: space-between; margin-left:10px;margin-right:10px;margin-top:3px; margin-bottom:3px;">
+                      <div style="display: flex; justify-content: space-between; margin-left:5px;margin-right:5px;margin-top:3px; margin-bottom:3px;">
                     <div style="color:#716E7B;font-size:10px;">
                       ${d.data.position}
                       </div>
@@ -673,12 +680,12 @@
 
 <div class="controls">
   <div class="drag-controls">
-    <button id="enableDragButton" onclick="enableDrag()">Organize</button>
+    <button id="enableDragButton" onclick="enableDrag()">Organizar</button>
     <div id="dragActions" class="hide">
-      <button id="finishDrag" onclick="disableDrag()">Done</button>
-      <button id="undoButton" disabled onclick="undo()">Undo</button>
-      <button id="redoButton" disabled onclick="redo()">Redo</button>
-      <button id="cancelDrag" onclick="cancelDrag()">Cancel</button>
+      <button id="finishDrag" onclick="disableDrag()">Salvar</button>
+      <button id="undoButton" disabled onclick="undo()">Desfazer</button>
+      <button id="redoButton" disabled onclick="redo()">Refazer</button>
+      <button id="cancelDrag" onclick="cancelDrag()">Cancelar</button>
     </div>
   </div>
   <div class="right-buttons">
