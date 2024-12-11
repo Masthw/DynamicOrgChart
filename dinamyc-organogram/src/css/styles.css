@@ -321,3 +321,58 @@ input[type='text'] {
   color: #ff4d4f;
   cursor: pointer;
 }
+
+/* alertas */
+
+.alert {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%, 50%);
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.alert.show {
+  display: block;
+  opacity: 1;
+}
+
+.alert.error {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert.success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.alert-buttons {
+  margin-top: 10px;
+}
+
+.alert-buttons button {
+  padding: 8px 16px;
+  margin: 0 5px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.alert-buttons .cancel {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.alert-buttons .confirm {
+  background-color: #007bff;
+  color: #fff;
+}

@@ -1,15 +1,15 @@
 import { RouteRecordRaw } from 'vue-router';
 import OrganogramPage from 'src/pages/OrganogramPage.vue';
+import LoginPage from 'src/pages/LoginPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    children: [
-      {
-        path: '',
-        component: OrganogramPage,
-      },
-    ],
+    component: LoginPage,
+  },
+  {
+    path: '/organogram',
+    component: OrganogramPage,
   },
 ];
 
