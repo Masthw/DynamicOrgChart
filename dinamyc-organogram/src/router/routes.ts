@@ -4,11 +4,11 @@ import LoginPage from 'src/pages/LoginPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/login',
+    path: '/',
     component: LoginPage,
   },
   {
-    path: '/',
+    path: '/organogram',
     component: OrganogramPage,
   },
 ];

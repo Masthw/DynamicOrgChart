@@ -4,8 +4,16 @@
     <div :class="['login-section', { 'switch-mode': isRegistering }]">
       <div class="form-container">
         <div class="text-h5 q-mb-lg">
-          {{ isRegistering ? 'Register' : 'Login' }}
+          {{ isRegistering ? 'Registrar' : 'Entrar' }}
         </div>
+        <q-input
+          v-if="isRegistering"
+          v-model="fullName"
+          label="Nome Completo"
+          type="text"
+          outlined
+          class="q-mb-md"
+        />
         <q-input
           v-model="email"
           label="Email"
@@ -15,20 +23,43 @@
         />
         <q-input
           v-model="password"
-          label="Password"
+          :label="isRegistering ? 'Senha' : 'Password'"
           type="password"
           outlined
           class="q-mb-md"
         />
-        <div class="button-group">
-          <q-btn
-            label="Submit"
-            color="primary"
-            unelevated
-            @click="handleSubmit"
-            class="q-mb-md"
-          />
-          <q-btn label="Register" flat @click="toggleRegister" />
+        <q-input
+          v-if="isRegistering"
+          v-model="confirmPassword"
+          label="Confirme sua senha"
+          type="password"
+          outlined
+          class="q-mb-md"
+        />
+        <q-btn
+          :label="isRegistering ? 'Registrar' : 'Entrar'"
+          color="primary"
+          unelevated
+          @click="handleSubmit"
+          class="q-mb-md"
+          style="width: 100%"
+        />
+
+        <!-- Textos adicionais -->
+        <div v-if="!isRegistering" class="aux-text">
+          <span class="link-text" @click="redirectToReset"
+            >Esqueceu sua senha?</span
+          >
+        </div>
+        <div class="aux-text">
+          <span>
+            {{
+              isRegistering ? 'Já tem uma conta?' : 'Ainda não tem uma conta?'
+            }}
+          </span>
+          <span class="link-text" @click="toggleRegister">
+            {{ isRegistering ? 'Entrar' : 'Registrar-se' }}
+          </span>
         </div>
       </div>
     </div>
@@ -36,8 +67,7 @@
     <!-- Direita (Imagem ou Fundo Animado) -->
     <div :class="['image-section', { 'switch-mode': isRegistering }]">
       <div class="placeholder">
-        <!-- Aqui você pode colocar uma imagem ou animação -->
-        <p>{{ isRegistering ? 'Welcome!' : 'Company Logo Here' }}</p>
+        <p>Company Logo Here</p>
       </div>
     </div>
   </div>
@@ -49,13 +79,19 @@ import { ref } from 'vue';
 
 const email = ref('');
 const password = ref('');
+const confirmPassword = ref('');
+const fullName = ref('');
 const isRegistering = ref(false);
 const router = useRouter();
 
+// Lógica para enviar formulário
 const handleSubmit = () => {
-  // Lógica para login ou registro
   if (isRegistering.value) {
-    alert('Registering...');
+    if (password.value !== confirmPassword.value) {
+      console.log('As senhas não coincidem!');
+      return;
+    }
+    console.log('Registrando...');
   } else {
     router.push('/organogram');
   }
@@ -64,10 +100,13 @@ const handleSubmit = () => {
 const toggleRegister = () => {
   isRegistering.value = !isRegistering.value;
 };
+
+const redirectToReset = () => {
+  router.push('/reset-password');
+};
 </script>
 
 <style scoped>
-/* Container principal */
 .login-page {
   display: flex;
   flex-direction: row;
@@ -94,26 +133,36 @@ const toggleRegister = () => {
   left: 70%;
 }
 
-/* Container do formulário */
 .form-container {
   width: 80%;
   text-align: center;
 }
 
-/* Botões no centro */
-.button-group {
+.aux-text {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  margin-top: 10px;
 }
 
-/* Seção da direita (imagem/fundo) */
+.link-text {
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-text:hover {
+  color: #0056b3;
+}
+
 .image-section {
   width: 70%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0; /* Cor de fundo temporária */
+  background-color: #f0f0f0;
   transition: all 0.5s ease;
   position: absolute;
   right: 0;
@@ -125,14 +174,12 @@ const toggleRegister = () => {
   right: 30%;
 }
 
-/* Placeholder de imagem ou animação */
 .placeholder {
   text-align: center;
   font-size: 1.5rem;
   color: #555;
 }
 
-/* Responsividade para telas menores */
 @media (max-width: 768px) {
   .login-page {
     flex-direction: column;

@@ -684,11 +684,9 @@
 
   //gráficos
   function renderComparisonCharts(originalData, modifiedData) {
-    // Cálculo de dados para o gráfico de custo de salários
     const salaryDataOriginal = calculateSalaryData(originalData);
     const salaryDataModified = calculateSalaryData(modifiedData);
 
-    // Configuração do gráfico de salários
     new Chart(document.getElementById('salaryChart'), {
       type: 'bar',
       data: {
@@ -711,23 +709,20 @@
         },
       },
     });
-
-    console.log(salaryDataOriginal, salaryDataModified);
   }
 
-  // Funções para calcular os dados para os gráficos
   function calculateSalaryData(data) {
-    // Exemplo simples: soma de salários (assumindo que cada dado possui um campo "salary")
+    // Exemplo simples: soma de salários
     return data.reduce((total, person) => total + parseFloat(person.salary), 0);
   }
 
   function processSalaryData(data) {
     const salaryData = {
-      labels: data.map((d) => d.name), // Exemplo de nome para os labels
+      labels: data.map((d) => d.name),
       datasets: [
         {
           label: 'Salário',
-          data: data.map((d) => parseFloat(d.salary)), // Salário
+          data: data.map((d) => parseFloat(d.salary)),
           backgroundColor: '#42A5F5',
         },
       ],
@@ -736,8 +731,6 @@
   }
 
   function compareOrgCharts() {
-    // Supondo que modifiedData já tenha sido atualizado com as modificações
-    // Caso contrário, utilize originalData e compare com o que foi modificado
     if (originalData && modifiedData) {
       renderCharts(modifiedData); // Passa os dados modificados para os gráficos
     }
