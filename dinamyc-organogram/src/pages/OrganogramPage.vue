@@ -32,8 +32,7 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const organogram = ref(null); // Dados do organograma
-
+    const organogram = ref(null);
     // Carregar dados do organograma baseado no ID
     onMounted(() => {
       const organograms = JSON.parse(localStorage.getItem('organograms')) || [];
@@ -61,17 +60,12 @@ export default {
 <style scoped>
 .header-wrapper {
   position: fixed;
-  top: -3.5em;
+  top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  transition: top 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  opacity: 0;
-}
-
-.header-wrapper:hover {
-  top: 0;
-  opacity: 1;
+  background-color: #b3b3b3;
+  height: 60px;
 }
 
 .header {
@@ -81,7 +75,7 @@ export default {
   padding: 0.5em 1em;
   background-color: #b3b3b3;
   border-bottom: 1px solid #ddd;
-  transition: background-color 0.3s ease-in-out;
+  height: 100%;
 }
 
 .header:hover {

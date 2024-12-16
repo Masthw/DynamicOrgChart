@@ -26,7 +26,6 @@
     originalData = data;
     modifiedData = [...data];
     initializeFilters(data);
-    console.log(data);
     // Configura e renderiza o gráfico de organograma
     chart = new d3.OrgChart()
       .nodeHeight((d) => 85 + 30)
@@ -210,23 +209,8 @@
     chart.render();
     updateDragActions();
 
-    /*  if (!isValidChange) {
-      showAlert(
-        'error',
-        'Mudança não está conforme o plano de sucessão. Deseja continuar?',
-
-        chart.render()
-      );
-    } else {
-      showAlert('success', 'Mudança realizada com sucesso!');
-    } */
+    saveOrganogramChanges();
   }
-
-  /* function validateChange(dragNode, dropNode) {
-    return (
-      dragNode.data.role !== 'Manager' || dropNode.data.role === 'Director'
-    );
-  } */
 
   function enableDrag() {
     dragEnabled = true;

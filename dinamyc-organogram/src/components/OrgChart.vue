@@ -27,7 +27,7 @@ export default {
 html,
 body {
   height: 100%;
-  margin: 0;
+  margin-top: 3px;
   padding: 0;
   overflow: hidden;
 }

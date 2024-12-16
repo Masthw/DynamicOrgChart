@@ -43,11 +43,9 @@ const addNewOrganogram = () => {
   };
   organograms.value.push(newOrganogram);
 
-  // Salvar no localStorage
   localStorage.setItem('organograms', JSON.stringify(organograms.value));
 
-  // Redirecionar para a página do organograma
-  router.push('/organogram');
+  openOrganogram(newId);
 };
 
 // Função para abrir organograma
