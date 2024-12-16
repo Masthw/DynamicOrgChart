@@ -93,7 +93,7 @@ const handleSubmit = () => {
     }
     console.log('Registrando...');
   } else {
-    router.push('/organogram');
+    router.push('/dashboard');
   }
 };
 

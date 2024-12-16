@@ -33,11 +33,13 @@ body {
 }
 
 .orgchart-container {
-  margin: 0;
+  margin-top: 3.5em;
   padding: 0;
   width: 100%;
   height: 100vh;
   display: flex;
+  overflow: hidden;
+  position: relative;
 }
 
 iframe {
