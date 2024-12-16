@@ -164,12 +164,14 @@ const toggleActions = (id) => {
   font-weight: bold;
   color: #333;
   text-align: center;
+  margin: 0;
 }
 
 .actions {
   display: flex;
   justify-content: space-between;
   width: 90%;
+  margin-top: 5px;
 }
 
 .action-btn {
@@ -182,5 +184,9 @@ const toggleActions = (id) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.q-mb-lg {
+  font-size: 40px;
 }
 </style>
