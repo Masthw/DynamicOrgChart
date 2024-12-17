@@ -20,11 +20,6 @@
   let modifiedData = null;
   let originalData = null;
 
-  function loadChartState(id) {
-    const savedData = localStorage.getItem(`organogramData_${id}`);
-    return savedData ? JSON.parse(savedData) : null;
-  }
-
   // Função principal de inicialização
   function initializeChart(data) {
     const chartContainer = document.querySelector('.chart-container');
@@ -92,24 +87,18 @@
 
     const savedData = localStorage.getItem(`organogramData_${organogramId}`);
     if (savedData) {
-      console.log(`Carregando organograma com ID: ${organogramId}`);
       const data = JSON.parse(savedData);
       initializeChart(data);
     } else {
-      console.log('Nenhum dado encontrado. Carregando CSV padrão.');
       d3.csv(
         'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
-      )
-        .then((data) => {
-          localStorage.setItem(
-            `organogramData_${organogramId}`,
-            JSON.stringify(data)
-          );
-          initializeChart(data);
-        })
-        .catch((error) => {
-          console.error('Erro ao carregar o CSV:', error);
-        });
+      ).then((data) => {
+        localStorage.setItem(
+          `organogramData_${organogramId}`,
+          JSON.stringify(data)
+        );
+        initializeChart(data);
+      });
     }
   });
 
@@ -786,30 +775,11 @@
       },
     });
   }
-  function loadChartState() {
-    const savedData = localStorage.getItem('organogramData');
-    if (savedData) {
-      console.log('Carregando organograma salvo:');
-      return JSON.parse(savedData);
-    }
-    console.log('Nenhum dado salvo encontrado.');
-    return null;
-  }
 
   function saveChartState(id) {
-    console.log(id);
-
     if (chart) {
       const updatedData = chart.getChartState().data;
-
-      // Salva os dados do organograma com base no ID único
       localStorage.setItem(`organogramData_${id}`, JSON.stringify(updatedData));
-      console.log(
-        `Estado do organograma com ID ${id} salvo com sucesso!`,
-        updatedData
-      );
-    } else {
-      console.error('Erro: Gráfico não inicializado. Nada foi salvo.');
     }
   }
 
