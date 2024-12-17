@@ -65,7 +65,7 @@ export default {
   width: 100%;
   z-index: 1000;
   background-color: #b3b3b3;
-  height: 60px;
+  height: 50px;
 }
 
 .header {
@@ -76,10 +76,6 @@ export default {
   background-color: #b3b3b3;
   border-bottom: 1px solid #ddd;
   height: 100%;
-}
-
-.header:hover {
-  background-color: #a3a3a3;
 }
 
 .header q-btn {

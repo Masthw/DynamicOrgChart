@@ -1,44 +1,58 @@
 <template>
   <div class="dashboard-page">
-    <h1 class="q-mb-lg">Gerenciar Organogramas</h1>
-    <div class="organogram-grid">
-      <!-- Lista de organogramas existentes -->
-      <div
-        v-for="organogram in organograms"
-        :key="organogram.id"
-        class="organogram-card"
-        @click="toggleActions(organogram.id)"
-      >
-        <!-- Nome do Organograma sempre visível -->
-        <p class="organogram-name">{{ organogram.name }}</p>
+    <!-- Barra Superior -->
+    <q-toolbar class="top-bar">
+      <q-toolbar-title>Bem-vindo, {{ userName }}</q-toolbar-title>
+      <q-btn
+        label="Sair"
+        flat
+        icon="logout"
+        color="white"
+        @click="handleLogout"
+      />
+    </q-toolbar>
 
-        <!-- Ícones de Ação - Exibidos somente após o clique -->
-        <div v-if="organogram.showActions" class="actions">
-          <q-btn
-            flat
-            icon="open_in_new"
-            @click.stop="openOrganogram(organogram.id)"
-            class="action-btn"
-          />
-          <q-btn
-            flat
-            icon="compare_arrows"
-            @click.stop="compareOrganogram(organogram.id)"
-            class="action-btn"
-          />
-          <q-btn
-            flat
-            icon="delete"
-            @click.stop="deleteOrganogram(organogram.id)"
-            class="action-btn"
-          />
+    <div class="content">
+      <h1 class="q-mb-lg">Gerenciar Organogramas</h1>
+      <div class="organogram-grid">
+        <!-- Lista de organogramas existentes -->
+        <div
+          v-for="organogram in organograms"
+          :key="organogram.id"
+          class="organogram-card"
+          @click="toggleActions(organogram.id)"
+        >
+          <!-- Nome do Organograma sempre visível -->
+          <p class="organogram-name">{{ organogram.name }}</p>
+
+          <!-- Ícones de Ação - Exibidos somente após o clique -->
+          <div v-if="organogram.showActions" class="actions">
+            <q-btn
+              flat
+              icon="open_in_new"
+              @click.stop="openOrganogram(organogram.id)"
+              class="action-btn"
+            />
+            <q-btn
+              flat
+              icon="compare_arrows"
+              @click.stop="compareOrganogram(organogram.id)"
+              class="action-btn"
+            />
+            <q-btn
+              flat
+              icon="delete"
+              @click.stop="deleteOrganogram(organogram.id)"
+              class="action-btn"
+            />
+          </div>
         </div>
-      </div>
 
-      <!-- Card para adicionar novo organograma -->
-      <div class="organogram-card add-new" @click="addNewOrganogram">
-        <p class="plus-sign">+</p>
-        <p>Adicionar Novo Organograma</p>
+        <!-- Card para adicionar novo organograma -->
+        <div class="organogram-card add-new" @click="addNewOrganogram">
+          <p class="plus-sign">+</p>
+          <p>Adicionar Organograma</p>
+        </div>
       </div>
     </div>
   </div>
@@ -48,23 +62,26 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-const organograms = ref([]); // Lista de organogramas
+const organograms = ref([]);
+const userName = ref('Usuário'); // Simula o nome do usuário logado
 const router = useRouter();
 
-// Carregar organogramas do localStorage ao montar o componente
 onMounted(() => {
   const storedOrganograms =
     JSON.parse(localStorage.getItem('organograms')) || [];
   organograms.value = storedOrganograms;
-  // Inicializar o estado de visibilidade dos ícones
   organograms.value.forEach((organogram) => {
     organogram.showActions = false;
   });
 });
 
-// Função para adicionar novo organograma
+const handleLogout = () => {
+  console.log('Usuário deslogado');
+  router.push('/');
+};
+
 const addNewOrganogram = () => {
-  const newId = Date.now(); // ID único baseado no timestamp
+  const newId = Date.now();
   let baseName = 'Organograma';
   let nameIndex = 1;
   let newName = `${baseName} ${nameIndex}`;
@@ -87,19 +104,15 @@ const addNewOrganogram = () => {
   openOrganogram(newId);
 };
 
-// Função para abrir organograma
 const openOrganogram = (id) => {
   console.log(`Abrindo organograma com ID: ${id}`);
   router.push(`/organogram/${id}`);
 };
 
-// Função para comparar organograma
 const compareOrganogram = (id) => {
   console.log(`Comparando organograma com ID: ${id}`);
-  // Adicione a lógica para comparar organogramas aqui
 };
 
-// Função para excluir organograma
 const deleteOrganogram = (id) => {
   const updatedOrganograms = organograms.value.filter(
     (organogram) => organogram.id !== id
@@ -109,18 +122,33 @@ const deleteOrganogram = (id) => {
   console.log(`Organograma com ID ${id} excluído`);
 };
 
-// Função para alternar a visibilidade dos ícones
 const toggleActions = (id) => {
   const organogram = organograms.value.find((o) => o.id === id);
   if (organogram) {
-    organogram.showActions = !organogram.showActions; // Alterna a visibilidade dos ícones
+    organogram.showActions = !organogram.showActions;
   }
 };
 </script>
 
 <style scoped>
 .dashboard-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.top-bar {
+  background-color: #6676ce;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content {
+  flex-grow: 1;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .organogram-grid {
@@ -177,13 +205,6 @@ const toggleActions = (id) => {
 .action-btn {
   font-size: 1rem;
   color: #666;
-}
-
-.add-new {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .q-mb-lg {

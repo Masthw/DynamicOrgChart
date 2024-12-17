@@ -6,44 +6,53 @@
         <div class="text-h5 q-mb-lg">
           {{ isRegistering ? 'Registrar' : 'Entrar' }}
         </div>
-        <q-input
-          v-if="isRegistering"
-          v-model="fullName"
-          label="Nome Completo"
-          type="text"
-          outlined
-          class="q-mb-md"
-        />
-        <q-input
-          v-model="email"
-          label="Email"
-          type="email"
-          outlined
-          class="q-mb-md"
-        />
-        <q-input
-          v-model="password"
-          :label="isRegistering ? 'Senha' : 'Password'"
-          type="password"
-          outlined
-          class="q-mb-md"
-        />
-        <q-input
-          v-if="isRegistering"
-          v-model="confirmPassword"
-          label="Confirme sua senha"
-          type="password"
-          outlined
-          class="q-mb-md"
-        />
-        <q-btn
-          :label="isRegistering ? 'Registrar' : 'Entrar'"
-          color="primary"
-          unelevated
-          @click="handleSubmit"
-          class="q-mb-md"
-          style="width: 100%"
-        />
+        <form @submit.prevent="handleSubmit">
+          <q-input
+            v-if="isRegistering"
+            v-model="fullName"
+            label="Nome Completo"
+            type="text"
+            outlined
+            class="q-mb-md"
+            autocomplete="name"
+          />
+          <q-input
+            v-model="email"
+            label="Email"
+            type="email"
+            outlined
+            class="q-mb-md"
+            autocomplete="email"
+            required
+          />
+          <q-input
+            v-model="password"
+            :label="isRegistering ? 'Senha' : 'Password'"
+            type="password"
+            outlined
+            class="q-mb-md"
+            :autocomplete="isRegistering ? 'new-password' : 'current-password'"
+            required
+          />
+          <q-input
+            v-if="isRegistering"
+            v-model="confirmPassword"
+            label="Confirme sua senha"
+            type="password"
+            outlined
+            class="q-mb-md"
+            autocomplete="new-password"
+            required
+          />
+          <q-btn
+            :label="isRegistering ? 'Registrar' : 'Entrar'"
+            color="primary"
+            unelevated
+            @click="handleSubmit"
+            class="q-mb-md"
+            style="width: 100%"
+          />
+        </form>
 
         <!-- Textos adicionais -->
         <div v-if="!isRegistering" class="aux-text">
