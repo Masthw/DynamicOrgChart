@@ -1,8 +1,8 @@
 import { RouteRecordRaw } from 'vue-router';
-import OrganogramPage from 'src/pages/OrganogramPage.vue';
+import OrganogramPage from 'src/pages/OrgChartPage.vue';
 import LoginPage from 'src/pages/LoginPage.vue';
 import ResetPasswordPage from 'src/pages/ResetPasswordPage.vue';
-import OrganogramDashboardPage from 'src/pages/OrganogramDashboardPage.vue';
+import OrganogramDashboardPage from 'src/pages/OrgChartDashboardPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {

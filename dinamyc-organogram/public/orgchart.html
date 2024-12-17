@@ -18,14 +18,27 @@
   let undoActions = [];
   let redoActions = [];
   let modifiedData = null;
+  let originalData = null;
 
-  // Carregamento de dados (chamada do back)
-  d3.csv(
-    'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
-  ).then((data) => {
+  function loadChartState(id) {
+    const savedData = localStorage.getItem(`organogramData_${id}`);
+    return savedData ? JSON.parse(savedData) : null;
+  }
+
+  // Função principal de inicialização
+  function initializeChart(data) {
+    const chartContainer = document.querySelector('.chart-container');
+    if (!chartContainer) {
+      console.error(
+        'Erro: Contêiner ".chart-container" não encontrado no DOM.'
+      );
+      return;
+    }
+
     originalData = data;
     modifiedData = [...data];
     initializeFilters(data);
+
     // Configura e renderiza o gráfico de organograma
     chart = new d3.OrgChart()
       .nodeHeight((d) => 85 + 30)
@@ -34,36 +47,70 @@
       .compactMarginBetween((d) => 35)
       .compactMarginPair((d) => 30)
       .neighbourMargin((a, b) => 20)
-      .nodeContent(function (d, i, arr, state) {
-        return generateContent(d);
-      })
+      .nodeContent((d, i, arr, state) => generateContent(d))
       .nodeEnter(function (node) {
         d3.select(this).call(
           d3
             .drag()
-            .filter(function (x, node) {
-              return dragEnabled && this.classList.contains('draggable');
-            })
-            .on('start', function (d, node) {
-              onDragStart(this, d, node);
-            })
-            .on('drag', function (dragEvent, node) {
-              onDrag(this, dragEvent);
-            })
-            .on('end', function (d) {
-              onDragEnd(this, d);
-            })
+            .filter(() => dragEnabled && this.classList.contains('draggable'))
+            .on('start', (d, node) => onDragStart(this, d, node))
+            .on('drag', (dragEvent, node) => onDrag(this, dragEvent))
+            .on('end', (d) => onDragEnd(this, d))
         );
       })
       .nodeUpdate(function (d) {
-        d3.select(this).classed('droppable', true);
-        d3.select(this).classed('draggable', true);
+        d3.select(this).classed('droppable', true).classed('draggable', true);
       })
       .container('.chart-container')
       .data(data)
       .render();
+
     renderComparisonCharts(originalData, modifiedData);
     addNodeEventListeners();
+  }
+
+  function getOrganogramIdFromURL() {
+    const hash = window.location.hash; // Captura a parte após o #
+    if (!hash) {
+      console.error('Hash ausente ou inválido na URL');
+      return null;
+    }
+    const organogramId = hash.substring(1); // Remove o "#" do hash
+    if (/^\d+$/.test(organogramId)) {
+      return organogramId; // Retorna o ID se for numérico
+    }
+    console.error('ID inválido encontrado no hash:', organogramId);
+    return null;
+  }
+  // Inicialização do organograma
+  document.addEventListener('DOMContentLoaded', () => {
+    const organogramId = getOrganogramIdFromURL();
+    if (!organogramId) {
+      console.error('ID do organograma não encontrado na URL');
+      return;
+    }
+
+    const savedData = localStorage.getItem(`organogramData_${organogramId}`);
+    if (savedData) {
+      console.log(`Carregando organograma com ID: ${organogramId}`);
+      const data = JSON.parse(savedData);
+      initializeChart(data);
+    } else {
+      console.log('Nenhum dado encontrado. Carregando CSV padrão.');
+      d3.csv(
+        'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
+      )
+        .then((data) => {
+          localStorage.setItem(
+            `organogramData_${organogramId}`,
+            JSON.stringify(data)
+          );
+          initializeChart(data);
+        })
+        .catch((error) => {
+          console.error('Erro ao carregar o CSV:', error);
+        });
+    }
   });
 
   function addNodeEventListeners() {
@@ -208,8 +255,6 @@
     dragNode = null;
     chart.render();
     updateDragActions();
-
-    saveOrganogramChanges();
   }
 
   function enableDrag() {
@@ -226,6 +271,8 @@
     document.getElementById('dragActions').classList.add('hide');
     undoActions = [];
     redoActions = [];
+    const organogramId = getOrganogramIdFromURL();
+    saveChartState(organogramId);
     updateDragActions();
   }
 
@@ -739,15 +786,31 @@
       },
     });
   }
+  function loadChartState() {
+    const savedData = localStorage.getItem('organogramData');
+    if (savedData) {
+      console.log('Carregando organograma salvo:');
+      return JSON.parse(savedData);
+    }
+    console.log('Nenhum dado salvo encontrado.');
+    return null;
+  }
 
-  // Função que ativa a comparação
-  function compareOrganogram(originalData, modifiedData) {
-    renderComparisonCharts(originalData, modifiedData);
-    document
-      .getElementById('compareButton')
-      .addEventListener('click', function () {
-        compareOrganogram(originalData, modifiedData);
-      });
+  function saveChartState(id) {
+    console.log(id);
+
+    if (chart) {
+      const updatedData = chart.getChartState().data;
+
+      // Salva os dados do organograma com base no ID único
+      localStorage.setItem(`organogramData_${id}`, JSON.stringify(updatedData));
+      console.log(
+        `Estado do organograma com ID ${id} salvo com sucesso!`,
+        updatedData
+      );
+    } else {
+      console.error('Erro: Gráfico não inicializado. Nada foi salvo.');
+    }
   }
 
   function generateContent(d) {

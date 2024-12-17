@@ -108,7 +108,6 @@ const openOrganogram = (id) => {
   console.log(`Abrindo organograma com ID: ${id}`);
   router.push(`/organogram/${id}`);
 };
-
 const compareOrganogram = (id) => {
   console.log(`Comparando organograma com ID: ${id}`);
 };

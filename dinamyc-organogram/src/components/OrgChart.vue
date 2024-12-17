@@ -2,7 +2,7 @@
   <div class="orgchart-container">
     <!-- Iframe que carrega o arquivo orgchart.html -->
     <iframe
-      v-bind:src="orgChartUrl"
+      :src="orgChartUrl"
       width="100%"
       height="100%"
       frameborder="0"
@@ -12,10 +12,15 @@
 </template>
 
 <script>
+import { useRoute } from 'vue-router';
+
 export default {
   name: 'OrgChart',
   setup() {
-    const orgChartUrl = '/orgchart.html';
+    const route = useRoute();
+    const organogramId = route.params.id; // Pegamos o ID do organograma
+
+    const orgChartUrl = `/orgchart.html#${organogramId}`;
     return {
       orgChartUrl,
     };
