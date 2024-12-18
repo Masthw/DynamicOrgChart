@@ -60,7 +60,7 @@
       .data(data)
       .render();
 
-    renderComparisonCharts(originalData, modifiedData);
+    renderCharts(data);
     addNodeEventListeners();
   }
 
@@ -708,17 +708,32 @@
  */
 
   //gráficos
-  function renderComparisonCharts(originalData, modifiedData) {
-    const salaryDataOriginal = calculateSalaryData(originalData);
-    const salaryDataModified = calculateSalaryData(modifiedData);
 
-    new Chart(document.getElementById('salaryChart'), {
+  let salaryDataOriginal = 0; // Inicializamos o dado original globalmente
+  let salaryChartInstance = null;
+  // Função para calcular o custo total dos salários
+  function calculateSalaryData(data) {
+    return data.reduce(
+      (total, person) => total + parseFloat(person.salary || 0),
+      0
+    );
+  }
+
+  function renderCharts(data) {
+    salaryDataOriginal = calculateSalaryData(data);
+
+    // Renderizar os gráficos usando o Chart.js
+    const ctxSalary = document.getElementById('salaryChart').getContext('2d');
+    if (salaryChartInstance) {
+      salaryChartInstance.destroy();
+    }
+    salaryChartInstance = new Chart(ctxSalary, {
       type: 'bar',
       data: {
-        labels: ['Original'],
+        labels: ['Salários'],
         datasets: [
           {
-            label: 'Custo de Salários',
+            label: 'Custo Total de Salários',
             data: [salaryDataOriginal],
             backgroundColor: ['rgba(75, 192, 192, 0.2)'],
             borderColor: ['rgba(75, 192, 192, 1)'],
@@ -726,50 +741,6 @@
           },
         ],
       },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
-        },
-      },
-    });
-  }
-
-  function calculateSalaryData(data) {
-    // Exemplo simples: soma de salários
-    return data.reduce((total, person) => total + parseFloat(person.salary), 0);
-  }
-
-  function processSalaryData(data) {
-    const salaryData = {
-      labels: data.map((d) => d.name),
-      datasets: [
-        {
-          label: 'Salário',
-          data: data.map((d) => parseFloat(d.salary)),
-          backgroundColor: '#42A5F5',
-        },
-      ],
-    };
-    return salaryData;
-  }
-
-  function compareOrgCharts() {
-    if (originalData && modifiedData) {
-      renderCharts(modifiedData); // Passa os dados modificados para os gráficos
-    }
-  }
-
-  function renderCharts(data) {
-    // Aqui, você vai processar os dados para criar os gráficos
-    const salaryData = processSalaryData(data);
-
-    // Renderizar os gráficos usando o Chart.js
-    const ctxSalary = document.getElementById('salaryChart').getContext('2d');
-    new Chart(ctxSalary, {
-      type: 'bar',
-      data: salaryData,
       options: {
         responsive: true,
         scales: {
@@ -781,10 +752,15 @@
     });
   }
 
+  function updateOrganogramData(updatedData) {
+    renderCharts(updatedData);
+  }
+
   function saveChartState(id) {
     if (chart) {
       const updatedData = chart.getChartState().data;
       localStorage.setItem(`organogramData_${id}`, JSON.stringify(updatedData));
+      updateOrganogramData(updatedData);
     }
   }
 
