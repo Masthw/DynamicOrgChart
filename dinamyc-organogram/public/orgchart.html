@@ -511,6 +511,8 @@
           ...updatedPerson,
         };
         chart.data(chartData).render();
+        const organogramId = getOrganogramIdFromURL();
+        saveChartState(organogramId);
       }
       document.getElementById('person-info-sidebar').classList.remove('active');
       document.getElementById('overlay').classList.remove('active');
@@ -529,6 +531,9 @@
     const chartState = chart.getChartState();
     chartState.data.push(newChild);
     chart.data(chartState.data).render();
+
+    const organogramId = getOrganogramIdFromURL();
+    saveChartState(organogramId);
   }
 
   //Filtro
