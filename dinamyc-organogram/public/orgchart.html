@@ -6,7 +6,6 @@
 <link rel="stylesheet" href="src/css/styles.css" />
 
 <script>
-  // Variáveis principais do gráfico
   var chart = null;
   let dragNode;
   let dropNode;
@@ -33,6 +32,7 @@
     originalData = data;
     modifiedData = [...data];
     initializeFilters(data);
+    console.log(data);
 
     // Configura e renderiza o gráfico de organograma
     chart = new d3.OrgChart()
@@ -70,9 +70,9 @@
       console.error('Hash ausente ou inválido na URL');
       return null;
     }
-    const organogramId = hash.substring(1); // Remove o "#" do hash
+    const organogramId = hash.substring(1);
     if (/^\d+$/.test(organogramId)) {
-      return organogramId; // Retorna o ID se for numérico
+      return organogramId;
     }
     console.error('ID inválido encontrado no hash:', organogramId);
     return null;
@@ -220,8 +220,6 @@
       return;
     }
 
-    /*  const isValidChange = validateChange(dragNode, dropNode); */
-
     if (dragEvent.subject.parent.id === dropNode.id) {
       chart.render();
       return;
@@ -341,7 +339,6 @@
       `.node-options-btn[data-id="${nodeId}"]`
     );
     if (!button) {
-      console.error('Botão não encontrado!');
       return;
     }
 
@@ -365,27 +362,27 @@
     const buttonRect = button.getBoundingClientRect();
 
     const menuHtml = `
-       <div class="options-menu" style="
-      position: absolute;
-      top: ${buttonRect.bottom + window.scrollY}px;
-      left: ${buttonRect.left + window.scrollX}px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: 10px;
-      min-width: 150px;
-      width: auto;
-      z-index: 9999;
-    ">
-      <div style="margin-bottom: 8px;">
-        <button class="info-btn">Informações</button>
-      </div>
-      <div>
-        <button class="add-child-btn">Adicionar</button>
-      </div>
-    </div>
-  `;
+        <div class="options-menu" style="
+       position: absolute;
+       top: ${buttonRect.bottom + window.scrollY}px;
+       left: ${buttonRect.left + window.scrollX}px;
+       background: white;
+       border: 1px solid #ccc;
+       border-radius: 8px;
+       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+       padding: 10px;
+       min-width: 150px;
+       width: auto;
+       z-index: 9999;
+     ">
+       <div style="margin-bottom: 8px;">
+         <button class="info-btn">Informações</button>
+       </div>
+       <div>
+         <button class="add-child-btn">Adicionar</button>
+       </div>
+     </div>
+   `;
 
     const menuElement = document.createElement('div');
     menuElement.innerHTML = menuHtml;
@@ -449,38 +446,42 @@
     });
 
     const personInfoHtml = `
-     <input type="hidden" id="id" value="${person.id}" />
-      <div>
-        <label>Nome:</label>
-        <input type="text" id="name" value="${fullName.trim()}" />
-      </div>
-      <div>
-        <label>Cargo:</label>
-        <input type="text" id="position" value="${person.position}" />
-      </div>
-      <div>
-        <label>Email:</label>
-        <input type="text" id="email" value="${person.email}" />
-      </div>
-      <div>
-        <label>Telefone:</label>
-        <input type="text" id="phone" value="${person.phone_number}" />
-      </div>
-      <div>
-        <label>Salário:</label>
-        <input type="text" id="salary" value="${person.salary}" />
-      </div>
-      <div>
-        <div>
-        <label>Faixa Salarial:</label>
-        <input type="text" id="salaryRange" value="${salaryRange}" readonly />
-      </div>
-      <div>
-        <label>Data de Contratação:</label>
-        <input type="text" id="hireDate" value="${formattedHireDate}" readonly />
-      </div>
-      </div>
-      `;
+      <input type="hidden" id="id" value="${person.id}" />
+       <div>
+         <label>Nome:</label>
+         <input type="text" id="name" value="${fullName.trim()}" />
+       </div>
+       <div>
+         <label>Cargo:</label>
+         <input type="text" id="position" value="${person.position}" />
+       </div>
+       <div>
+         <label>Email:</label>
+         <input type="text" id="email" value="${person.email}" />
+       </div>
+       <div>
+         <label>Telefone:</label>
+         <input type="text" id="phone" value="${person.phone_number}" />
+       </div>
+       <div>
+         <label>Salário:</label>
+         <input type="text" id="salary" value="${person.salary}" />
+       </div>
+       <div>
+          <div>
+      <label>Departamento:</label>
+      <input type="text" id="department" value="${person.department_name}" />
+    </div>
+         <div>
+         <label>Faixa Salarial:</label>
+         <input type="text" id="salaryRange" value="${salaryRange}" readonly />
+       </div>
+       <div>
+         <label>Data de Contratação:</label>
+         <input type="text" id="hireDate" value="${formattedHireDate}" readonly />
+       </div>
+       </div>
+       `;
     content.innerHTML = personInfoHtml;
     sidebar.classList.add('active');
     overlay.classList.add('active');
@@ -499,6 +500,7 @@
         email: document.getElementById('email')?.value || '',
         phone_number: document.getElementById('phone')?.value || '',
         salary: document.getElementById('salary')?.value || '',
+        department_name: document.getElementById('department')?.value || '',
       };
 
       const chartData = chart.getChartState().data;
@@ -517,7 +519,217 @@
       document.getElementById('person-info-sidebar').classList.remove('active');
       document.getElementById('overlay').classList.remove('active');
     });
+
+    document.getElementById('delete-person').addEventListener('click', () => {
+      const personId = document.getElementById('id').value;
+      if (personId) {
+        deletePersonWithConditions(personId);
+        document
+          .getElementById('person-info-sidebar')
+          .classList.remove('active');
+        document.getElementById('overlay').classList.remove('active');
+      }
+    });
   });
+
+  function deletePersonWithConditions(nodeId) {
+    const chartData = chart.getChartState().data;
+
+    // Encontrar os filhos diretos
+    const children = chartData.filter((node) => node.parentId === nodeId);
+
+    if (children.length === 0) {
+      // Sem filhos, podemos remover diretamente
+      deletePerson(nodeId);
+      return;
+    }
+
+    if (children.length === 1) {
+      // Apenas um filho: sugerir a promoção automaticamente
+      const confirmPromotion = confirm(
+        `Esta pessoa tem um subordinado direto. Deseja promover ${children[0].name} para ocupar o cargo?`
+      );
+      if (confirmPromotion) {
+        promoteChild(nodeId, children[0].id);
+      } else {
+        return; // O usuário cancelou
+      }
+    } else {
+      openDeleteDialog(nodeId);
+    }
+  }
+  function openDeleteDialog(nodeId) {
+    document.getElementById('deleteDialog').style.display = 'block';
+    document.getElementById('deleteOverlay').style.display = 'block';
+    populateSubordinatesSelect(nodeId);
+  }
+
+  function closeDeleteDialog() {
+    document.getElementById('deleteDialog').style.display = 'none';
+    document.getElementById('deleteOverlay').style.display = 'none';
+  }
+
+  function populateSubordinatesSelect(nodeId) {
+    // Limpar o conteúdo atual do select
+    const selectElement = document.getElementById('subordinateSelect');
+    selectElement.innerHTML =
+      '<option value="">Selecione um subordinado</option>';
+
+    // Obter subordinados do nodeId
+    const chartData = chart.getChartState().data;
+    const children = chartData.filter((node) => node.parentId === nodeId);
+
+    // Adicionar subordinados ao select
+    children.forEach((child) => {
+      const option = document.createElement('option');
+      option.value = child.id;
+      option.textContent = child.name;
+      selectElement.appendChild(option);
+    });
+  }
+
+  // Ações no modal de exclusão
+  function promoteSubordinates() {
+    const selectedSubordinateId =
+      document.getElementById('subordinateSelect').value;
+    const selectedParentId = document.getElementById('personIdToDelete').value;
+    if (selectedSubordinateId && selectedParentId) {
+      // Promover o subordinado
+      const chartData = chart.getChartState().data;
+      const selectedSubordinate = chartData.find(
+        (node) => node.id === selectedSubordinateId
+      );
+      const selectedParent = chartData.find(
+        (node) => node.id === selectedParentId
+      );
+
+      if (selectedSubordinate && selectedParent) {
+        // Chama a função de promoção
+        promoteChild(selectedSubordinate, selectedParent);
+        closeDeleteDialog(); // Fecha o modal após promoção
+      }
+    } else {
+      alert('Por favor, selecione um subordinado e um chefe para promover.');
+    }
+  }
+
+  function addNewManager() {
+    console.log('Adicionando novo gerente...');
+    closeDeleteDialog();
+  }
+
+  function closeDepartment() {
+    console.log('Encerrando setor...');
+    closeDeleteDialog();
+  }
+
+  function attachModalEventListeners(nodeId) {
+    const chartData = chart.getChartState().data;
+
+    document
+      .querySelector(`#delete-modal-${nodeId} .promote-child`)
+      .addEventListener('click', () => {
+        const selectedChildId = document.querySelector(
+          `#delete-modal-${nodeId} .child-selector`
+        ).value;
+        if (selectedChildId) {
+          promoteChild(nodeId, selectedChildId);
+          redistributeChildren(nodeId, selectedChildId); // Redistribui os outros filhos
+          closeModal(nodeId);
+        } else {
+          alert('Por favor, selecione um subordinado para promover.');
+        }
+      });
+
+    document
+      .querySelector(`#delete-modal-${nodeId} .add-new-person`)
+      .addEventListener('click', () => {
+        addNewPerson(nodeId);
+        closeModal(nodeId);
+      });
+
+    document
+      .querySelector(`#delete-modal-${nodeId} .close-department`)
+      .addEventListener('click', () => {
+        const confirmClose = confirm(
+          'Tem certeza de que deseja encerrar este setor e remover todas as pessoas subordinadas?'
+        );
+        if (confirmClose) {
+          deletePerson(nodeId);
+          closeModal(nodeId);
+        }
+      });
+
+    document
+      .querySelector(`#delete-modal-${nodeId} .close-modal`)
+      .addEventListener('click', () => closeModal(nodeId));
+  }
+
+  function closeModal() {
+    const modal = document.getElementById(`delete-modal-${nodeId}`);
+    if (modal) modal.remove();
+  }
+
+  function promoteChild(subordinate, parent) {
+    const chartData = chart.getChartState().data;
+    subordinate.parentId = parent.id;
+
+    if (!parent || !child) {
+      alert('Erro ao encontrar as pessoas selecionadas.');
+      return;
+    }
+
+    // Promover o filho para ocupar a posição do pai
+    const children = chartData.filter(
+      (node) => node.parentId === subordinate.id
+    );
+    children.forEach((child) => {
+      child.parentId = parent.id;
+    });
+
+    // Redesenhar o gráfico com os dados atualizados
+    chart.data(chartData).render();
+  }
+
+  function deletePerson(nodeId) {
+    const chartData = chart.getChartState().data;
+
+    const parent = chartData.find((node) => node.id === nodeId);
+    if (parent) {
+      const children = chartData.filter((node) => node.parentId === nodeId);
+      children.forEach((child) => {
+        child.parentId = parent.parentId; // Reatribui ao avô
+      });
+    }
+
+    // Remove apenas o nó pai
+    const index = chartData.findIndex((node) => node.id === nodeId);
+    if (index !== -1) {
+      chartData.splice(index, 1);
+    }
+
+    originalData = originalData.filter((node) => node.id !== nodeId);
+
+    // **Salvando as alterações no localStorage** para que a exclusão seja persistida
+    const organogramId = getOrganogramIdFromURL();
+    localStorage.setItem(
+      `organogramData_${organogramId}`,
+      JSON.stringify(originalData)
+    );
+
+    // Re-renderize o gráfico com os dados atualizados
+    chart.data(originalData).render();
+  }
+
+  function redistributeChildren(oldParentId, newParentId) {
+    const chartData = chart.getChartState().data;
+
+    // Atribuir os filhos do antigo pai para o novo pai
+    const children = chartData.filter((node) => node.parentId === oldParentId);
+    children.forEach((child) => {
+      child.parentId = newParentId;
+    });
+  }
 
   function addChild(nodeId) {
     const newChild = {
@@ -526,6 +738,7 @@
       //Adicionar informações sobre a pesoa nova para serem editadas, apenas um exemplo abaixo
       name: 'Novo Filho',
       position: 'Cargo Padrão',
+      department_name: 'Default Dp',
       image: 'https://via.placeholder.com/150',
     };
     const chartState = chart.getChartState();
@@ -656,62 +869,9 @@
     populateSelect(locationFilter, uniqueLocations);
   }
 
-  //alertas
-  /* function showAlert(type, message, onConfirm, onCancel) {
-    const alertBox = document.createElement('div');
-    alertBox.classList.add('alert', type); // 'alert' é uma classe base, 'type' pode ser 'success' ou 'error'
-
-    const alertMessage = document.createElement('p');
-    alertMessage.textContent = message;
-
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.classList.add('alert-buttons');
-
-    if (type === 'success') {
-      const okButton = document.createElement('button');
-      okButton.textContent = 'OK';
-      okButton.onclick = () => {
-        if (onConfirm) onConfirm();
-        alertBox.remove();
-      };
-      buttonsContainer.appendChild(okButton);
-    } else {
-      // Adiciona os botões de Confirmar e Cancelar para o erro
-      const confirmButton = document.createElement('button');
-      confirmButton.textContent = 'Confirmar';
-      confirmButton.onclick = () => {
-        if (onConfirm) onConfirm();
-        alertBox.remove();
-      };
-
-      const cancelButton = document.createElement('button');
-      cancelButton.textContent = 'Cancelar';
-      cancelButton.onclick = () => {
-        if (onCancel) onCancel();
-        alertBox.remove();
-      };
-
-      buttonsContainer.appendChild(confirmButton);
-      buttonsContainer.appendChild(cancelButton);
-    }
-
-    alertBox.appendChild(alertMessage);
-    alertBox.appendChild(buttonsContainer);
-
-    document.body.appendChild(alertBox);
-
-    // Adiciona a classe 'show' após um pequeno delay para animação
-    setTimeout(() => {
-      alertBox.classList.add('show');
-    }, 10);
-  }
- */
-
-  //gráficos
-
-  let salaryDataOriginal = 0; // Inicializamos o dado original globalmente
+  //  gráficos
+  let salaryDataOriginal = 0;
   let salaryChartInstance = null;
-  // Função para calcular o custo total dos salários
   function calculateSalaryData(data) {
     return data.reduce(
       (total, person) => total + parseFloat(person.salary || 0),
@@ -721,8 +881,6 @@
 
   function renderCharts(data) {
     salaryDataOriginal = calculateSalaryData(data);
-
-    // Renderizar os gráficos usando o Chart.js
     const ctxSalary = document.getElementById('salaryChart').getContext('2d');
     if (salaryChartInstance) {
       salaryChartInstance.destroy();
@@ -758,7 +916,7 @@
 
   function saveChartState(id) {
     if (chart) {
-      const updatedData = chart.getChartState().data;
+      const updatedData = originalData;
       localStorage.setItem(`organogramData_${id}`, JSON.stringify(updatedData));
       updateOrganogramData(updatedData);
     }
@@ -768,49 +926,49 @@
     const color = '#FFFFFF';
     const imageDiffVert = 25 + 2;
     return `
-        <div class="node-container" style='
-        width:${d.width}px;
-        height:${d.height}px;
-        padding-top:${imageDiffVert - 2}px;
-        padding-left:1px;
-        padding-right:1px'>
-                <div class="content-container" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
-                  d.width - 2
-                }px;height:
-                ${d.height - imageDiffVert}px;border-radius:10px;border:
-    ${
-      d.data._highlighted || d.data._upToTheRootHighlighted
-        ? '5px solid #E27396"'
-        : '1px solid #E4E2E9"'
-    } >
-               <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px;position:relative;">
-         <button class="node-options-btn" data-id="${d.data.id}" style="
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-  " onclick="showOptionsMenu('${d.data.id}')">...</button>
-        </div>
-                    <div  style="margin-top:${
-                      -imageDiffVert - 20
-                    }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
-                    <div style="margin-top:${-imageDiffVert - 20}px;">
-                    <img src="${d.data.image}"
-     style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" /></div>
-                    <div style="font-size:15px;color:#08011E;margin-left:5px;margin-top:10px">
-                      ${d.data.name}
-                      </div>
-                      <div style="display: flex; justify-content: space-between; margin-left:5px;margin-right:5px;margin-top:3px; margin-bottom:3px;">
-                    <div style="color:#716E7B;font-size:10px;">
-                      ${d.data.position}
-                      </div>
-                      <div style="color:#716E7B; font-size:10px; text-align:right;">
-          ${d.data.department_name || 'No Department'}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+         <div class="node-container" style='
+         width:${d.width}px;
+         height:${d.height}px;
+         padding-top:${imageDiffVert - 2}px;
+         padding-left:1px;
+         padding-right:1px'>
+                 <div class="content-container" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
+                   d.width - 2
+                 }px;height:
+                 ${d.height - imageDiffVert}px;border-radius:10px;border:
+     ${
+       d.data._highlighted || d.data._upToTheRootHighlighted
+         ? '5px solid #E27396"'
+         : '1px solid #E4E2E9"'
+     } >
+                <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px;position:relative;">
+          <button class="node-options-btn" data-id="${d.data.id}" style="
+     background: none;
+     border: none;
+     font-size: 18px;
+     cursor: pointer;
+   " onclick="showOptionsMenu('${d.data.id}')">...</button>
+         </div>
+                     <div  style="margin-top:${
+                       -imageDiffVert - 20
+                     }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
+                     <div style="margin-top:${-imageDiffVert - 20}px;">
+                     <img src="${d.data.image}"
+      style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" /></div>
+                     <div style="font-size:15px;color:#08011E;margin-left:5px;margin-top:10px">
+                       ${d.data.name}
+                       </div>
+                       <div style="display: flex; justify-content: space-between; margin-left:5px;margin-right:5px;margin-top:3px; margin-bottom:3px;">
+                     <div style="color:#716E7B;font-size:10px;">
+                       ${d.data.position}
+                       </div>
+                       <div style="color:#716E7B; font-size:10px; text-align:right;">
+           ${d.data.department_name || 'No Department'}
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         `;
   }
 </script>
 <div class="controls">
@@ -855,6 +1013,7 @@
   <div id="person-info-content" class="sidebar-content"></div>
   <div class="sidebar-footer">
     <button id="save-info" class="save-btn">Salvar</button>
+    <button id="delete-person" class="delete-btn">Excluir</button>
   </div>
 </div>
 <div id="overlay" class="overlay"></div>
@@ -887,3 +1046,24 @@
   </div>
 </div>
 <div id="modalOverlay" class="overlay"></div>
+<!-- Modal de Exclusão -->
+<div id="deleteDialog" class="modal">
+  <div class="modal-content">
+    <h3>Excluir Pessoa</h3>
+    <p>Esta pessoa possui múltiplos subordinados. Como deseja prosseguir?</p>
+    <div id="subordinate-selection-container">
+      <label for="subordinateSelect"
+        >Selecione um subordinado para promover:</label
+      >
+      <select id="subordinateSelect">
+        <!-- Opções de subordinados serão adicionadas dinamicamente -->
+      </select>
+    </div>
+
+    <button id="promoteSubordinatesButton">Promover Subordinados</button>
+    <button onclick="addNewManager()">Adicionar Novo Gerente</button>
+    <button onclick="closeDepartment()">Encerrar Setor</button>
+    <button onclick="closeDeleteDialog()">Cancelar</button>
+  </div>
+</div>
+<div id="deleteOverlay" class="overlay"></div>

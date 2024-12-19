@@ -203,16 +203,7 @@ button[disabled] {
   text-align: right;
 }
 
-input[type='text'] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-}
-
-.save-btn {
+.sidebar-footer .save-btn {
   padding: 10px 20px;
   background-color: #28a745;
   color: white;
@@ -221,8 +212,31 @@ input[type='text'] {
   cursor: pointer;
 }
 
-.save-btn:hover {
+.sidebar-footer .save-btn:hover {
   background-color: #218838;
+}
+
+.sidebar-footer .delete-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.sidebar-footer .delete-btn:hover {
+  background-color: #d32f2f;
+}
+
+input[type='text'] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
 }
 
 .close-btn {
@@ -302,8 +316,8 @@ input[type='text'] {
   padding: 0;
   border: none;
   display: flex;
-  gap: 10px; /* Espaço entre os filtros */
-  flex-wrap: wrap; /* Ajusta os filtros em múltiplas linhas, se necessário */
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .applied-filters span {
