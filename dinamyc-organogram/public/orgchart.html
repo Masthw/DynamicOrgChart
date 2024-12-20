@@ -712,10 +712,7 @@
 
     // **Salvando as alterações no localStorage** para que a exclusão seja persistida
     const organogramId = getOrganogramIdFromURL();
-    localStorage.setItem(
-      `organogramData_${organogramId}`,
-      JSON.stringify(originalData)
-    );
+    saveChartState(organogramId);
 
     applyFilters();
   }
@@ -909,15 +906,11 @@
     });
   }
 
-  function updateOrganogramData(updatedData) {
-    renderCharts(updatedData);
-  }
-
   function saveChartState(id) {
     if (chart) {
       const updatedData = originalData;
       localStorage.setItem(`organogramData_${id}`, JSON.stringify(updatedData));
-      updateOrganogramData(updatedData);
+      renderCharts(updatedData);
     }
   }
 
