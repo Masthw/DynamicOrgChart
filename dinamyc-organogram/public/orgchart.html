@@ -717,8 +717,30 @@
       JSON.stringify(originalData)
     );
 
-    // Re-renderize o gráfico com os dados atualizados
-    chart.data(originalData).render();
+    const positionFilter = document.getElementById('positionFilter').value;
+    const departmentFilter = document.getElementById('departmentFilter').value;
+    const locationFilter = document.getElementById('locationFilter').value;
+
+    const filteredNodes = originalData.filter((item) => {
+      return (
+        (positionFilter === '' || item.position === positionFilter) &&
+        (departmentFilter === '' ||
+          item.department_name === departmentFilter) &&
+        (locationFilter === '' || item.location_state === locationFilter)
+      );
+    });
+
+    // Adiciona ancestrais dos nós filtrados
+    const ancestors = new Set();
+    filteredNodes.forEach((node) => {
+      const nodeAncestors = getAncestors(originalData, node.id);
+      nodeAncestors.forEach((ancestor) => ancestors.add(ancestor));
+    });
+
+    const filteredDataWithAncestors = [...ancestors];
+
+    // Re-renderiza o gráfico com os dados filtrados
+    chart.data(filteredDataWithAncestors).render();
   }
 
   function redistributeChildren(oldParentId, newParentId) {
