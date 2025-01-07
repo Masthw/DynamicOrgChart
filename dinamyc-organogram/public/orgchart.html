@@ -564,6 +564,10 @@
       function () {
         promoteSubordinates(nodeId);
       };
+    document.querySelector('button[onclick="addNewManager()"]').onclick =
+      function () {
+        addNewManager(nodeId);
+      };
   }
 
   function closeDeleteDialog() {
@@ -646,8 +650,48 @@
     }
   }
 
-  function addNewManager() {
-    console.log('Adicionando novo gerente...');
+  function addNewManager(nodeId) {
+    const chartData = chart.getChartState().data;
+
+    // Verificar se o nó a ser excluído existe
+    const deletedNode = chartData.find((node) => node.id === nodeId);
+    if (!deletedNode) {
+      alert('Erro: Nó para exclusão não encontrado.');
+      return;
+    }
+
+    // Criar a nova pessoa (gerente em branco)
+    const newManager = {
+      id: Date.now().toString(), // Gera um ID único para o novo nó
+      parentId: deletedNode.parentId, // O novo gerente herda o chefe do nó excluído
+      name: 'Novo Gerente', // Nome padrão para ser editado posteriormente
+      position: 'Cargo Padrão', // Posição padrão
+      department_name: 'Departamento Padrão', // Departamento padrão
+      image: 'https://via.placeholder.com/150', // Imagem padrão
+    };
+
+    // Adiciona o novo gerente ao organograma
+    chartData.push(newManager);
+
+    // Reatribuir os subordinados ao novo gerente
+    const children = chartData.filter((node) => node.parentId === nodeId);
+    children.forEach((child) => {
+      child.parentId = newManager.id;
+    });
+
+    // Remove o nó excluído
+    const index = chartData.findIndex((node) => node.id === nodeId);
+    if (index !== -1) {
+      chartData.splice(index, 1);
+    }
+
+    // Atualizar os dados e renderizar o organograma
+    originalData = [...chartData];
+    const organogramId = getOrganogramIdFromURL();
+    saveChartState(organogramId);
+
+    // Renderizar o gráfico atualizado
+    chart.data(chartData).render();
     closeDeleteDialog();
   }
 
