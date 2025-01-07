@@ -803,7 +803,13 @@
   }
 
   function deletePerson(nodeId) {
-    const chartData = chart.getChartState().data;
+    const chartData = [...originalData];
+
+    const positionFilter = document.getElementById('positionFilter').value;
+    const departmentFilter = document.getElementById('departmentFilter').value;
+    const locationFilter = document.getElementById('locationFilter').value;
+
+    clearFilters();
 
     const personToDelete = chartData.find((node) => node.id === nodeId);
     if (!personToDelete) {
@@ -836,7 +842,12 @@
     const organogramId = getOrganogramIdFromURL();
     saveChartState(organogramId);
 
-    // Reaplicar os filtros para manter o estado visual consistente
+    if (positionFilter)
+      document.getElementById('positionFilter').value = positionFilter;
+    if (departmentFilter)
+      document.getElementById('departmentFilter').value = departmentFilter;
+    if (locationFilter)
+      document.getElementById('locationFilter').value = locationFilter;
     applyFilters();
   }
 
