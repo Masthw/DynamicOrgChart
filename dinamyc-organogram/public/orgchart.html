@@ -539,25 +539,22 @@
     const children = chartData.filter((node) => node.parentId === nodeId);
 
     if (children.length === 0) {
-      // Sem filhos, podemos remover diretamente
+      // Sem filhos, remover diretamente
       deletePerson(nodeId);
-      return;
-    }
-
-    if (children.length === 1) {
-      // Apenas um filho: sugerir a promoção automaticamente
+    } else if (children.length === 1) {
+      // Apenas um filho, perguntar sobre a promoção
       const confirmPromotion = confirm(
         `Esta pessoa tem um subordinado direto. Deseja promover ${children[0].name} para ocupar o cargo?`
       );
       if (confirmPromotion) {
-        promoteChild(nodeId, children[0].id);
-      } else {
-        return; // O usuário cancelou
+        deletePerson(nodeId); // A lógica de promoção está incluída na função deletePerson
       }
     } else {
+      // Mais de um filho, abrir diálogo para confirmação
       openDeleteDialog(nodeId);
     }
   }
+
   function openDeleteDialog(nodeId) {
     document.getElementById('deleteDialog').style.display = 'block';
     document.getElementById('deleteOverlay').style.display = 'block';
@@ -670,50 +667,96 @@
     if (modal) modal.remove();
   }
 
-  function promoteChild(subordinate, parent) {
+  function promoteChild(subordinateId, parentId) {
     const chartData = chart.getChartState().data;
-    subordinate.parentId = parent.id;
 
-    if (!parent || !child) {
+    // Encontrar os nós relevantes no gráfico
+    const subordinate = chartData.find((node) => node.id === subordinateId);
+    const parent = chartData.find((node) => node.id === parentId);
+
+    if (!subordinate || !parent) {
       alert('Erro ao encontrar as pessoas selecionadas.');
       return;
     }
 
-    // Promover o filho para ocupar a posição do pai
+    // Verificar se a promoção criaria um ciclo
+    if (isDescendant(subordinateId, parentId, chartData)) {
+      alert('Erro: não é possível promover este nó pois criaria um ciclo.');
+      return;
+    }
+
+    // Promover o subordinado para ocupar a posição do pai
+    subordinate.parentId = parent.parentId;
+
+    // Ajustar os filhos do subordinado para que apontem para ele
     const children = chartData.filter(
-      (node) => node.parentId === subordinate.id
+      (node) => node.parentId === subordinateId
     );
     children.forEach((child) => {
-      child.parentId = parent.id;
+      child.parentId = subordinate.id;
     });
 
     // Redesenhar o gráfico com os dados atualizados
     chart.data(chartData).render();
+    originalData = [...chartData];
+
+    // Salvar as alterações no localStorage
+    const organogramId = getOrganogramIdFromURL();
+    saveChartState(organogramId);
+  }
+
+  /**
+   * Verifica se o nó `potentialAncestorId` é um descendente do nó `nodeId`.
+   * Isso ajuda a evitar ciclos.
+   */
+  function isDescendant(nodeId, potentialAncestorId, chartData) {
+    let current = chartData.find((node) => node.id === potentialAncestorId);
+
+    while (current) {
+      if (current.parentId === nodeId) {
+        return true; // Um ciclo seria criado
+      }
+      current = chartData.find((node) => node.id === current.parentId);
+    }
+
+    return false; // Sem ciclos
   }
 
   function deletePerson(nodeId) {
     const chartData = chart.getChartState().data;
 
-    const parent = chartData.find((node) => node.id === nodeId);
-    if (parent) {
-      const children = chartData.filter((node) => node.parentId === nodeId);
+    const personToDelete = chartData.find((node) => node.id === nodeId);
+    if (!personToDelete) {
+      alert('Erro: Pessoa não encontrada.');
+      return;
+    }
+
+    const parentId = personToDelete.parentId;
+
+    const children = chartData.filter((node) => node.parentId === nodeId);
+
+    if (children.length === 1) {
+      // Se há apenas um filho, ele assume o lugar da pessoa deletada
+      children[0].parentId = parentId;
+    } else if (children.length > 1) {
+      // Se há mais de um filho, os filhos são promovidos para o nível do avô
       children.forEach((child) => {
-        child.parentId = parent.parentId; // Reatribui ao avô
+        child.parentId = parentId;
       });
     }
 
-    // Remove apenas o nó pai
+    // Remover a pessoa deletada do organograma
     const index = chartData.findIndex((node) => node.id === nodeId);
     if (index !== -1) {
       chartData.splice(index, 1);
     }
 
-    originalData = originalData.filter((node) => node.id !== nodeId);
-
-    // **Salvando as alterações no localStorage** para que a exclusão seja persistida
+    // Atualizar o estado original e salvar no localStorage
+    originalData = [...chartData];
     const organogramId = getOrganogramIdFromURL();
     saveChartState(organogramId);
 
+    // Reaplicar os filtros para manter o estado visual consistente
     applyFilters();
   }
 
