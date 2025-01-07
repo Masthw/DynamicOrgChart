@@ -559,6 +559,11 @@
     document.getElementById('deleteDialog').style.display = 'block';
     document.getElementById('deleteOverlay').style.display = 'block';
     populateSubordinatesSelect(nodeId);
+
+    document.querySelector('button[onclick="promoteSubordinates()"]').onclick =
+      function () {
+        promoteSubordinates(nodeId);
+      };
   }
 
   function closeDeleteDialog() {
@@ -586,24 +591,55 @@
   }
 
   // Ações no modal de exclusão
-  function promoteSubordinates() {
-    const selectedSubordinateId =
-      document.getElementById('subordinateSelect').value;
-    const selectedParentId = document.getElementById('personIdToDelete').value;
-    if (selectedSubordinateId && selectedParentId) {
-      // Promover o subordinado
+  function promoteSubordinates(nodeId) {
+    const selectElement = document.getElementById('subordinateSelect');
+    if (!selectElement) {
+      alert('Erro: O seletor de subordinados não foi encontrado.');
+      return;
+    }
+
+    const selectedSubordinateId = selectElement.value;
+
+    if (!nodeId) {
+      alert('Erro: ID do chefe não encontrado.');
+      return;
+    }
+
+    if (selectedSubordinateId && nodeId) {
       const chartData = chart.getChartState().data;
+
       const selectedSubordinate = chartData.find(
         (node) => node.id === selectedSubordinateId
       );
-      const selectedParent = chartData.find(
-        (node) => node.id === selectedParentId
-      );
+      const selectedParent = chartData.find((node) => node.id === nodeId);
 
       if (selectedSubordinate && selectedParent) {
-        // Chama a função de promoção
-        promoteChild(selectedSubordinate, selectedParent);
-        closeDeleteDialog(); // Fecha o modal após promoção
+        // Atualizar o parentId dos outros subordinados do nó excluído
+        const otherSubordinates = chartData.filter(
+          (node) =>
+            node.parentId === nodeId && node.id !== selectedSubordinateId
+        );
+
+        otherSubordinates.forEach((subordinate) => {
+          subordinate.parentId = selectedSubordinateId;
+        });
+
+        // Promover o subordinado selecionado
+        selectedSubordinate.parentId = selectedParent.parentId;
+
+        const updatedChartData = chartData.filter((node) => node.id !== nodeId);
+
+        // Redesenhar o gráfico com os dados atualizados
+        chart.data(updatedChartData).render();
+
+        // Atualizar o estado original com os dados do organograma
+        originalData = [...updatedChartData];
+
+        const organogramId = getOrganogramIdFromURL();
+        saveChartState(organogramId);
+
+        // Fechar o modal
+        closeDeleteDialog();
       }
     } else {
       alert('Por favor, selecione um subordinado e um chefe para promover.');
@@ -1113,7 +1149,7 @@
       </select>
     </div>
 
-    <button id="promoteSubordinatesButton">Promover Subordinados</button>
+    <button onclick="promoteSubordinates()">Promover Subordinado</button>
     <button onclick="addNewManager()">Adicionar Novo Gerente</button>
     <button onclick="closeDepartment()">Encerrar Setor</button>
     <button onclick="closeDeleteDialog()">Cancelar</button>
