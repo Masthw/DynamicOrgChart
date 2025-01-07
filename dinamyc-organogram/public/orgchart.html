@@ -908,6 +908,24 @@
     populateSelect(locationFilter, uniqueLocations);
   }
 
+  function clearFilters() {
+    // Resetar os valores dos filtros para o estado inicial
+    document.getElementById('positionFilter').value = '';
+    document.getElementById('departmentFilter').value = '';
+    document.getElementById('locationFilter').value = '';
+
+    // Limpar os filtros aplicados na interface
+    const appliedFiltersDiv = document.getElementById('appliedFilters');
+    appliedFiltersDiv.style.display = 'none';
+    appliedFiltersDiv.innerHTML = '';
+
+    // Limpar o array de filtros aplicados
+    appliedFilters = [];
+
+    // Reaplicar os filtros (sem nenhum filtro, exibe tudo)
+    applyFilters();
+  }
+
   //  gráficos
   let salaryDataOriginal = 0;
   let salaryChartInstance = null;
