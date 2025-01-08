@@ -568,6 +568,10 @@
       function () {
         addNewManager(nodeId);
       };
+    document.querySelector('button[onclick="closeDepartment()"]').onclick =
+      function () {
+        closeDepartment(nodeId);
+      };
   }
 
   function closeDeleteDialog() {
@@ -695,8 +699,28 @@
     closeDeleteDialog();
   }
 
-  function closeDepartment() {
-    console.log('Encerrando setor...');
+  function closeDepartment(nodeId) {
+    const chartData = chart.getChartState().data;
+
+    function getAllSubordinates(nodeId, data) {
+      const directSubordinates = data.filter(
+        (node) => node.parentId === nodeId
+      );
+      let allSubordinates = [...directSubordinates];
+      directSubordinates.forEach((subordinate) => {
+        allSubordinates = allSubordinates.concat(
+          getAllSubordinates(subordinate.id, data)
+        );
+      });
+      return allSubordinates;
+    }
+
+    const allSubordinates = getAllSubordinates(nodeId, chartData);
+    const allIdsToDelete = [...allSubordinates.map((node) => node.id), nodeId];
+
+    allIdsToDelete.reverse().forEach((id) => {
+      deletePerson(id); // Reutiliza a função deletePerson
+    });
     closeDeleteDialog();
   }
 
