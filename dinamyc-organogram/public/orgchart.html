@@ -783,12 +783,6 @@
       return;
     }
 
-    // Verificar se a promoção criaria um ciclo
-    if (isDescendant(subordinateId, parentId, chartData)) {
-      alert('Erro: não é possível promover este nó pois criaria um ciclo.');
-      return;
-    }
-
     // Promover o subordinado para ocupar a posição do pai
     subordinate.parentId = parent.parentId;
 
@@ -807,23 +801,6 @@
     // Salvar as alterações no localStorage
     const organogramId = getOrganogramIdFromURL();
     saveChartState(organogramId);
-  }
-
-  /**
-   * Verifica se o nó `potentialAncestorId` é um descendente do nó `nodeId`.
-   * Isso ajuda a evitar ciclos.
-   */
-  function isDescendant(nodeId, potentialAncestorId, chartData) {
-    let current = chartData.find((node) => node.id === potentialAncestorId);
-
-    while (current) {
-      if (current.parentId === nodeId) {
-        return true; // Um ciclo seria criado
-      }
-      current = chartData.find((node) => node.id === current.parentId);
-    }
-
-    return false; // Sem ciclos
   }
 
   function deletePerson(nodeId) {
