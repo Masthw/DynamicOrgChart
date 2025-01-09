@@ -1,8 +1,8 @@
 {
-  "name": "dinamyc-organogram",
+  "name": "dinamyc-orgchart",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "Dynamic Organogram",
+  "productName": "Dynamic OrgChart",
   "author": "Matheus dos Santos Soares <maverick17xd@gmail.com>",
   "private": true,
   "scripts": {

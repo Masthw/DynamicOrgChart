@@ -18,9 +18,9 @@ export default {
   name: 'OrgChart',
   setup() {
     const route = useRoute();
-    const organogramId = route.params.id; // Pegamos o ID do organograma
+    const orgChartId = route.params.id;
 
-    const orgChartUrl = `/orgchart.html#${organogramId}`;
+    const orgChartUrl = `/orgchart.html#${orgChartId}`;
     return {
       orgChartUrl,
     };

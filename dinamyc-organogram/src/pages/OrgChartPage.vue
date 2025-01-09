@@ -10,12 +10,12 @@
           @click="goToDashboard"
         />
         <h3 class="header-title">
-          {{ organogram?.name || 'Carregando...' }}
+          {{ orgchart?.name || 'Carregando...' }}
         </h3>
       </div>
     </div>
     <div class="orgchart-wrapper">
-      <OrgChart v-if="organogram" :data="organogram.data" />
+      <OrgChart v-if="orgchart" :data="orgchart.data" />
     </div>
   </div>
 </template>
@@ -32,15 +32,15 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const organogram = ref(null);
+    const orgchart = ref(null);
     // Carregar dados do organograma baseado no ID
     onMounted(() => {
-      const organograms = JSON.parse(localStorage.getItem('organograms')) || [];
-      const organogramId = route.params.id;
-      organogram.value = organograms.find((o) => o.id === Number(organogramId));
+      const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
+      const orgChartId = route.params.id;
+      orgchart.value = orgcharts.find((o) => o.id === Number(orgChartId));
 
-      if (!organogram.value) {
-        console.error(`Organograma com ID ${organogramId} não encontrado.`);
+      if (!orgchart.value) {
+        console.error(`Organograma com ID ${orgChartId} não encontrado.`);
         router.push('/dashboard'); // Redireciona se o organograma não existir
       }
     });
@@ -50,21 +50,21 @@ export default {
     };
 
     return {
-      organogram,
+      orgchart,
       goToDashboard,
     };
   },
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .header-wrapper {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: #b3b3b3;
+  background-color: $background-gray;
   height: 50px;
 }
 
@@ -73,7 +73,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 0.5em 1em;
-  background-color: #b3b3b3;
+  background-color: $background-gray;
   border-bottom: 1px solid #ddd;
   height: 100%;
 }

@@ -1,6 +1,5 @@
 <template>
   <div class="login-page">
-    <!-- Esquerda (Campos de login ou registro) -->
     <div :class="['login-section', { 'switch-mode': isRegistering }]">
       <div class="form-container">
         <div class="text-h5 q-mb-lg">
@@ -53,8 +52,6 @@
             style="width: 100%"
           />
         </form>
-
-        <!-- Textos adicionais -->
         <div v-if="!isRegistering" class="aux-text">
           <span class="link-text" @click="redirectToReset"
             >Esqueceu sua senha?</span
@@ -72,8 +69,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Direita (Imagem ou Fundo Animado) -->
     <div :class="['image-section', { 'switch-mode': isRegistering }]">
       <div class="placeholder">
         <p>Company Logo Here</p>

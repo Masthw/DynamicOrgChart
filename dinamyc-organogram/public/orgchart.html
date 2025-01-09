@@ -64,28 +64,28 @@
     addNodeEventListeners();
   }
 
-  function getOrganogramIdFromURL() {
+  function getOrgChartIdFromURL() {
     const hash = window.location.hash; // Captura a parte após o #
     if (!hash) {
       console.error('Hash ausente ou inválido na URL');
       return null;
     }
-    const organogramId = hash.substring(1);
-    if (/^\d+$/.test(organogramId)) {
-      return organogramId;
+    const orgChartId = hash.substring(1);
+    if (/^\d+$/.test(orgChartId)) {
+      return orgChartId;
     }
-    console.error('ID inválido encontrado no hash:', organogramId);
+    console.error('ID inválido encontrado no hash:', orgChartId);
     return null;
   }
   // Inicialização do organograma
   document.addEventListener('DOMContentLoaded', () => {
-    const organogramId = getOrganogramIdFromURL();
-    if (!organogramId) {
+    const orgChartId = getOrgChartIdFromURL();
+    if (!orgChartId) {
       console.error('ID do organograma não encontrado na URL');
       return;
     }
 
-    const savedData = localStorage.getItem(`organogramData_${organogramId}`);
+    const savedData = localStorage.getItem(`orgChartData_${orgChartId}`);
     if (savedData) {
       const data = JSON.parse(savedData);
       initializeChart(data);
@@ -94,7 +94,7 @@
         'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
       ).then((data) => {
         localStorage.setItem(
-          `organogramData_${organogramId}`,
+          `orgChartData_${orgChartId}`,
           JSON.stringify(data)
         );
         initializeChart(data);
@@ -258,8 +258,8 @@
     document.getElementById('dragActions').classList.add('hide');
     undoActions = [];
     redoActions = [];
-    const organogramId = getOrganogramIdFromURL();
-    saveChartState(organogramId);
+    const orgChartId = getOrgChartIdFromURL();
+    saveChartState(orgChartId);
     updateDragActions();
   }
 
@@ -513,8 +513,8 @@
           ...updatedPerson,
         };
         chart.data(chartData).render();
-        const organogramId = getOrganogramIdFromURL();
-        saveChartState(organogramId);
+        const orgChartId = getOrgChartIdFromURL();
+        saveChartState(orgChartId);
       }
       document.getElementById('person-info-sidebar').classList.remove('active');
       document.getElementById('overlay').classList.remove('active');
@@ -643,8 +643,8 @@
         // Atualizar o estado original com os dados do organograma
         originalData = [...updatedChartData];
 
-        const organogramId = getOrganogramIdFromURL();
-        saveChartState(organogramId);
+        const orgChartId = getOrgChartIdFromURL();
+        saveChartState(orgChartId);
 
         // Fechar o modal
         closeDeleteDialog();
@@ -691,8 +691,8 @@
 
     // Atualizar os dados e renderizar o organograma
     originalData = [...chartData];
-    const organogramId = getOrganogramIdFromURL();
-    saveChartState(organogramId);
+    const orgChartId = getOrgChartIdFromURL();
+    saveChartState(orgChartId);
 
     // Renderizar o gráfico atualizado
     chart.data(chartData).render();
@@ -799,8 +799,8 @@
     originalData = [...chartData];
 
     // Salvar as alterações no localStorage
-    const organogramId = getOrganogramIdFromURL();
-    saveChartState(organogramId);
+    const orgChartId = getOrgChartIdFromURL();
+    saveChartState(orgChartId);
   }
 
   function deletePerson(nodeId) {
@@ -840,8 +840,8 @@
 
     // Atualizar o estado original e salvar no localStorage
     originalData = [...chartData];
-    const organogramId = getOrganogramIdFromURL();
-    saveChartState(organogramId);
+    const orgChartId = getOrgChartIdFromURL();
+    saveChartState(orgChartId);
 
     if (positionFilter)
       document.getElementById('positionFilter').value = positionFilter;
@@ -876,8 +876,8 @@
     chartState.data.push(newChild);
     chart.data(chartState.data).render();
 
-    const organogramId = getOrganogramIdFromURL();
-    saveChartState(organogramId);
+    const orgChartId = getOrgChartIdFromURL();
+    saveChartState(orgChartId);
   }
 
   //Filtro
@@ -1062,7 +1062,7 @@
   function saveChartState(id) {
     if (chart) {
       const updatedData = originalData;
-      localStorage.setItem(`organogramData_${id}`, JSON.stringify(updatedData));
+      localStorage.setItem(`orgChartData_${id}`, JSON.stringify(updatedData));
       renderCharts(updatedData);
     }
   }

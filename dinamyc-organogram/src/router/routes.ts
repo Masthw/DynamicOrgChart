@@ -1,8 +1,8 @@
 import { RouteRecordRaw } from 'vue-router';
-import OrganogramPage from 'src/pages/OrgChartPage.vue';
+import OrgChartPage from 'src/pages/OrgChartPage.vue';
 import LoginPage from 'src/pages/LoginPage.vue';
 import ResetPasswordPage from 'src/pages/ResetPasswordPage.vue';
-import OrganogramDashboardPage from 'src/pages/OrgChartDashboardPage.vue';
+import OrgChartDashboardPage from 'src/pages/OrgChartDashboardPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -11,11 +11,11 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/dashboard',
-    component: OrganogramDashboardPage,
+    component: OrgChartDashboardPage,
   },
   {
-    path: '/organogram/:id',
-    component: OrganogramPage,
+    path: '/orgchart/:id',
+    component: OrgChartPage,
     props: true,
   },
   {

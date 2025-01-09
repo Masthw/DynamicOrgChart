@@ -14,42 +14,36 @@
 
     <div class="content">
       <h1 class="q-mb-lg">Gerenciar Organogramas</h1>
-      <div class="organogram-grid">
-        <!-- Lista de organogramas existentes -->
+      <div class="orgchart-grid">
         <div
-          v-for="organogram in organograms"
-          :key="organogram.id"
-          class="organogram-card"
-          @click="toggleActions(organogram.id)"
+          v-for="orgchart in orgcharts"
+          :key="orgchart.id"
+          class="orgchart-card"
+          @click="toggleActions(orgchart.id)"
         >
-          <!-- Nome do Organograma sempre visível -->
-          <p class="organogram-name">{{ organogram.name }}</p>
-
-          <!-- Ícones de Ação - Exibidos somente após o clique -->
-          <div v-if="organogram.showActions" class="actions">
+          <p class="orgchart-name">{{ orgchart.name }}</p>
+          <div v-if="orgchart.showActions" class="actions">
             <q-btn
               flat
               icon="open_in_new"
-              @click.stop="openOrganogram(organogram.id)"
+              @click.stop="openOrgChart(orgchart.id)"
               class="action-btn"
             />
             <q-btn
               flat
               icon="compare_arrows"
-              @click.stop="compareOrganogram(organogram.id)"
+              @click.stop="compareOrgChart(orgchart.id)"
               class="action-btn"
             />
             <q-btn
               flat
               icon="delete"
-              @click.stop="deleteOrganogram(organogram.id)"
+              @click.stop="deleteOrgChart(orgchart.id)"
               class="action-btn"
             />
           </div>
         </div>
-
-        <!-- Card para adicionar novo organograma -->
-        <div class="organogram-card add-new" @click="addNewOrganogram">
+        <div class="orgchart-card add-new" @click="addNewOrgChart">
           <p class="plus-sign">+</p>
           <p>Adicionar Organograma</p>
         </div>
@@ -62,16 +56,15 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-const organograms = ref([]);
+const orgcharts = ref([]);
 const userName = ref('Usuário'); // Simula o nome do usuário logado
 const router = useRouter();
 
 onMounted(() => {
-  const storedOrganograms =
-    JSON.parse(localStorage.getItem('organograms')) || [];
-  organograms.value = storedOrganograms;
-  organograms.value.forEach((organogram) => {
-    organogram.showActions = false;
+  const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
+  orgcharts.value = storedOrgCharts;
+  orgcharts.value.forEach((orgchart) => {
+    orgchart.showActions = false;
   });
 });
 
@@ -80,51 +73,51 @@ const handleLogout = () => {
   router.push('/');
 };
 
-const addNewOrganogram = () => {
+const addNewOrgChart = () => {
   const newId = Date.now();
   let baseName = 'Organograma';
   let nameIndex = 1;
   let newName = `${baseName} ${nameIndex}`;
-  const existingNames = organograms.value.map((o) => o.name);
+  const existingNames = orgcharts.value.map((o) => o.name);
 
   while (existingNames.includes(newName)) {
     nameIndex += 1;
     newName = `${baseName} ${nameIndex}`;
   }
 
-  const newOrganogram = {
+  const newOrgChart = {
     id: newId,
     name: newName,
     showActions: false,
   };
 
-  organograms.value.push(newOrganogram);
-  localStorage.setItem('organograms', JSON.stringify(organograms.value));
+  orgcharts.value.push(newOrgChart);
+  localStorage.setItem('orgcharts', JSON.stringify(orgcharts.value));
 
-  openOrganogram(newId);
+  openOrgChart(newId);
 };
 
-const openOrganogram = (id) => {
+const openOrgChart = (id) => {
   console.log(`Abrindo organograma com ID: ${id}`);
-  router.push(`/organogram/${id}`);
+  router.push(`/orgchart/${id}`);
 };
-const compareOrganogram = (id) => {
+const compareOrgChart = (id) => {
   console.log(`Comparando organograma com ID: ${id}`);
 };
 
-const deleteOrganogram = (id) => {
-  const updatedOrganograms = organograms.value.filter(
-    (organogram) => organogram.id !== id
+const deleteOrgChart = (id) => {
+  const updatedOrgCharts = orgcharts.value.filter(
+    (orgchart) => orgchart.id !== id
   );
-  organograms.value = updatedOrganograms;
-  localStorage.setItem('organograms', JSON.stringify(updatedOrganograms));
+  orgcharts.value = updatedOrgCharts;
+  localStorage.setItem('orgcharts', JSON.stringify(updatedOrgCharts));
   console.log(`Organograma com ID ${id} excluído`);
 };
 
 const toggleActions = (id) => {
-  const organogram = organograms.value.find((o) => o.id === id);
-  if (organogram) {
-    organogram.showActions = !organogram.showActions;
+  const orgchart = orgcharts.value.find((o) => o.id === id);
+  if (orgchart) {
+    orgchart.showActions = !orgchart.showActions;
   }
 };
 </script>
@@ -150,13 +143,13 @@ const toggleActions = (id) => {
   overflow-y: auto;
 }
 
-.organogram-grid {
+.orgchart-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
 }
 
-.organogram-card {
+.orgchart-card {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -171,7 +164,7 @@ const toggleActions = (id) => {
   transition: background-color 0.3s ease;
 }
 
-.organogram-card:hover {
+.orgchart-card:hover {
   background: #e6e6e6;
 }
 
@@ -186,7 +179,7 @@ const toggleActions = (id) => {
   margin-bottom: 10px;
 }
 
-.organogram-name {
+.orgchart-name {
   font-size: 1.2rem;
   font-weight: bold;
   color: #333;

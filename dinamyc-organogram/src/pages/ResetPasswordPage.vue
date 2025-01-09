@@ -4,10 +4,6 @@
   </div>
 </template>
 
-<script setup>
-// Aqui podemos adicionar lógica mais tarde, quando necessário
-</script>
+<script setup></script>
 
-<style scoped>
-/* Estilos podem ser adicionados posteriormente */
-</style>
+<style scoped></style>
