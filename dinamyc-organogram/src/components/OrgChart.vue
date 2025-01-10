@@ -28,7 +28,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
 html,
 body {
   height: 100%;
@@ -52,5 +52,6 @@ iframe {
   border: none;
   margin: 0;
   padding: 0;
+  /* background-color: $; */
 }
 </style>

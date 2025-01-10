@@ -56,6 +56,9 @@
       .nodeUpdate(function (d) {
         d3.select(this).classed('droppable', true).classed('draggable', true);
       })
+      .linkUpdate(function (linkData, index, links) {
+        d3.select(links[index]).attr('stroke', '#FF5733');
+      })
       .container('.chart-container')
       .data(data)
       .render();
