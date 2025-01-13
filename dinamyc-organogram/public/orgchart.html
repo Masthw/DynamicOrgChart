@@ -36,8 +36,30 @@
 
     // Configura e renderiza o gráfico de organograma
     chart = new d3.OrgChart()
-      .nodeHeight((d) => 85 + 30)
-      .nodeWidth((d) => 220 + 35)
+      .nodeHeight((d) => {
+        const isCEO = !d.data.parentId;
+        const hasSubordinates = d.data._directSubordinates > 0;
+
+        if (isCEO) {
+          return 150;
+        } else if (hasSubordinates) {
+          return 150;
+        } else {
+          return 100;
+        }
+      })
+      .nodeWidth((d) => {
+        const isCEO = !d.data.parentId;
+        const hasSubordinates = d.data._directSubordinates > 0;
+
+        if (isCEO) {
+          return 155;
+        } else if (hasSubordinates) {
+          return 200; // Largura do Líder
+        } else {
+          return 200; // Largura do Funcionário
+        }
+      })
       .childrenMargin((d) => 50)
       .compactMarginBetween((d) => 35)
       .compactMarginPair((d) => 30)
@@ -1072,9 +1094,12 @@
 
   function generateContent(d) {
     const isCEO = !d.data.parentId;
+    const hasSubordinates = d.data._directSubordinates > 0;
 
     if (isCEO) {
       return generateCEOContent(d);
+    } else if (hasSubordinates) {
+      return generateLeaderContent(d);
     } else {
       return generateEmployeeContent(d);
     }
@@ -1084,7 +1109,7 @@
     return `
     <div class="ceo-container" style="
       width:${d.width}px;
-      height:${d.height - 38}px;
+      height:${d.height}px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -1136,6 +1161,71 @@
         </div>
 
         <!-- Cargo do CEO -->
+        <div style="
+          font-size:12px;
+          color:#555;
+          margin-top:8px;
+          text-align:center;
+        ">
+          ${d.data.position}
+        </div>
+
+      </div>
+    </div>
+  `;
+  }
+
+  function generateLeaderContent(d) {
+    return `
+    <div class="leader-container" style="
+      width:${d.width}px;
+      height:${d.height}px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    ">
+
+      <!-- Caixa principal do Líder -->
+      <div style="
+        width:200px;
+        height:150px;
+        border-radius:15px;
+        background-color: #F0F0F0;
+        overflow: hidden;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:flex-start;
+        padding-top:5px;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+      ">
+
+        <!-- Imagem do Líder -->
+        <img src="${d.data.image}" style="
+          width:70px;
+          height:70px;
+          border-radius:50%;
+          object-fit:cover;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        " />
+
+        <!-- Nome do Líder -->
+        <div style="
+          width:110px;
+          background-color:#414341;
+          color:white;
+          font-size:14px;
+          font-weight:bold;
+          text-align:center;
+          padding:6px 0;
+          margin-top:10px;
+          border-radius: 4px;
+          box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+        ">
+          ${d.data.name}
+        </div>
+
+        <!-- Cargo do Líder -->
         <div style="
           font-size:12px;
           color:#555;
