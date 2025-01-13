@@ -63,7 +63,7 @@
       .childrenMargin((d) => 80)
       .compactMarginBetween((d) => 45)
       .compactMarginPair((d) => 80)
-      .neighbourMargin((a, b) => 30)
+      .neighbourMargin((a, b) => 50)
       .nodeContent((d, i, arr, state) => generateContent(d))
       .nodeEnter(function (node) {
         d3.select(this).call(
@@ -1092,6 +1092,34 @@
     }
   }
 
+  function getLeaderColor(leaderId) {
+    const storedColors = JSON.parse(localStorage.getItem('leaderColors')) || {};
+
+    // Se já existe uma cor para o líder, retorna ela
+    if (storedColors[leaderId]) {
+      return storedColors[leaderId];
+    }
+
+    // Se não existir, gera uma nova e salva
+    const newColor = generateRandomColor();
+    storedColors[leaderId] = newColor;
+    localStorage.setItem('leaderColors', JSON.stringify(storedColors));
+    return newColor;
+  }
+
+  function generateRandomColor() {
+    const palette = [
+      '#FF6F61',
+      '#6B5B95',
+      '#88B04B',
+      '#F7CAC9',
+      '#92A8D1',
+      '#955251',
+      '#B565A7',
+    ];
+    return palette[Math.floor(Math.random() * palette.length)];
+  }
+
   function generateContent(d) {
     const isCEO = !d.data.parentId;
     const hasSubordinates = d.data._directSubordinates > 0;
@@ -1175,6 +1203,8 @@
   }
 
   function generateLeaderContent(d) {
+    const leaderColor = getLeaderColor(d.data.id);
+
     return `
     <div class="leader-container" style="
       width:${d.width}px;
@@ -1211,7 +1241,7 @@
         <!-- Nome do Líder -->
         <div style="
           width:110px;
-          background-color:#414341;
+          background-color:${leaderColor};
           color:white;
           font-size:14px;
           font-weight:bold;
@@ -1240,6 +1270,9 @@
   }
 
   function generateEmployeeContent(d) {
+    const parentLeaderColor = d.data.parentId
+      ? getLeaderColor(d.data.parentId)
+      : '#716E7B';
     return `
          <div class="node-container" style='
           width:${d.width}px;
@@ -1279,7 +1312,7 @@
           </div>
           <div style="
             font-size:12px;
-            color:#716E7B;
+            color:${parentLeaderColor};
           ">
             ${d.data.position}
           </div>
