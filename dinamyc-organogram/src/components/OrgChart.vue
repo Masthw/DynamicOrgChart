@@ -37,7 +37,6 @@ body {
 }
 
 .orgchart-container {
-  margin-top: 3.5em;
   padding: 0;
   width: 100%;
   height: 100vh;
@@ -52,6 +51,6 @@ iframe {
   border: none;
   margin: 0;
   padding: 0;
-  /* background-color: $; */
+  background-color: $background-blue;
 }
 </style>

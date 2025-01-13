@@ -1071,6 +1071,86 @@
   }
 
   function generateContent(d) {
+    const isCEO = !d.data.parentId;
+
+    if (isCEO) {
+      return generateCEOContent(d);
+    } else {
+      return generateEmployeeContent(d);
+    }
+  }
+
+  function generateCEOContent(d) {
+    return `
+    <div class="ceo-container" style="
+      width:${d.width}px;
+      height:${d.height - 38}px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+    ">
+
+      <!-- Caixa principal do CEO ("Dedão") -->
+      <div style="
+        width:150px;
+        height:150px;
+        border-top-left-radius:90px;
+        border-top-right-radius:90px;
+        border-bottom-left-radius:5px;
+        border-bottom-right-radius:5px;
+        border-bottom: 5px;
+        background-color: #F0F0F0;
+        overflow: hidden;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:flex-start;
+        padding-top:5px;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+      ">
+
+        <!-- Imagem do CEO -->
+        <img src="${d.data.image}" style="
+          width:70px;
+          height:70px;
+          border-radius:50%;
+          object-fit:cover;
+          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        " />
+
+        <!-- Nome do CEO -->
+        <div style="
+          width:110px;
+          background-color:#414341;
+          color:white;
+          font-size:14px;
+          font-weight:bold;
+          text-align:center;
+          padding:6px 0;
+          margin-top:10px;
+          border-radius: 4px;
+          box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+        ">
+          ${d.data.name}
+        </div>
+
+        <!-- Cargo do CEO -->
+        <div style="
+          font-size:12px;
+          color:#555;
+          margin-top:8px;
+          text-align:center;
+        ">
+          ${d.data.position}
+        </div>
+
+      </div>
+    </div>
+  `;
+  }
+
+  function generateEmployeeContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 25 + 2;
     return `
