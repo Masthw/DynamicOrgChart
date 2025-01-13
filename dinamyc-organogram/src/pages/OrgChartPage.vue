@@ -74,7 +74,6 @@ export default {
   justify-content: space-between;
   padding: 0.5em 1em;
   background-color: $background-gray;
-  border-bottom: 1px solid #ddd;
   height: 100%;
 }
 

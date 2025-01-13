@@ -37,9 +37,10 @@ body {
 }
 
 .orgchart-container {
+  margin-top: 3rem;
   padding: 0;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 48px);
   display: flex;
   overflow: hidden;
   position: relative;
