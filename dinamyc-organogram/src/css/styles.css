@@ -6,13 +6,13 @@ svg:not(:root) {
 }
 
 .drag-enabled:not(.dragging-active) .node.draggable {
-  stroke: grey;
+  stroke: rgb(226, 13, 226);
   stroke-width: 3px;
   stroke-dasharray: 5px;
 }
 
 .drag-enabled.dragging-active .droppable {
-  stroke: green;
+  stroke: rgb(67, 243, 67);
   stroke-width: 3px;
   stroke-dasharray: 5px;
 }

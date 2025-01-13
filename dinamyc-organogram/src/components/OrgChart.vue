@@ -52,6 +52,6 @@ iframe {
   border: none;
   margin: 0;
   padding: 0;
-  background-color: $background-blue;
+  background-color: $dark;
 }
 </style>
