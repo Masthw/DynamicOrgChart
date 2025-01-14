@@ -525,6 +525,10 @@ input[type='text'] {
   background-color: #c82333;
 }
 
+#dragActions {
+  z-index: 9999;
+}
+
 /* Responsividade */
 @media (max-width: 480px) {
   .delete-modal-content {
