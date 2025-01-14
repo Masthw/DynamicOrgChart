@@ -1119,9 +1119,26 @@
     });
   }
 
+  function updateNodeTypes() {
+    const data = chart.data();
+
+    data.forEach((d) => {
+      // Se o nó tiver filhos, ele deve ser um Leader
+      if (d._children && d._children.length > 0) {
+        d.type = 'leader';
+      } else {
+        d.type = 'employee';
+      }
+    });
+  }
+
   function saveChartState(id) {
     if (chart) {
       const updatedData = originalData;
+      updatedData.forEach((d) => {
+        delete d._highlighted;
+        delete d._expanded;
+      });
       localStorage.setItem(`orgChartData_${id}`, JSON.stringify(updatedData));
       renderCharts(updatedData);
     }
