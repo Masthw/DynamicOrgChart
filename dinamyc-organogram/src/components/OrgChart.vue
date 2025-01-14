@@ -1,13 +1,7 @@
 <template>
   <div class="orgchart-container">
     <!-- Iframe que carrega o arquivo orgchart.html -->
-    <iframe
-      :src="orgChartUrl"
-      width="100%"
-      height="100%"
-      frameborder="0"
-      title="Org Chart"
-    ></iframe>
+    <iframe :src="orgChartUrl" frameborder="0" title="Org Chart"></iframe>
   </div>
 </template>
 
@@ -32,6 +26,7 @@ export default {
 html,
 body {
   height: 100%;
+  margin: 0;
   padding: 0;
   overflow: hidden;
 }
@@ -46,6 +41,14 @@ body {
   position: relative;
 }
 
+.chart-container {
+  width: 100%;
+  height: 100%; /* Faz com que a chart-container ocupe toda a altura disponível */
+  display: flex;
+  justify-content: center; /* Alinha o conteúdo do SVG no centro */
+  overflow: hidden; /* Impede barra de rolagem lateral */
+}
+
 iframe {
   width: 100%;
   height: 100%;
@@ -53,5 +56,12 @@ iframe {
   margin: 0;
   padding: 0;
   background-color: $dark;
+  box-sizing: border-box;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 </style>

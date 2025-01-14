@@ -63,7 +63,8 @@
       .childrenMargin((d) => 80)
       .compactMarginBetween((d) => 45)
       .compactMarginPair((d) => 80)
-      .neighbourMargin((a, b) => 50)
+      .neighbourMargin((a, b) => 60)
+      .siblingsMargin((d) => 80)
       .nodeContent((d, i, arr, state) => generateContent(d))
       .nodeEnter(function (node) {
         d3.select(this).call(
