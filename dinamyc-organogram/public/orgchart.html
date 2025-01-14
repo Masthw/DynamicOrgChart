@@ -1043,6 +1043,40 @@
     applyFilters();
   }
 
+  //BUSCA
+  function filterChart(e) {
+    const value = e.target.value.toLowerCase();
+
+    // Limpa os destaques anteriores
+    chart.clearHighlighting();
+
+    const data = chart.data();
+
+    // Marca todos os nós como recolhidos
+    data.forEach((d) => {
+      (d._expanded = false), (d._highlighted = false);
+    });
+
+    // Verifica se o valor pesquisado está no nome, cargo ou departamento
+    data.forEach((d) => {
+      const name = d.name ? d.name.toLowerCase() : '';
+      const position = d.position ? d.position.toLowerCase() : '';
+      const department = d.department ? d.department.toLowerCase() : '';
+
+      if (
+        value !== '' &&
+        (name.includes(value) ||
+          position.includes(value) ||
+          department.includes(value))
+      ) {
+        d._highlighted = true; // Destaca o nó
+        d._expanded = true; // Expande o nó
+      }
+    });
+    // Atualiza e renderiza o organograma
+    chart.render().fit();
+  }
+
   //  gráficos
   let salaryDataOriginal = 0;
   let salaryChartInstance = null;
@@ -1141,26 +1175,25 @@
       display:flex;
       align-items:center;
       justify-content:center;
-
-    ">
+      ">
 
       <!-- Caixa principal do CEO ("Dedão") -->
       <div style="
-        width:150px;
-        height:150px;
-        border-top-left-radius:90px;
-        border-top-right-radius:90px;
-        border-bottom-left-radius:5px;
-        border-bottom-right-radius:5px;
-        border-bottom: 5px;
-        background-color: #F0F0F0;
-        overflow: hidden;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:flex-start;
-        padding-top:5px;
-        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+      width:150px;
+      height:150px;
+      border-top-left-radius:90px;
+      border-top-right-radius:90px;
+      border-bottom-left-radius:5px;
+      border-bottom-right-radius:5px;
+      border-bottom: 5px;
+      background-color: #F0F0F0;
+      overflow: hidden;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      padding-top:5px;
+      border: ${d.data._highlighted ? '4px solid #fffb00' : 'none'};
       ">
 
         <!-- Imagem do CEO -->
@@ -1204,7 +1237,6 @@
 
   function generateLeaderContent(d) {
     const leaderColor = getLeaderColor(d.data.id);
-
     return `
     <div class="leader-container" style="
       width:${d.width}px;
@@ -1212,6 +1244,7 @@
       display:flex;
       align-items:center;
       justify-content:center;
+       border: ${d.data._highlighted ? '4px solid #fffb00' : 'none'};
     ">
 
       <!-- Caixa principal do Líder -->
@@ -1273,6 +1306,7 @@
     const parentLeaderColor = d.data.parentId
       ? getLeaderColor(d.data.parentId)
       : '#716E7B';
+
     return `
          <div class="node-container" style='
           width:${d.width}px;
@@ -1280,6 +1314,7 @@
           display: flex;
           align-items: center;
           position: relative;
+           border: ${d.data._highlighted ? '4px solid #fffb00' : 'none'};
          '>
             <div class="content-container" style="
              display: flex;
@@ -1333,6 +1368,13 @@
     </div>
   </div>
   <div class="right-buttons">
+    <input
+      type="search"
+      placeholder="Buscar por nome, cargo ou departamento"
+      class="search-input"
+      oninput="filterChart(event)"
+    />
+
     <button id="filterButton" onclick="openFilterDialog()">Filtros</button>
   </div>
 </div>

@@ -250,6 +250,8 @@ input[type='text'] {
 .right-buttons {
   display: flex;
   justify-content: flex-end;
+  position: sticky;
+  z-index: 1000;
 }
 
 .filterButton button {
@@ -334,6 +336,22 @@ input[type='text'] {
   font-weight: bold;
   color: #ff4d4f;
   cursor: pointer;
+}
+
+/* busca */
+.search-input {
+  width: 300px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 /* alertas */
