@@ -840,7 +840,6 @@
 
     const personToDelete = chartData.find((node) => node.id === nodeId);
     if (!personToDelete) {
-      alert('Erro: Pessoa não encontrada.');
       return;
     }
 
@@ -876,6 +875,7 @@
     if (locationFilter)
       document.getElementById('locationFilter').value = locationFilter;
     applyFilters();
+    chart.render();
   }
 
   function redistributeChildren(oldParentId, newParentId) {
@@ -1118,18 +1118,31 @@
       },
     });
   }
-
-  function updateNodeTypes() {
-    const data = chart.data();
-
-    data.forEach((d) => {
-      // Se o nó tiver filhos, ele deve ser um Leader
-      if (d._children && d._children.length > 0) {
-        d.type = 'leader';
-      } else {
-        d.type = 'employee';
+  function getExpandedNodes() {
+    const expandedNodes = [];
+    chart.data().forEach((node) => {
+      if (node._expanded) {
+        expandedNodes.push(node.id);
       }
     });
+    return expandedNodes;
+  }
+
+  function restoreExpandedNodes(expandedNodes) {
+    chart.data().forEach((node) => {
+      node._expanded = expandedNodes.includes(node.id);
+    });
+    chart.render();
+  }
+
+  function forceChartUpdate() {
+    // Salva o estado de expansão
+    const expandedNodes = getExpandedNodes();
+
+    chart.nodeContent((d, i, arr, state) => generateContent(d));
+
+    chart.render();
+    restoreExpandedNodes(expandedNodes);
   }
 
   function saveChartState(id) {
@@ -1137,10 +1150,10 @@
       const updatedData = originalData;
       updatedData.forEach((d) => {
         delete d._highlighted;
-        delete d._expanded;
       });
       localStorage.setItem(`orgChartData_${id}`, JSON.stringify(updatedData));
       renderCharts(updatedData);
+      forceChartUpdate();
     }
   }
 
