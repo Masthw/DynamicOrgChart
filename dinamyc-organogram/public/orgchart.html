@@ -1326,26 +1326,42 @@
              border-radius: 10px;
              box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
       ">
-        <!-- Foto do Funcionário -->
-        <img src="${d.data.image}" style="
-          width:70px;
-          height:70px;
-          border-radius:50%;
-          object-fit:cover;
-          position: absolute;
-          left: -20px;
-          cursor: pointer;
-        " onclick="showOptionsMenu('${d.data.id}')"/>
 
-        <!-- Informações do Funcionário -->
-        <div style="display: flex; flex-direction: column; justify-content: center; margin-left: 60px;">
-          <div style="
-            font-size:14px;
-            font-weight:bold;
-            color:#08011E;
-          ">
-            ${d.data.name}
+      <!-- Foto do Funcionário -->
+      <img src="${d.data.image}" style="
+      width:70px;
+      height:70px;
+      border-radius:50%;
+      object-fit:cover;
+      position: absolute;
+      left: -20px;
+     "/>
+
+      <!-- Informações do Funcionário -->
+  <div style="display: flex; flex-direction: column; justify-content: center; margin-left: 60px; width: 100%;">
+
+          <!-- Nome e Botão de Opções na mesma linha -->
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <div style="
+              font-size:14px;
+              font-weight:bold;
+              color:#08011E;
+            ">
+              ${d.data.name}
+            </div>
+
+            <!-- Botão de Opções (três pontinhos) -->
+            <button class="node-options-btn" data-id="${d.data.id}" style="
+              background: none;
+              border: none;
+              font-size: 18px;
+              margin-right: 5px;
+              cursor: pointer;
+              color: ${parentLeaderColor};
+            " onclick="showOptionsMenu('${d.data.id}')">...</button>
           </div>
+
+          <!-- Cargo do Funcionário -->
           <div style="
             font-size:12px;
             color:${parentLeaderColor};
