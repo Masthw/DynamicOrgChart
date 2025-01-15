@@ -41,6 +41,7 @@ svg:not(:root) {
 
 .options-menu {
   z-index: 9999 !important;
+  overflow: visible;
 }
 
 .options-menu button {

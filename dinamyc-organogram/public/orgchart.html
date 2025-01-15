@@ -379,26 +379,19 @@
       activeMenu = null;
     }
 
-    const existingMenu = button.parentNode.querySelector('.options-menu');
-    if (existingMenu) {
-      existingMenu.remove();
-      return;
-    }
-
     const buttonRect = button.getBoundingClientRect();
 
     const menuHtml = `
         <div class="options-menu" style="
-       position: absolute;
-       top: ${buttonRect.bottom + window.scrollY}px;
-       left: ${buttonRect.left + window.scrollX}px;
+       position: fixed;
+       top: ${buttonRect.top}px;
+       left: ${buttonRect.left + buttonRect.width + 10}px;
        background: white;
        border: 1px solid #ccc;
        border-radius: 8px;
        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
        padding: 10px;
        min-width: 150px;
-       width: auto;
        z-index: 9999;
      ">
        <div style="margin-bottom: 8px;">
@@ -415,6 +408,22 @@
     document.body.appendChild(menuElement);
 
     activeMenu = { menuElement, button };
+
+    const menuRect = menuElement
+      .querySelector('.options-menu')
+      .getBoundingClientRect();
+
+    if (menuRect.right > window.innerWidth) {
+      menuElement.querySelector('.options-menu').style.left = `${
+        buttonRect.left - menuRect.width - 10
+      }px`;
+    }
+
+    if (menuRect.bottom > window.innerHeight) {
+      menuElement.querySelector('.options-menu').style.top = `${
+        buttonRect.top - menuRect.height
+      }px`;
+    }
 
     const infoButton = menuElement.querySelector('.info-btn');
     const addChildButton = menuElement.querySelector('.add-child-btn');
