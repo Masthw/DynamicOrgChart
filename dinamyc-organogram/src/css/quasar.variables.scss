@@ -12,17 +12,18 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary: #1976d2;
-$secondary: #26a69a;
-$accent: #9c27b0;
+$orange: #ff3700;
+$white: #ffffff;
+$blue: #0072ce;
+$gray: #414141;
+$purple: #460a78;
+$green: #6e9d3d;
+$red: #ee261b;
 
-$dark: #1d1d1d;
-$dark-page: #121212;
+$purple-gradient: #460a78;
+$red-gradient: #e63c41;
+$orange-gradient: #f58746;
 
-$positive: #21ba45;
-$negative: #c10015;
-$info: #31ccec;
-$warning: #f2c037;
-
-$background-gray: #b3b3b3;
-$background-blue: #375c8b;
+@mixin app-bar-gradient {
+  background: linear-gradient(to right, #460a78 13%, #e63c41 50%, #f58746 100%);
+}
