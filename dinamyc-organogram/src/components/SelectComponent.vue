@@ -35,6 +35,10 @@ export default {
       type: String,
       default: 'Selecione uma opção',
     },
+    modelValue: {
+      type: [String, Number],
+      default: '',
+    },
   },
   data() {
     return {
@@ -45,6 +49,14 @@ export default {
       arrowDownIcon,
     };
   },
+  watch: {
+    modelValue(newValue) {
+      const selectedOption = this.options.find(
+        (option) => option.value === newValue
+      );
+      this.selectedLabel = selectedOption ? selectedOption.label : '';
+    },
+  },
   methods: {
     toggleDropdown() {
       this.isOpen = !this.isOpen;
@@ -53,8 +65,14 @@ export default {
       this.selectedOption = option.value;
       this.selectedLabel = option.label;
       this.isOpen = false;
-      this.$emit('input', option.value); // Emite o valor selecionado
+      this.$emit('update:modelValue', option.value);
     },
+  },
+  created() {
+    const selectedOption = this.options.find(
+      (option) => option.value === this.modelValue
+    );
+    this.selectedLabel = selectedOption ? selectedOption.label : '';
   },
 };
 </script>
@@ -90,7 +108,7 @@ export default {
   padding: 10px;
   position: absolute;
   width: 100%;
-  background-color: white;
+  background-color: $white;
   border: 1px solid $background-white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-top: none;
@@ -105,11 +123,11 @@ export default {
   padding: 8px;
   cursor: pointer;
   &:hover {
-    background-color: #f0f0f0;
+    background-color: $background-white;
   }
 }
 
 .option-item.selected {
-  background-color: #e0e0e0;
+  background-color: $background-gray;
 }
 </style>

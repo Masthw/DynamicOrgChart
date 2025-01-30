@@ -45,9 +45,9 @@ export default {
       showSearch: false,
     };
   },
-  methods: {
-    onSelectChange() {
-      this.showSearch = this.selectedOption !== '';
+  watch: {
+    selectedOption(newVal) {
+      this.showSearch = newVal !== '';
     },
   },
 };
