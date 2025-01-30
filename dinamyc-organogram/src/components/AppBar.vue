@@ -4,15 +4,11 @@
     <router-link to="/" class="home-icon">
       <img src="../assets/icons/home_white.png" alt="Home" class="icon" />
     </router-link>
-    <select v-model="selectedOption" @change="onSelectChange">
-      <option
-        v-for="option in options"
-        :key="option.value"
-        :value="option.value"
-      >
-        {{ option.label }}
-      </option>
-    </select>
+    <SelectComponent
+      v-model="selectedOption"
+      :options="options"
+      placeholder="Selecione o Organograma"
+    />
     <SearchComponent v-if="showSearch" />
     <div class="icons">
       <img
@@ -31,10 +27,12 @@
 
 <script>
 import SearchComponent from './SearchComponent.vue';
+import SelectComponent from './SelectComponent.vue';
 
 export default {
   components: {
     SearchComponent,
+    SelectComponent,
   },
   data() {
     return {
