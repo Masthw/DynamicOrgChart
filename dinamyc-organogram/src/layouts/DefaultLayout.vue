@@ -14,6 +14,11 @@
 import AppBar from 'src/components/AppBar.vue';
 </script>
 
-<style scoped>
-/* Estilos opcionais */
+<style scoped lang="scss">
+.q-page-container {
+  height: calc(100vh - 75px);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
 </style>
