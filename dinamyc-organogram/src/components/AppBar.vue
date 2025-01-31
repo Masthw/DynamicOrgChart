@@ -58,6 +58,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 75px;
   padding: 15px;
   @include app-bar-gradient;
 }
