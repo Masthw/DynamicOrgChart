@@ -59,20 +59,45 @@ import TextFieldComponent from 'src/components/TextFieldComponent.vue';
 const router = useRouter();
 const orgchartName = ref('');
 const orgchartDescription = ref('');
+const isCreating = ref(false);
 
-// Função para criar o organograma
 const createOrgChart = () => {
+  // Se já está em processo de criação, sai imediatamente
+  if (isCreating.value) return;
+
+  // Se o campo estiver vazio, aborta
+  if (!orgchartName.value.trim()) return;
+
+  // Recupera os organogramas salvos
+  const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
+
+  // Verifica se já existe um organograma com o mesmo nome (comparação sem espaços e case-insensitive)
+  const nameExists = storedOrgCharts.some(
+    (o) =>
+      o.name.trim().toLowerCase() === orgchartName.value.trim().toLowerCase()
+  );
+
+  if (nameExists) {
+    alert(
+      'Já existe um organograma com esse nome. Por favor, escolha outro nome.'
+    );
+    return;
+  }
+
+  // Bloqueia novos cliques enquanto processa
+  isCreating.value = true;
+
+  // Gera um ID único (pode usar Date.now(), mas em produção considere outras abordagens)
   const newId = Date.now();
 
   const newOrgChart = {
     id: newId,
-    name: orgchartName.value,
+    name: orgchartName.value.trim(),
     description: orgchartDescription.value || '',
     modifiedDate: new Date().toLocaleDateString(),
   };
 
-  // Recupera organogramas salvos e adiciona o novo
-  const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
+  // Adiciona o novo organograma à lista e salva no localStorage
   storedOrgCharts.push(newOrgChart);
   localStorage.setItem('orgcharts', JSON.stringify(storedOrgCharts));
 
@@ -80,7 +105,6 @@ const createOrgChart = () => {
   router.push(`/orgchart/${newId}`);
 };
 
-// Voltar sem criar um organograma
 const goBack = () => {
   router.push('/');
 };
