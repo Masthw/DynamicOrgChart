@@ -156,8 +156,8 @@ onMounted(() => {
   const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
   orgcharts.value = storedOrgCharts.map((orgchart) => ({
     ...orgchart,
-    modifiedDate: new Date().toLocaleDateString(), // Adiciona data de modificação
-    description: 'Descrição do organograma.', // Adiciona descrição padrão
+    modifiedDate: orgchart.modifiedDate || new Date().toLocaleDateString(),
+    description: orgchart.description || '',
   }));
 });
 
@@ -295,12 +295,16 @@ const deleteOrgChart = (id) => {
   font-weight: 500;
   color: $gray;
   margin: 0.5rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .orgchart-description {
   font-size: 0.875rem;
   color: $gray;
   margin: 0.5rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .modification-date {
