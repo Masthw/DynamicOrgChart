@@ -3,6 +3,7 @@ import OrgChartPage from 'src/views/OrgChartPage.vue';
 import OrgChartDashboardPage from 'src/views/OrgChartDashboardPage.vue';
 import DefaultLayout from 'layouts/DefaultLayout.vue';
 import HomePage from '../views/HomePage.vue';
+import CreateOrgChartPage from 'src/views/CreateOrgChartPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -24,6 +25,10 @@ const routes: RouteRecordRaw[] = [
         props: true,
       },
     ],
+  },
+  {
+    path: '/orgchart/create',
+    component: CreateOrgChartPage,
   },
 ];
 

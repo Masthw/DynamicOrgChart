@@ -165,34 +165,8 @@ const setHoverIcon = (id, isHovered) => {
   hoverIcons.value[id] = isHovered;
 };
 
-// Adiciona um novo organograma
 const addNewOrgChart = () => {
-  const newId = Date.now(); // Gera um ID único
-  let baseName = 'Organograma';
-  let nameIndex = 1;
-  let newName = `${baseName} ${nameIndex}`;
-
-  // Verifica se o nome já existe e incrementa o índice
-  const existingNames = orgcharts.value.map((o) => o.name);
-  while (existingNames.includes(newName)) {
-    nameIndex += 1;
-    newName = `${baseName} ${nameIndex}`;
-  }
-
-  // Cria o novo organograma
-  const newOrgChart = {
-    id: newId,
-    name: newName,
-    modifiedDate: new Date().toLocaleDateString(),
-    description: 'Descrição do organograma.', // Descrição padrão
-  };
-
-  // Adiciona à lista e salva no localStorage
-  orgcharts.value.push(newOrgChart);
-  localStorage.setItem('orgcharts', JSON.stringify(orgcharts.value));
-
-  // Abre o organograma recém-criado
-  openOrgChart(newId);
+  router.push('/orgchart/create');
 };
 
 // Abre um organograma
