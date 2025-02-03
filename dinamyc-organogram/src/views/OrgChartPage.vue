@@ -1,19 +1,5 @@
 <template>
   <div>
-    <div class="header-wrapper">
-      <div class="header">
-        <q-btn
-          label="Voltar ao Dashboard"
-          icon="arrow_back"
-          color="secondary"
-          unelevated
-          @click="goToDashboard"
-        />
-        <h3 class="header-title">
-          {{ orgchart?.name || 'Carregando...' }}
-        </h3>
-      </div>
-    </div>
     <div class="orgchart-wrapper">
       <OrgChart v-if="orgchart" :data="orgchart.data" />
     </div>
@@ -57,34 +43,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.header-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  background-color: $background-gray;
-  height: 50px;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5em 1em;
-  background-color: $background-gray;
-  height: 100%;
-}
-
-.header q-btn {
-  margin-left: 10px;
-}
-
-.header-title {
-  font-size: 1rem;
-  margin-right: 10px;
-  color: #333;
-  font-weight: normal;
-}
-</style>
+<style scoped lang="scss"></style>
