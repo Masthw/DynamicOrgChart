@@ -282,8 +282,9 @@ const deleteOrgChart = (id) => {
 
   &:hover {
     background-color: $orange;
+    border: none;
     .icon {
-      filter: brightness(0) invert(1); /* Torna o ícone branco */
+      filter: brightness(0) invert(1);
     }
   }
 }
