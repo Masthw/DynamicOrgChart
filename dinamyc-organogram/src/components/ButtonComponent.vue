@@ -1,12 +1,13 @@
 <template>
   <button :class="['custom-button', variant]" @click="$emit('click')">
-    <q-icon v-if="icon" :name="icon" class="button-icon" size="18px" />
+    <img v-if="icon" :src="icon" :alt="label" class="button-icon" />
     <span class="button-text">{{ label }}</span>
   </button>
 </template>
 
 <script setup>
-defineProps({
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const props = defineProps({
   label: {
     type: String,
     required: true,
@@ -17,7 +18,7 @@ defineProps({
   },
   variant: {
     type: String,
-    default: 'primary', // 'primary' ou 'secondary'
+    default: 'primary',
     validator: (value) => ['primary', 'secondary'].includes(value),
   },
 });
@@ -29,7 +30,6 @@ defineProps({
   align-items: center;
   justify-content: center;
   padding: 0.75rem 1.5rem;
-
   border-radius: 20px;
   font-size: 14px;
   cursor: pointer;
@@ -39,10 +39,17 @@ defineProps({
     background-color: $white;
     color: $orange;
     border: 1px solid $orange;
+    .button-icon {
+      filter: brightness(0) saturate(100%) invert(28%) sepia(81%)
+        saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
+    }
 
     &:hover {
       background-color: $orange;
       color: $white;
+      .button-icon {
+        filter: brightness(0) invert(1);
+      }
     }
   }
 
@@ -50,14 +57,24 @@ defineProps({
     background-color: $orange;
     color: $white;
     border: 1px solid $orange;
+    .button-icon {
+      filter: brightness(0) invert(1);
+    }
 
     &:hover {
       background-color: $white;
       color: $orange;
+
+      .button-icon {
+        filter: brightness(0) saturate(100%) invert(28%) sepia(81%)
+          saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
+      }
     }
   }
 
   .button-icon {
+    width: 18px;
+    height: 18px;
     margin-right: 0.5rem;
   }
 
