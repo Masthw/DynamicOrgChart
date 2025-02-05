@@ -282,12 +282,16 @@ const deleteOrgChart = (id) => {
 
   &:hover {
     background-color: $orange;
+    .icon {
+      filter: brightness(0) invert(1); /* Torna o ícone branco */
+    }
   }
 }
 
 .orgchart-icon .icon {
   width: 35px;
   height: 35px;
+  transition: filter 0.3s ease;
 }
 
 .orgchart-name {
@@ -331,6 +335,9 @@ const deleteOrgChart = (id) => {
 
   &:hover {
     background-color: $orange;
+    .action-icon {
+      filter: brightness(0) invert(1);
+    }
   }
 }
 
@@ -338,6 +345,7 @@ const deleteOrgChart = (id) => {
   width: 24px;
   height: 24px;
   cursor: pointer;
+  transition: filter 0.1s ease;
 }
 
 .orgchart-empty-card {
