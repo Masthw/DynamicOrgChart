@@ -145,9 +145,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { emitter } from 'src/eventBus';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
 
-const orgcharts = ref([]); // Lista de organogramas
+const orgcharts = ref([]);
 const router = useRouter();
 const hoverIcons = ref({});
 
@@ -161,6 +162,12 @@ onMounted(() => {
   }));
 });
 
+const updateOrgCharts = (newList) => {
+  orgcharts.value = newList;
+  localStorage.setItem('orgcharts', JSON.stringify(newList));
+  emitter.emit('orgcharts-updated');
+};
+
 const setHoverIcon = (id, isHovered) => {
   hoverIcons.value[id] = isHovered;
 };
@@ -172,6 +179,7 @@ const addNewOrgChart = () => {
 // Abre um organograma
 const openOrgChart = (id) => {
   console.log(`Abrindo organograma com ID: ${id}`);
+  emitter.emit('orgchart-selected', id);
   router.push(`/orgchart/${id}`);
 };
 
@@ -200,9 +208,7 @@ const deleteOrgChart = (id) => {
   const updatedOrgCharts = orgcharts.value.filter(
     (orgchart) => orgchart.id !== id
   );
-  orgcharts.value = updatedOrgCharts;
-  localStorage.setItem('orgcharts', JSON.stringify(updatedOrgCharts));
-  console.log(`Organograma com ID ${id} excluído`);
+  updateOrgCharts(updatedOrgCharts);
 };
 </script>
 

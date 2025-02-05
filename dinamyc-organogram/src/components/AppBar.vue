@@ -2,7 +2,12 @@
   <div class="app-bar">
     <img src="../assets/images/organiza_ai_logo.png" alt="Logo" class="logo" />
     <router-link to="/" class="home-icon">
-      <img src="../assets/icons/home_white.png" alt="Home" class="icon" />
+      <img
+        src="../assets/icons/home_white.png"
+        alt="Home"
+        class="icon"
+        @click="clearSelection"
+      />
     </router-link>
     <SelectComponent
       v-model="selectedOption"
@@ -28,6 +33,7 @@
 <script>
 import SearchComponent from './SearchComponent.vue';
 import SelectComponent from './SelectComponent.vue';
+import { emitter } from 'src/eventBus';
 
 export default {
   components: {
@@ -37,17 +43,43 @@ export default {
   data() {
     return {
       selectedOption: '',
-      options: [
-        { value: 'option1', label: 'Opção 1' },
-        { value: 'option2', label: 'Opção 2' },
-        { value: 'option3', label: 'Opção 3' },
-      ],
+      options: [],
       showSearch: false,
     };
+  },
+  created() {
+    this.loadOrgCharts();
+    emitter.on('orgcharts-updated', this.loadOrgCharts);
+    emitter.on('orgchart-selected', (id) => {
+      this.selectedOption = id;
+    });
+  },
+
+  methods: {
+    loadOrgCharts() {
+      // Recupera os organogramas salvos do localStorage
+      const storedOrgCharts =
+        JSON.parse(localStorage.getItem('orgcharts')) || [];
+      if (storedOrgCharts.length > 0) {
+        this.options = storedOrgCharts.map((orgchart) => ({
+          value: orgchart.id,
+          label: orgchart.name,
+        }));
+      } else {
+        this.options = [];
+      }
+    },
+    clearSelection() {
+      this.selectedOption = '';
+    },
   },
   watch: {
     selectedOption(newVal) {
       this.showSearch = newVal !== '';
+      if (newVal) {
+        // Quando uma opção é selecionada, pode-se abrir a página automaticamente
+        this.$router.push(`/orgchart/${newVal}`);
+      }
     },
   },
 };
