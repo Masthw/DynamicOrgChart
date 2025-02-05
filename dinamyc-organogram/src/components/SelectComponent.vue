@@ -9,6 +9,9 @@
       />
     </div>
     <div v-if="isOpen" class="options-list">
+      <div v-if="options.length === 0" class="empty-option">
+        Nenhum organograma cadastrado
+      </div>
       <div
         v-for="option in options"
         :key="option.value"
