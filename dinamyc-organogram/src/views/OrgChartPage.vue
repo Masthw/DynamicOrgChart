@@ -8,7 +8,7 @@
 
 <script>
 import OrgChart from 'components/OrgChart.vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 
 export default {
@@ -16,7 +16,6 @@ export default {
     OrgChart,
   },
   setup() {
-    const router = useRouter();
     const route = useRoute();
     const orgchart = ref(null);
     // Carregar dados do organograma baseado no ID
@@ -24,20 +23,10 @@ export default {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
       const orgChartId = route.params.id;
       orgchart.value = orgcharts.find((o) => o.id === Number(orgChartId));
-
-      if (!orgchart.value) {
-        console.error(`Organograma com ID ${orgChartId} não encontrado.`);
-        router.push('/dashboard'); // Redireciona se o organograma não existir
-      }
     });
-
-    const goToDashboard = () => {
-      router.push('/dashboard');
-    };
 
     return {
       orgchart,
-      goToDashboard,
     };
   },
 };

@@ -1,6 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
 import OrgChartPage from 'src/views/OrgChartPage.vue';
-import OrgChartDashboardPage from 'src/views/OrgChartDashboardPage.vue';
 import DefaultLayout from 'layouts/DefaultLayout.vue';
 import HomePage from '../views/HomePage.vue';
 import CreateOrgChartPage from 'src/views/CreateOrgChartPage.vue';
@@ -13,11 +12,6 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         component: HomePage,
-      },
-
-      {
-        path: '/dashboard',
-        component: OrgChartDashboardPage,
       },
       {
         path: '/orgchart/:id',
