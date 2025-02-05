@@ -1,7 +1,6 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <link rel="stylesheet" href="src/css/styles.css" />
 
@@ -79,14 +78,10 @@
       .nodeUpdate(function (d) {
         d3.select(this).classed('droppable', true).classed('draggable', true);
       })
-      .linkUpdate(function (linkData, index, links) {
-        d3.select(links[index]).attr('stroke', '#FF5733');
-      })
       .container('.chart-container')
       .data(data)
       .render();
 
-    renderCharts(data);
     addNodeEventListeners();
   }
 
@@ -1082,36 +1077,6 @@
     );
   }
 
-  function renderCharts(data) {
-    salaryDataOriginal = calculateSalaryData(data);
-    const ctxSalary = document.getElementById('salaryChart').getContext('2d');
-    if (salaryChartInstance) {
-      salaryChartInstance.destroy();
-    }
-    salaryChartInstance = new Chart(ctxSalary, {
-      type: 'bar',
-      data: {
-        labels: ['Salários'],
-        datasets: [
-          {
-            label: 'Custo Total de Salários',
-            data: [salaryDataOriginal],
-            backgroundColor: ['rgba(75, 192, 192, 0.2)'],
-            borderColor: ['rgba(75, 192, 192, 1)'],
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
-        },
-      },
-    });
-  }
   function getExpandedNodes() {
     const expandedNodes = [];
     chart.data().forEach((node) => {
@@ -1147,7 +1112,6 @@
       });
       localStorage.setItem(`orgChartData_${id}`, JSON.stringify(updatedData));
       forceChartUpdate();
-      renderCharts(updatedData);
     }
   }
 
@@ -1180,246 +1144,45 @@
   }
 
   function generateContent(d) {
-    const isCEO = !d.data.parentId;
-    const hasSubordinates = d.data._directSubordinates > 0;
-
-    if (isCEO) {
-      return generateCEOContent(d);
-    } else if (hasSubordinates) {
-      return generateLeaderContent(d);
-    } else {
-      return generateEmployeeContent(d);
-    }
-  }
-
-  function generateCEOContent(d) {
+    const color = '#FFFFFF';
+    const imageDiffVert = 25 + 2;
     return `
-    <div class="ceo-container" style="
+      <div class="node-container" style='
       width:${d.width}px;
       height:${d.height}px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    ">
+      padding-top:${imageDiffVert - 2}px;
+      padding-left:1px;
+      padding-right:1px'>
+              <div class="content-container" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
+                d.width - 2
+              }px;height:${
+      d.height - imageDiffVert
+    }px;border-radius:10px;border: ${
+      d.data._highlighted || d.data._upToTheRootHighlighted
+        ? '5px solid #E27396"'
+        : '1px solid #E4E2E9"'
+    } >
+                  <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px">#${
+                    d.data.id
+                  }</div>
+                  <div  style="margin-top:${
+                    -imageDiffVert - 20
+                  }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
+                  <div style="margin-top:${
+                    -imageDiffVert - 20
+                  }px;">   <img src=" ${
+      d.data.image
+    }" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" /></div>
+                  <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${
+                    d.data.name
+                  } </div>
+                  <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
+                    d.data.position
+                  } </div>
 
-      <!-- Caixa principal do CEO ("Dedão") -->
-      <div style="
-        width:150px;
-        height:150px;
-        border-top-left-radius:90px;
-        border-top-right-radius:90px;
-        border-bottom-left-radius:5px;
-        border-bottom-right-radius:5px;
-        border-bottom: 5px;
-        background-color: #F0F0F0;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        padding-top:5px;
-        border: ${d.data._highlighted ? '4px solid #fffb00' : 'none'};
-      ">
-
-        <!-- Botão de Opções (três pontinhos) -->
-        <button class="node-options-btn" data-id="${d.data.id}" style="
-          position: absolute;
-          top: 50px;
-          right: 8px;
-          background: none;
-          border: none;
-          font-size: 18px;
-          cursor: pointer;
-          color: #414341;
-        " onclick="showOptionsMenu('${d.data.id}')">...</button>
-
-        <!-- Imagem do CEO -->
-        <img src="${d.data.image}" style="
-          width:70px;
-          height:70px;
-          border-radius:50%;
-          object-fit:cover;
-          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        " />
-
-        <!-- Nome do CEO -->
-        <div style="
-          width:110px;
-          background-color:#414341;
-          color:white;
-          font-size:14px;
-          font-weight:bold;
-          text-align:center;
-          padding:6px 0;
-          margin-top:10px;
-          border-radius: 4px;
-          box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
-        ">
-          ${d.data.name}
-        </div>
-
-        <!-- Cargo do CEO -->
-        <div style="
-          font-size:12px;
-          color:#555;
-          margin-top:8px;
-          text-align:center;
-        ">
-          ${d.data.position}
-        </div>
-
-      </div>
-    </div>
-  `;
-  }
-
-  function generateLeaderContent(d) {
-    const leaderColor = getLeaderColor(d.data.id);
-    return `
-    <div class="leader-container" style="
-      width:${d.width}px;
-      height:${d.height}px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      position: relative;
-      border: ${d.data._highlighted ? '4px solid #fffb00' : 'none'};
-    ">
-
-      <!-- Caixa principal do Líder -->
-      <div style="
-        width:200px;
-        height:150px;
-        border-radius:15px;
-        background-color: #F0F0F0;
-        overflow: hidden;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:flex-start;
-        padding-top:5px;
-        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
-      ">
-
-        <!-- Botão de Opções (três pontinhos) -->
-        <button class="node-options-btn" data-id="${d.data.id}" style="
-          position: absolute;
-          top: 5px;
-          right: 5px;
-          background: none;
-          border: none;
-          font-size: 18px;
-          cursor: pointer;
-          color: ${leaderColor};
-        " onclick="showOptionsMenu('${d.data.id}')">...</button>
-
-        <!-- Imagem do Líder -->
-        <img src="${d.data.image}" style="
-          width:70px;
-          height:70px;
-          border-radius:50%;
-          object-fit:cover;
-          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        " />
-
-        <!-- Nome do Líder -->
-        <div style="
-          width:110px;
-          background-color:${leaderColor};
-          color:white;
-          font-size:14px;
-          font-weight:bold;
-          text-align:center;
-          padding:6px 0;
-          margin-top:10px;
-          border-radius: 4px;
-          box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
-        ">
-          ${d.data.name}
-        </div>
-
-        <!-- Cargo do Líder -->
-        <div style="
-          font-size:12px;
-          color:#555;
-          margin-top:8px;
-          text-align:center;
-        ">
-          ${d.data.position}
-        </div>
-
-      </div>
-    </div>
-  `;
-  }
-
-  function generateEmployeeContent(d) {
-    const parentLeaderColor = d.data.parentId
-      ? getLeaderColor(d.data.parentId)
-      : '#716E7B';
-
-    return `
-    <div class="node-container" style='
-      width:${d.width}px;
-      height:${d.height}px;
-      display: flex;
-      align-items: center;
-      position: relative;
-      border: ${d.data._highlighted ? '4px solid #fffb00' : 'none'};
-    '>
-      <div class="content-container" style="
-        display: flex;
-        align-items: center;
-        background-color: #F0F0F0;
-        width: 100%;
-        height: 100%;
-        border-radius: 10px;
-        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-      ">
-
-        <!-- Botão de Opções (três pontinhos) -->
-        <button class="node-options-btn" data-id="${d.data.id}" style="
-          position: absolute;
-          top: 5px;
-          right: 5px;
-          background: none;
-          border: none;
-          font-size: 18px;
-          cursor: pointer;
-          color: ${parentLeaderColor};
-        " onclick="showOptionsMenu('${d.data.id}')">...</button>
-
-        <!-- Foto do Funcionário -->
-        <img src="${d.data.image}" style="
-          width:70px;
-          height:70px;
-          border-radius:50%;
-          object-fit:cover;
-          position: absolute;
-          left: -20px;
-          cursor: pointer;
-        " onclick="showOptionsMenu('${d.data.id}')"/>
-
-        <!-- Informações do Funcionário -->
-        <div style="display: flex; flex-direction: column; justify-content: center; margin-left: 60px;">
-          <div style="
-            font-size:14px;
-            font-weight:bold;
-            color:#08011E;
-          ">
-            ${d.data.name}
+              </div>
           </div>
-          <div style="
-            font-size:12px;
-            color:${parentLeaderColor};
-          ">
-            ${d.data.position}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
+      `;
   }
 </script>
 <div class="controls">
