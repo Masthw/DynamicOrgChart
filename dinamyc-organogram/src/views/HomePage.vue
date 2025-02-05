@@ -8,7 +8,7 @@
       </h1>
       <ButtonComponent
         label="Criar Nova Simulação"
-        icon="add"
+        icon="src/assets/icons/add.png"
         variant="primary"
         @click="addNewOrgChart"
       />
@@ -27,7 +27,7 @@
           </p>
           <ButtonComponent
             label="Criar Nova Simulação"
-            icon="add"
+            icon="src/assets/icons/add.png"
             variant="primary"
             @click="addNewOrgChart"
           />
