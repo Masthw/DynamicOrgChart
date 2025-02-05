@@ -93,7 +93,10 @@ const createOrgChart = () => {
   // Adiciona o novo organograma à lista e salva no localStorage
   storedOrgCharts.push(newOrgChart);
   localStorage.setItem('orgcharts', JSON.stringify(storedOrgCharts));
-  emitter.emit('orgcharts-updated');
+  setTimeout(() => {
+    emitter.emit('orgcharts-updated');
+    emitter.emit('orgchart-selected', newId);
+  }, 100);
   router.push(`/orgchart/${newId}`);
 };
 
