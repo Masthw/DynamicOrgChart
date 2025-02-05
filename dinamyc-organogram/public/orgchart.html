@@ -35,30 +35,8 @@
 
     // Configura e renderiza o gráfico de organograma
     chart = new d3.OrgChart()
-      .nodeHeight((d) => {
-        const isCEO = !d.data.parentId;
-        const hasSubordinates = d.data._directSubordinates > 0;
-
-        if (isCEO) {
-          return 150;
-        } else if (hasSubordinates) {
-          return 150;
-        } else {
-          return 80;
-        }
-      })
-      .nodeWidth((d) => {
-        const isCEO = !d.data.parentId;
-        const hasSubordinates = d.data._directSubordinates > 0;
-
-        if (isCEO) {
-          return 155;
-        } else if (hasSubordinates) {
-          return 200;
-        } else {
-          return 220;
-        }
-      })
+      .nodeHeight((d) => 125)
+      .nodeWidth((d) => 220 + 2)
       .childrenMargin((d) => 80)
       .compactMarginBetween((d) => 45)
       .compactMarginPair((d) => 80)
