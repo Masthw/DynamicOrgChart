@@ -19,6 +19,6 @@ import AppBar from 'src/components/AppBar.vue';
   height: calc(100vh - 75px);
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow: hidden;
 }
 </style>
