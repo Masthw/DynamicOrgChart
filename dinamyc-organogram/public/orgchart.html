@@ -1157,15 +1157,32 @@
     }
   }
 
+  function getNodeColor(d) {
+    // Se não há pai, é o CEO
+    if (!d.parent) {
+      return '#000000';
+    }
+    // Se o pai é o CEO (ou seja, d.parent não tem pai), este é um líder
+    else if (!d.parent.parent) {
+      // Se ainda não foi definido, gera e armazena a cor para este líder
+      if (!d.data.circleColor) {
+        d.data.circleColor = getLeaderColor(d.data.id);
+      }
+      return d.data.circleColor;
+    }
+    // Para outros nós, herda a cor do pai
+    else {
+      return d.parent.data.circleColor || getNodeColor(d.parent);
+    }
+  }
+
   function getLeaderColor(leaderId) {
     const storedColors = JSON.parse(localStorage.getItem('leaderColors')) || {};
 
-    // Se já existe uma cor para o líder, retorna ela
     if (storedColors[leaderId]) {
       return storedColors[leaderId];
     }
 
-    // Se não existir, gera uma nova e salva
     const newColor = generateRandomColor();
     storedColors[leaderId] = newColor;
     localStorage.setItem('leaderColors', JSON.stringify(storedColors));
@@ -1187,7 +1204,7 @@
 
   function generateContent(d) {
     const color = '#FFFFFF';
-    const imageDiffVert = 25 + 2;
+    const imageDiffVert = 27;
     return `
       <div class="node-container" style='
       width:${d.width}px;
@@ -1204,9 +1221,9 @@
         ? '5px solid #E27396"'
         : '1px solid #E4E2E9"'
     } >
-                  <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px">#${
-                    d.data.id
-                  }</div>
+                  <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(
+                    d
+                  )};"></div></div>
                   <div  style="margin-top:${
                     -imageDiffVert - 20
                   }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
