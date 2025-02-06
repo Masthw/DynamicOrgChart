@@ -29,3 +29,12 @@ $orange-gradient: #f58746;
 @mixin app-bar-gradient {
   background: linear-gradient(to right, #460a78 13%, #e63c41 50%, #f58746 100%);
 }
+
+@mixin gradient {
+  background: linear-gradient(
+    to bottom,
+    #460a78 13%,
+    #e63c41 50%,
+    #f58746 100%
+  );
+}
