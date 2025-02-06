@@ -33,7 +33,7 @@
     initializeFilters(data);
     console.log(data);
 
-    // Configura e renderiza o gráfico de organograma
+    // Configura e renderiza o organograma
     chart = new d3.OrgChart()
       .nodeHeight((d) => 125)
       .nodeWidth((d) => 220 + 2)
@@ -43,6 +43,21 @@
       .neighbourMargin((a, b) => 60)
       .siblingsMargin((d) => 80)
       .nodeContent((d, i, arr, state) => generateContent(d))
+      .buttonContent(({ node, state }) => {
+        const totalPeople = node.data._totalSubordinates;
+        const totalDepartments = countDepartments(node);
+        return `
+      <div class="button-content">
+        <span class="people">
+         <img src="src/assets/icons/person.png"/> ${totalPeople}
+        </span>
+        <span class="separator">|</span>
+        <span class="departments">
+         <img src="src/assets/icons/corporate_fare.png"/> ${totalDepartments}
+        </span>
+      </div>
+    `;
+      })
       .nodeEnter(function (node) {
         d3.select(this).call(
           d3
@@ -331,6 +346,45 @@
     } else {
       redoButton.disabled = true;
     }
+  }
+
+  function countDescendants(node) {
+    if (!node.children || node.children.length === 0) return 0;
+    return node.children.reduce(
+      (acc, child) => acc + 1 + countDescendants(child),
+      0
+    );
+  }
+
+  function countDepartments(node) {
+    const deptSet = new Set();
+    function traverse(n) {
+      const children = n.children || n._children;
+      if (children && children.length) {
+        children.forEach((child) => {
+          if (child.data && child.data.department_id) {
+            deptSet.add(child.data.department_id);
+          }
+          traverse(child);
+        });
+      }
+    }
+    let initialChildren = node.children || node._children;
+    // Caso a árvore original esteja armazenada em node.data.children (dependendo de como você estruturou os dados):
+    if (!initialChildren && node.data && node.data.children) {
+      initialChildren = node.data.children;
+    }
+
+    if (initialChildren && initialChildren.length) {
+      initialChildren.forEach((child) => {
+        if (child.data && child.data.department_id) {
+          deptSet.add(child.data.department_id);
+        }
+        traverse(child);
+      });
+    }
+
+    return deptSet.size;
   }
 
   let activeMenu = null;
@@ -1167,6 +1221,9 @@
                   <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
                     d.data.position
                   } </div>
+                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
+                      'R$ ' + d.data.salary
+                    } </div>
 
               </div>
           </div>

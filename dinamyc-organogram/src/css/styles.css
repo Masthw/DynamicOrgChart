@@ -553,3 +553,34 @@ input[type='text'] {
     font-size: 0.9em;
   }
 }
+.button-content {
+  position: relative;
+  top: 10px;
+  left: -5px;
+  height: fit-content;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #414141;
+  padding: 2px 4px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.button-content .people,
+.button-content .departments {
+  display: flex;
+  align-items: center;
+}
+
+.button-content .people img,
+.button-content .departments img {
+  height: 10px;
+  width: 10px;
+}
+
+.button-content .separator {
+  margin: 0 4px;
+}
