@@ -33,6 +33,20 @@
     <div class="orgchart-wrapper">
       <OrgChart v-if="orgchart" :key="orgchart.id" :data="orgchart.data" />
     </div>
+    <div class="legend-container">
+      <div class="legend-item">
+        <span class="legend-color legend-allowed"></span>
+        <span class="legend-label">Simulação Permitida</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color legend-allowed-with-reason"></span>
+        <span class="legend-label">Simulação Permitida com Justificativa</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color legend-not-allowed"></span>
+        <span class="legend-label">Simulação Não Permitida</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -92,5 +106,47 @@ export default {
 .button-group {
   display: flex;
   gap: 0.5rem;
+}
+
+.legend-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-allowed {
+  background-color: $green;
+}
+
+.legend-allowed-with-reason {
+  @include gradient;
+}
+
+.legend-not-allowed {
+  background-color: $red;
+}
+
+.legend-label {
+  font-size: 14px;
+  color: #333;
 }
 </style>
