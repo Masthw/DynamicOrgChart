@@ -1,21 +1,36 @@
 <template>
   <div class="orgchart-container">
     <!-- Iframe que carrega o arquivo orgchart.html -->
-    <iframe :src="orgChartUrl" frameborder="0" title="Org Chart"></iframe>
+    <iframe
+      :key="orgChartId"
+      :src="orgChartUrl"
+      frameborder="0"
+      title="Org Chart"
+    ></iframe>
   </div>
 </template>
 
 <script>
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 export default {
   name: 'OrgChart',
   setup() {
     const route = useRoute();
-    const orgChartId = route.params.id;
+    const orgChartId = ref(route.params.id);
+    const orgChartUrl = ref(`/orgchart.html#${orgChartId.value}`);
 
-    const orgChartUrl = `/orgchart.html#${orgChartId}`;
+    watch(
+      () => route.params.id,
+      (newId) => {
+        orgChartId.value = newId;
+        orgChartUrl.value = `/orgchart.html#${newId}`;
+      }
+    );
+
     return {
+      orgChartId,
       orgChartUrl,
     };
   },

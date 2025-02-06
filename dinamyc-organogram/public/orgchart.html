@@ -63,6 +63,16 @@
     addNodeEventListeners();
   }
 
+  window.addEventListener('hashchange', () => {
+    const orgChartId = window.location.hash.substring(1);
+    const savedData = localStorage.getItem(`orgChartData_${orgChartId}`);
+
+    if (savedData) {
+      const data = JSON.parse(savedData);
+      initializeChart(data);
+    }
+  });
+
   function getOrgChartIdFromURL() {
     const hash = window.location.hash; // Captura a parte após o #
     if (!hash) {

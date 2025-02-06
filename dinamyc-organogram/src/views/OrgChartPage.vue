@@ -31,7 +31,7 @@
     </div>
     <!-- Área do Organograma -->
     <div class="orgchart-wrapper">
-      <OrgChart v-if="orgchart" :data="orgchart.data" />
+      <OrgChart v-if="orgchart" :key="orgchart.id" :data="orgchart.data" />
     </div>
   </div>
 </template>
@@ -39,7 +39,7 @@
 <script>
 import OrgChart from 'components/OrgChart.vue';
 import { useRoute } from 'vue-router';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
 
 export default {
@@ -50,11 +50,21 @@ export default {
   setup() {
     const route = useRoute();
     const orgchart = ref(null);
-    onMounted(() => {
+
+    const loadOrgChart = () => {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
-      const orgChartId = route.params.id;
-      orgchart.value = orgcharts.find((o) => o.id === Number(orgChartId));
-    });
+      const orgChartId = Number(route.params.id);
+      orgchart.value = orgcharts.find((o) => o.id === orgChartId);
+    };
+
+    onMounted(loadOrgChart);
+
+    watch(
+      () => route.params.id,
+      (orgChartId) => {
+        loadOrgChart(orgChartId);
+      }
+    );
 
     return {
       orgchart,

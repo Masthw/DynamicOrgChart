@@ -76,9 +76,9 @@ export default {
   watch: {
     selectedOption(newVal) {
       this.showSearch = newVal !== '';
-      if (newVal) {
-        // Quando uma opção é selecionada, pode-se abrir a página automaticamente
-        this.$router.push(`/orgchart/${newVal}`);
+      if (newVal && this.$route.params.id !== newVal) {
+        // Força a navegação mesmo se já estiver na mesma rota
+        this.$router.push({ path: `/orgchart/${newVal}`, force: true });
       }
     },
   },
