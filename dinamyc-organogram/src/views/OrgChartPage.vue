@@ -33,18 +33,20 @@
     <div class="orgchart-wrapper">
       <OrgChart v-if="orgchart" :key="orgchart.id" :data="orgchart.data" />
     </div>
-    <div class="legend-container">
-      <div class="legend-item">
-        <span class="legend-color legend-allowed"></span>
-        <span class="legend-label">Simulação Permitida</span>
+    <div class="subtitle-container">
+      <div class="subtitle-item">
+        <span class="subtitle-color subtitle-allowed"></span>
+        <span class="subtitle-label">Simulação Permitida</span>
       </div>
-      <div class="legend-item">
-        <span class="legend-color legend-allowed-with-reason"></span>
-        <span class="legend-label">Simulação Permitida com Justificativa</span>
+      <div class="subtitle-item">
+        <span class="subtitle-color subtitle-allowed-with-reason"></span>
+        <span class="subtitle-label"
+          >Simulação Permitida com Justificativa</span
+        >
       </div>
-      <div class="legend-item">
-        <span class="legend-color legend-not-allowed"></span>
-        <span class="legend-label">Simulação Não Permitida</span>
+      <div class="subtitle-item">
+        <span class="subtitle-color subtitle-not-allowed"></span>
+        <span class="subtitle-label">Simulação Não Permitida</span>
       </div>
     </div>
   </div>
@@ -108,7 +110,7 @@ export default {
   gap: 0.5rem;
 }
 
-.legend-container {
+.subtitle-container {
   position: fixed;
   bottom: 20px;
   left: 20px;
@@ -120,33 +122,34 @@ export default {
   z-index: 1000;
 }
 
-.legend-item {
+.subtitle-item {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.legend-color {
+.subtitle-color {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   display: inline-block;
 }
 
-.legend-allowed {
+.subtitle-allowed {
   background-color: $green;
 }
 
-.legend-allowed-with-reason {
+.subtitle-allowed-with-reason {
   @include gradient;
 }
 
-.legend-not-allowed {
+.subtitle-not-allowed {
   background-color: $red;
 }
 
-.legend-label {
+.subtitle-label {
   font-size: 14px;
-  color: #333;
+  color: $gray;
+  font-weight: bold;
 }
 </style>
