@@ -1248,26 +1248,39 @@
   }
 </script>
 <div class="controls">
-  <div class="drag-controls">
-    <button id="enableDragButton" onclick="enableDrag()">Organizar</button>
-    <div id="dragActions" class="hide">
-      <button id="finishDrag" onclick="disableDrag()">Salvar</button>
-      <button id="undoButton" disabled onclick="undo()">Desfazer</button>
-      <button id="redoButton" disabled onclick="redo()">Refazer</button>
-      <button id="cancelDrag" onclick="cancelDrag()">Cancelar</button>
-    </div>
-  </div>
-  <div class="right-buttons">
-    <input
-      type="search"
-      placeholder="Buscar por nome, cargo ou departamento"
-      class="search-input"
-      oninput="filterChart(event)"
-    />
+  <div class="left-buttons">
+    <!-- Organizar (com ícone antes) -->
+    <button id="enableDragButton" onclick="enableDrag()">
+      <img src="src/assets/icons/map_search.png" alt="Organizar" />
+      Organizar
+    </button>
 
-    <button id="filterButton" onclick="openFilterDialog()">Filtros</button>
+    <!-- Filtro (botão circular) -->
+    <button id="filterButton" class="icon-button" onclick="openFilterDialog()">
+      <img src="src/assets/icons/lan.png" alt="Filtros" />
+    </button>
+    <!-- Zoom In -->
+    <button class="icon-button" onclick="chart.zoomIn()">
+      <img src="src/assets/icons/zoom_in.png" alt="Zoom In" />
+    </button>
+
+    <!-- Zoom Out -->
+    <button class="icon-button" onclick="chart.zoomOut()">
+      <img src="src/assets/icons/zoom_out.png" alt="Zoom Out" />
+    </button>
+    <button id="resetViewButton" class="icon-button" onclick="resetView()">
+      Redefinir Visualização
+    </button>
   </div>
 </div>
+
+<div id="dragActions" class="hide">
+  <button id="finishDrag" onclick="disableDrag()">Salvar</button>
+  <button id="undoButton" disabled onclick="undo()">Desfazer</button>
+  <button id="redoButton" disabled onclick="redo()">Refazer</button>
+  <button id="cancelDrag" onclick="cancelDrag()">Cancelar</button>
+</div>
+
 <div id="appliedFilters" class="applied-filters"></div>
 <div class="chart-container"></div>
 
