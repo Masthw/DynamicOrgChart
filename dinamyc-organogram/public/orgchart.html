@@ -1109,41 +1109,14 @@
     chart.render().fit();
   }
 
-  //  gráficos
-  let salaryDataOriginal = 0;
-  let salaryChartInstance = null;
-  function calculateSalaryData(data) {
-    return data.reduce(
-      (total, person) => total + parseFloat(person.salary || 0),
-      0
-    );
-  }
+  function resetView() {
+    clearFilters();
 
-  function getExpandedNodes() {
-    const expandedNodes = [];
-    chart.data().forEach((node) => {
-      if (node._expanded) {
-        expandedNodes.push(node.id);
-      }
-    });
-    return expandedNodes;
-  }
-
-  function restoreExpandedNodes(expandedNodes) {
-    chart.data().forEach((node) => {
-      node._expanded = expandedNodes.includes(node.id);
-    });
-    chart.render();
-  }
-
-  function forceChartUpdate() {
-    // Salva o estado de expansão
-    const expandedNodes = getExpandedNodes();
-
-    chart.nodeContent((d, i, arr, state) => generateContent(d));
-
-    chart.render();
-    restoreExpandedNodes(expandedNodes);
+    if (chart.resetZoom) {
+      chart.resetZoom();
+    } else {
+      chart.data(originalData).render().fit();
+    }
   }
 
   function saveChartState(id) {
