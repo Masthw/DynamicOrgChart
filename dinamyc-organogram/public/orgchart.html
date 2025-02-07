@@ -18,7 +18,6 @@
   let modifiedData = null;
   let originalData = null;
 
-  // Função principal de inicialização
   function initializeChart(data) {
     const chartContainer = document.querySelector('.chart-container');
     if (!chartContainer) {
@@ -33,7 +32,6 @@
     initializeFilters(data);
     console.log(data);
 
-    // Configura e renderiza o organograma
     chart = new d3.OrgChart()
       .nodeHeight((d) => 125)
       .nodeWidth((d) => 220 + 2)
@@ -1175,11 +1173,18 @@
     return palette[Math.floor(Math.random() * palette.length)];
   }
 
+  function toggleControls(element) {
+    const controls = element.querySelector('.node-controls');
+    if (controls) {
+      controls.classList.toggle('visible');
+    }
+  }
+
   function generateContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 27;
     return `
-      <div class="node-container" style='
+      <div class="node-container" onclick="toggleControls(this)" style='
       width:${d.width}px;
       height:${d.height}px;
       padding-top:${imageDiffVert - 2}px;
@@ -1216,8 +1221,30 @@
                     } </div>
 
               </div>
-          </div>
-      `;
+      <div class="node-controls">
+        <button class="control-btn" onclick="addEmployee(${
+          d.data.id
+        }); event.stopPropagation();">
+          <img src="src/assets/icons/person_add.png" alt="Adicionar Funcionário" />
+        </button>
+        <button class="control-btn" onclick="addDepartment(${
+          d.data.id
+        }); event.stopPropagation();">
+          <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
+        </button>
+        <button class="control-btn" onclick="addJob(${
+          d.data.id
+        }); event.stopPropagation();">
+          <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
+        </button>
+        <button class="control-btn" onclick="viewSuccessionPlan(${
+          d.data.id
+        }); event.stopPropagation();">
+          <img src="src/assets/icons/lan.png" alt="Ver Plano de Sucessão" />
+        </button>
+      </div>
+    </div>
+  `;
   }
 </script>
 <div class="controls">

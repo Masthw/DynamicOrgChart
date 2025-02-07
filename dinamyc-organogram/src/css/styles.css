@@ -5,16 +5,17 @@ svg:not(:root) {
   overflow: visible !important;
 }
 
+/*Ver estilos drag-enable with reason e not-enable */
 .drag-enabled:not(.dragging-active) .node.draggable {
-  stroke: rgb(226, 13, 226);
-  stroke-width: 3px;
-  stroke-dasharray: 5px;
+  stroke: #7f7f7f;
+  stroke-width: 2px;
+  stroke-dasharray: 0px;
 }
 
 .drag-enabled.dragging-active .droppable {
-  stroke: rgb(67, 243, 67);
-  stroke-width: 3px;
-  stroke-dasharray: 5px;
+  stroke: #6e9d3d;
+  stroke-width: 2px;
+  stroke-dasharray: 0px;
 }
 
 .node.dragging {
@@ -60,44 +61,52 @@ svg:not(:root) {
 }
 
 .node-container {
-  position: absolute;
+  position: relative;
   overflow: visible;
 }
 
-button {
-  font-size: 14px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
+.node-controls {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 16px;
+  display: none;
+  gap: 4px;
+}
+
+.node-controls.visible {
+  display: flex;
+}
+
+.control-btn {
+  background-color: #fff;
+  border: 1px dashed #ff3700;
+  border-radius: 4px;
+  padding: 2px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  z-index: 1;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
-.node-options-btn {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0;
-  transition: none;
+.control-btn img {
+  width: 14px;
+  height: 14px;
+
+  filter: brightness(0) saturate(100%) invert(28%) sepia(81%) saturate(4237%)
+    hue-rotate(3deg) brightness(104%) contrast(106%);
 }
 
-.node-options-btn:not([disabled]) {
-  color: #666;
+.control-btn:hover {
+  background-color: #ff3700;
+  border-color: #ff3700;
 }
 
-.info-btn:not([disabled]) {
-  background-color: white;
-  color: #333;
-}
-.add-child-btn:not([disabled]) {
-  background-color: white;
-  color: #333;
-}
-
-.node-options-btn:hover {
-  color: #007bff;
+.control-btn:hover img {
+  filter: brightness(0) invert(1);
 }
 
 .controls {
