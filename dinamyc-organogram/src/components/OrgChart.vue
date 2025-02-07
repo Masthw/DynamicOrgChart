@@ -6,6 +6,7 @@
       :src="orgChartUrl"
       frameborder="0"
       title="Org Chart"
+      @load="onIframeLoad"
     ></iframe>
   </div>
 </template>
@@ -32,6 +33,24 @@ export default {
     return {
       orgChartId,
       orgChartUrl,
+    };
+  },
+  methods: {
+    onIframeLoad() {
+      this.iframeLoaded = true;
+    },
+    onSearchInput(searchTerm) {
+      if (this.iframeLoaded) {
+        const iframe = document.querySelector('iframe');
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage(searchTerm, '*');
+        }
+      }
+    },
+  },
+  data() {
+    return {
+      iframeLoaded: false,
     };
   },
 };

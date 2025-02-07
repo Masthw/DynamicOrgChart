@@ -14,7 +14,7 @@
       :options="options"
       placeholder="Selecione o Organograma"
     />
-    <SearchComponent v-if="showSearch" />
+    <SearchComponent v-if="showSearch" @search-input="onSearchInput" />
     <div class="icons">
       <img
         src="../assets/icons/notifications_white.png"
@@ -71,6 +71,12 @@ export default {
     },
     clearSelection() {
       this.selectedOption = '';
+    },
+    onSearchInput(searchTerm) {
+      const iframe = document.querySelector('iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(searchTerm, '*');
+      }
     },
   },
   watch: {

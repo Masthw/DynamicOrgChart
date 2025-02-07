@@ -1074,15 +1074,17 @@
   }
 
   //BUSCA
-  function filterChart(e) {
-    const value = e.target.value.toLowerCase();
+  window.addEventListener('message', function (event) {
+    const searchTerm = event.data;
+    filterChart(searchTerm);
+  });
 
-    // Limpa os destaques anteriores
+  function filterChart(searchTerm) {
+    const value = searchTerm.toLowerCase();
     chart.clearHighlighting();
 
     const data = chart.data();
 
-    // Marca todos os nós como recolhidos
     data.forEach((d) => {
       (d._expanded = false), (d._highlighted = false);
     });
@@ -1099,11 +1101,10 @@
           position.includes(value) ||
           department.includes(value))
       ) {
-        d._highlighted = true; // Destaca o nó
-        d._expanded = true; // Expande o nó
+        d._highlighted = true;
+        d._expanded = true;
       }
     });
-    // Atualiza e renderiza o organograma
     chart.render().fit();
   }
 
@@ -1196,7 +1197,7 @@
       d.height - imageDiffVert
     }px;border-radius:10px;border: ${
       d.data._highlighted || d.data._upToTheRootHighlighted
-        ? '5px solid #E27396"'
+        ? '5px solid #ff3700"'
         : '1px solid #E4E2E9"'
     } >
                   <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(

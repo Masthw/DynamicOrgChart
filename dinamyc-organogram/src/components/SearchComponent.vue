@@ -1,6 +1,10 @@
 <template>
   <div class="search-component">
-    <input type="text" placeholder="Buscar Funcionário ou Departamento" />
+    <input
+      type="text"
+      placeholder="Buscar Funcionário ou Departamento"
+      @input="onInput"
+    />
     <img src="src/assets/icons/search.png" alt="Buscar" class="search-icon" />
   </div>
 </template>
@@ -8,6 +12,13 @@
 <script>
 export default {
   name: 'SearchComponent',
+
+  methods: {
+    onInput(event) {
+      const searchTerm = event.target.value;
+      this.$emit('search-input', searchTerm);
+    },
+  },
 };
 </script>
 
