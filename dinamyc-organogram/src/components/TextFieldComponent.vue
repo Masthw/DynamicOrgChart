@@ -13,6 +13,7 @@
       color="orange"
       :placeholder="placeholder"
       :rules="rules"
+      class="text-input"
     />
   </div>
 </template>
@@ -69,6 +70,10 @@ const localValue = computed({
 
   .required {
     color: $orange;
+  }
+
+  .text-input :deep(.q-field__control) {
+    border-radius: 14px;
   }
 }
 </style>
