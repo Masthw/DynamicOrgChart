@@ -2,8 +2,10 @@
   <q-dialog v-model="isOpen" persistent>
     <q-card class="edit-modal">
       <!-- Ícone de edição centralizado -->
-      <div class="icon-container">
-        <img src="src/assets/icons/edit.png" alt="Editar" class="edit-icon" />
+      <div class="icon-wrapper">
+        <div class="icon-container">
+          <img src="src/assets/icons/edit.png" alt="Editar" class="edit-icon" />
+        </div>
       </div>
 
       <!-- Conteúdo do modal -->
@@ -125,16 +127,25 @@ const saveChanges = () => {
   background-color: $background-white;
 }
 
-/* Ícone de edição */
-.icon-container {
+.icon-wrapper {
   position: absolute;
-  top: -30px;
+  top: -35px;
   left: 50%;
   transform: translateX(-50%);
-  background: $orange;
+  width: 70px;
+  height: 70px;
+  background: $background-white;
   border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-container {
   width: 60px;
   height: 60px;
+  background: $orange;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
