@@ -139,6 +139,11 @@
         </div>
       </div>
     </div>
+    <EditModal
+      v-model="isEditModalOpen"
+      :orgchart="selectedOrgChart"
+      @save="updateOrgChart"
+    />
   </div>
 </template>
 
@@ -147,10 +152,13 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { emitter } from 'src/eventBus';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
+import EditModal from 'src/components/modal/EditModal.vue';
 
 const orgcharts = ref([]);
 const router = useRouter();
 const hoverIcons = ref({});
+const isEditModalOpen = ref(false);
+const selectedOrgChart = ref(null);
 
 // Carrega os organogramas do localStorage ao montar a página
 onMounted(() => {
@@ -185,7 +193,8 @@ const openOrgChart = (id) => {
 
 // Edita um organograma
 const editOrgChart = (id) => {
-  console.log(`Editando organograma com ID: ${id}`);
+  selectedOrgChart.value = orgcharts.value.find((org) => org.id === id);
+  isEditModalOpen.value = true;
 };
 
 // Copia um organograma
@@ -209,6 +218,15 @@ const deleteOrgChart = (id) => {
     (orgchart) => orgchart.id !== id
   );
   updateOrgCharts(updatedOrgCharts);
+};
+
+const updateOrgChart = ({ name, description, modifiedDate }) => {
+  if (selectedOrgChart.value) {
+    selectedOrgChart.value.name = name;
+    selectedOrgChart.value.description = description;
+    selectedOrgChart.value.modifiedDate = modifiedDate;
+    localStorage.setItem('orgcharts', JSON.stringify(orgcharts.value));
+  }
 };
 </script>
 
