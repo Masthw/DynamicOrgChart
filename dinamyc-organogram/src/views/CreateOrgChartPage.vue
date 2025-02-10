@@ -62,30 +62,41 @@ const orgchartName = ref('');
 const orgchartDescription = ref('');
 const isCreating = ref(false);
 
+function generateUniqueName(name, orgcharts, currentId) {
+  let base = name;
+  let counter = 1;
+  let newName = base;
+  while (
+    orgcharts.some(
+      (o) =>
+        o.id !== currentId &&
+        o.name.trim().toLowerCase() === newName.trim().toLowerCase()
+    )
+  ) {
+    newName = `${base}(${counter})`;
+    counter++;
+  }
+  return newName;
+}
+
 const createOrgChart = () => {
   if (isCreating.value) return;
   if (!orgchartName.value.trim()) return;
 
   const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
 
-  const nameExists = storedOrgCharts.some(
-    (o) =>
-      o.name.trim().toLowerCase() === orgchartName.value.trim().toLowerCase()
+  const uniqueName = generateUniqueName(
+    orgchartName.value.trim(),
+    storedOrgCharts,
+    -1
   );
-
-  if (nameExists) {
-    alert(
-      'Já existe um organograma com esse nome. Por favor, escolha outro nome.'
-    );
-    return;
-  }
 
   isCreating.value = true;
   const newId = Date.now();
 
   const newOrgChart = {
     id: newId,
-    name: orgchartName.value.trim(),
+    name: uniqueName,
     description: orgchartDescription.value || '',
     modifiedDate: new Date().toLocaleDateString(),
   };
