@@ -34,7 +34,7 @@
         <ButtonComponent
           label="OK"
           variant="secondary"
-          :disabled="!isFormValid"
+          :disabled="!isFormValid || isSaving"
           @click="saveChanges"
         />
       </q-card-actions>
@@ -49,32 +49,32 @@ import ButtonComponent from 'src/components/ButtonComponent.vue';
 
 const props = defineProps({
   modelValue: Boolean,
-  orgchart: Object, // Organograma original que será duplicado
+  orgchart: Object,
 });
 
 const emit = defineEmits(['update:modelValue', 'save']);
 
 const isOpen = ref(props.modelValue);
 const newName = ref(props.orgchart?.name || '');
+const isSaving = ref(false);
+const hasSaved = ref(false);
 
-// Validação: o novo nome não pode estar vazio
 const isFormValid = computed(() => {
   return newName.value.trim().length > 0;
 });
 
-// Atualiza o campo newName sempre que o modal é aberto
 watch(
   () => props.modelValue,
   (newVal) => {
     isOpen.value = newVal;
     if (newVal) {
       newName.value = props.orgchart?.name || '';
+      hasSaved.value = false;
     }
   },
   { immediate: true }
 );
 
-// Função para gerar um nome único, evitando duplicações
 function generateUniqueName(name, orgcharts, currentId) {
   let base = name;
   let counter = 1;
@@ -92,8 +92,13 @@ function generateUniqueName(name, orgcharts, currentId) {
   return newNameCandidate;
 }
 
-// Salva as alterações: emite os dados para duplicar o organograma
 const saveChanges = () => {
+  if (hasSaved.value) return;
+  hasSaved.value = true;
+
+  if (isSaving.value) return;
+  isSaving.value = true;
+
   const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
   const newId = Date.now();
   const uniqueName = generateUniqueName(
@@ -102,6 +107,14 @@ const saveChanges = () => {
     -1
   );
 
+  const originalData = JSON.parse(
+    localStorage.getItem(`orgChartData_${props.orgchart.id}`)
+  );
+  if (!originalData) {
+    isSaving.value = false;
+    return;
+  }
+
   const duplicatedOrgChart = {
     ...props.orgchart,
     id: newId,
@@ -109,8 +122,14 @@ const saveChanges = () => {
     modifiedDate: new Date().toLocaleDateString(),
   };
 
+  localStorage.setItem(`orgChartData_${newId}`, JSON.stringify(originalData));
+  storedOrgCharts.push(duplicatedOrgChart);
+  localStorage.setItem('orgcharts', JSON.stringify(storedOrgCharts));
+
+  console.log('Org chart duplicado:', duplicatedOrgChart);
   emit('save', duplicatedOrgChart);
   closeModal();
+  isSaving.value = false;
 };
 
 const closeModal = () => {

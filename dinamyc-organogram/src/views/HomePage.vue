@@ -188,7 +188,6 @@ const isExportModalOpen = ref(false);
 const isDeleteModalOpen = ref(false);
 const selectedOrgChart = ref(null);
 
-// Carrega os organogramas do localStorage ao montar a página
 onMounted(() => {
   const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
   orgcharts.value = storedOrgCharts.map((orgchart) => ({
@@ -196,6 +195,7 @@ onMounted(() => {
     modifiedDate: orgchart.modifiedDate || new Date().toLocaleDateString(),
     description: orgchart.description || '',
   }));
+  console.log(storedOrgCharts);
 });
 
 const updateOrgCharts = (newList) => {
@@ -212,14 +212,12 @@ const addNewOrgChart = () => {
   router.push('/orgchart/create');
 };
 
-// Abre um organograma
 const openOrgChart = (id) => {
   console.log(`Abrindo organograma com ID: ${id}`);
   emitter.emit('orgchart-selected', id);
   router.push(`/orgchart/${id}`);
 };
 
-// Edita um organograma
 const editOrgChart = (id) => {
   selectedOrgChart.value = orgcharts.value.find((org) => org.id === id);
   isEditModalOpen.value = true;
@@ -230,7 +228,6 @@ const duplicateOrgChart = (id) => {
   isDuplicateModalOpen.value = true;
 };
 
-// Compartilha um organograma
 const shareOrgChart = (id) => {
   selectedOrgChart.value = orgcharts.value.find((org) => org.id === id);
   isShareModalOpen.value = true;
@@ -241,7 +238,6 @@ const exportOrgChart = (id) => {
   isExportModalOpen.value = true;
 };
 
-// Exclui um organograma
 const deleteOrgChart = (id) => {
   selectedOrgChart.value = orgcharts.value.find((org) => org.id === id);
   isDeleteModalOpen.value = true;
@@ -256,21 +252,14 @@ const updateOrgChart = ({ name, description, modifiedDate }) => {
   }
 };
 
-//ESSA FUNÇÃO NÃO DUPLICA ATUALMENTE AS LIGAÇÕES E ALTERAÇÕES, ESTÁ APENAS CRIANDO UM ORGANOGRAMA NOVO
-const handleDuplicate = (duplicatedData) => {
-  const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
-  storedOrgCharts.push(duplicatedData);
-  localStorage.setItem('orgcharts', JSON.stringify(storedOrgCharts));
-  orgcharts.value.push(duplicatedData);
-  emitter.emit('orgcharts-updated');
-  emitter.emit('orgchart-selected', duplicatedData.id);
-  selectedOrgChart.value = null;
-  isDuplicateModalOpen.value = false;
+const handleDuplicate = (duplicatedOrgChart) => {
+  console.log('handleDuplicate chamado com:', duplicatedOrgChart);
+  const updatedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
+  updateOrgCharts(updatedOrgCharts);
 };
 
 const handleShare = (email) => {
   console.log('Compartilhar organograma com o email:', email);
-
   isShareModalOpen.value = false;
   selectedOrgChart.value = null;
 };
