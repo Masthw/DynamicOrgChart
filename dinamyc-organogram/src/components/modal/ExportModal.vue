@@ -92,6 +92,7 @@ const exportPDF = () => {
   position: relative;
   overflow: visible;
   background-color: $background-white;
+  box-shadow: none;
 }
 
 .icon-wrapper {
