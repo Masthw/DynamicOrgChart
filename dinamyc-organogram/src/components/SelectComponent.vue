@@ -119,6 +119,22 @@ export default {
   z-index: 10;
   max-height: 150px;
   overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: $orange transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px; // Barra fininha
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent; // Fundo transparente para o track
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $orange; // Cor laranja para a thumb
+    border-radius: 3px;
+  }
 }
 
 .option-item {
