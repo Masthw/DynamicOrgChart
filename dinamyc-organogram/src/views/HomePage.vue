@@ -159,6 +159,11 @@
       :orgchart="selectedOrgChart"
       @export="handleExport"
     />
+    <DeleteModal
+      v-model="isDeleteModalOpen"
+      :orgchart="selectedOrgChart"
+      @confirm="handleDeleteConfirm"
+    />
   </div>
 </template>
 
@@ -171,6 +176,7 @@ import EditModal from 'src/components/modal/EditModal.vue';
 import DuplicateModal from 'src/components/modal/DuplicateModal.vue';
 import ShareModal from 'src/components/modal/ShareModal.vue';
 import ExportModal from 'src/components/modal/ExportModal.vue';
+import DeleteModal from 'src/components/modal/DeleteModal.vue';
 
 const orgcharts = ref([]);
 const router = useRouter();
@@ -179,6 +185,7 @@ const isEditModalOpen = ref(false);
 const isDuplicateModalOpen = ref(false);
 const isShareModalOpen = ref(false);
 const isExportModalOpen = ref(false);
+const isDeleteModalOpen = ref(false);
 const selectedOrgChart = ref(null);
 
 // Carrega os organogramas do localStorage ao montar a página
@@ -236,11 +243,8 @@ const exportOrgChart = (id) => {
 
 // Exclui um organograma
 const deleteOrgChart = (id) => {
-  const updatedOrgCharts = orgcharts.value.filter(
-    (orgchart) => orgchart.id !== id
-  );
-  localStorage.removeItem(`orgChartData_${id}`);
-  updateOrgCharts(updatedOrgCharts);
+  selectedOrgChart.value = orgcharts.value.find((org) => org.id === id);
+  isDeleteModalOpen.value = true;
 };
 
 const updateOrgChart = ({ name, description, modifiedDate }) => {
@@ -276,6 +280,18 @@ const handleExport = (id) => {
 
   isExportModalOpen.value = false;
   selectedOrgChart.value = null;
+};
+
+const handleDeleteConfirm = () => {
+  const updatedOrgCharts = orgcharts.value.filter(
+    (org) => org.id !== selectedOrgChart.value.id
+  );
+  localStorage.removeItem(`orgChartData_${selectedOrgChart.value.id}`);
+  localStorage.setItem('orgcharts', JSON.stringify(updatedOrgCharts));
+  emitter.emit('orgcharts-updated');
+  updateOrgCharts(updatedOrgCharts);
+  selectedOrgChart.value = null;
+  isDeleteModalOpen.value = false;
 };
 </script>
 
