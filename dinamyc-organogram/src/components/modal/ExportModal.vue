@@ -73,12 +73,12 @@ const closeModal = () => {
 };
 
 const exportPNG = () => {
-  emit('export', 'png');
+  emit('export', { id: props.orgchart?.id, format: 'png' });
   closeModal();
 };
 
 const exportPDF = () => {
-  emit('export', 'pdf');
+  emit('export', { id: props.orgchart?.id, format: 'pdf' });
   closeModal();
 };
 </script>
