@@ -97,7 +97,7 @@
             </div>
             <div
               class="action-icon-wrapper"
-              @click.stop="copyOrgChart(orgchart.id)"
+              @click.stop="duplicateOrgChart(orgchart.id)"
             >
               <img
                 src="../assets/icons/copy.png"
@@ -144,6 +144,11 @@
       :orgchart="selectedOrgChart"
       @save="updateOrgChart"
     />
+    <DuplicateModal
+      v-model="isDuplicateModalOpen"
+      :orgchart="selectedOrgChart"
+      @save.once="handleDuplicate"
+    />
   </div>
 </template>
 
@@ -153,11 +158,13 @@ import { useRouter } from 'vue-router';
 import { emitter } from 'src/eventBus';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
 import EditModal from 'src/components/modal/EditModal.vue';
+import DuplicateModal from 'src/components/modal/DuplicateModal.vue';
 
 const orgcharts = ref([]);
 const router = useRouter();
 const hoverIcons = ref({});
 const isEditModalOpen = ref(false);
+const isDuplicateModalOpen = ref(false);
 const selectedOrgChart = ref(null);
 
 // Carrega os organogramas do localStorage ao montar a página
@@ -172,7 +179,7 @@ onMounted(() => {
 
 const updateOrgCharts = (newList) => {
   orgcharts.value = newList;
-  localStorage.setItem('orgcharts', JSON.stringify(newList));
+  localStorage.setItem('orgcharts', JSON.stringify(newList, null, 0));
   emitter.emit('orgcharts-updated');
 };
 
@@ -197,9 +204,9 @@ const editOrgChart = (id) => {
   isEditModalOpen.value = true;
 };
 
-// Copia um organograma
-const copyOrgChart = (id) => {
-  console.log(`Copiando organograma com ID: ${id}`);
+const duplicateOrgChart = (id) => {
+  selectedOrgChart.value = orgcharts.value.find((o) => o.id === id);
+  isDuplicateModalOpen.value = true;
 };
 
 // Compartilha um organograma
@@ -217,6 +224,7 @@ const deleteOrgChart = (id) => {
   const updatedOrgCharts = orgcharts.value.filter(
     (orgchart) => orgchart.id !== id
   );
+  localStorage.removeItem(`orgChartData_${id}`);
   updateOrgCharts(updatedOrgCharts);
 };
 
@@ -225,8 +233,20 @@ const updateOrgChart = ({ name, description, modifiedDate }) => {
     selectedOrgChart.value.name = name;
     selectedOrgChart.value.description = description;
     selectedOrgChart.value.modifiedDate = modifiedDate;
-    localStorage.setItem('orgcharts', JSON.stringify(orgcharts.value));
+    localStorage.setItem('orgcharts', JSON.stringify(orgcharts.value, null, 0));
   }
+};
+
+//ESSA FUNÇÃO NÃO DUPLICA ATUALMENTE AS LIGAÇÕES E ALTERAÇÕES, ESTÁ APENAS CRIANDO UM ORGANOGRAMA NOVO
+const handleDuplicate = (duplicatedData) => {
+  const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
+  storedOrgCharts.push(duplicatedData);
+  localStorage.setItem('orgcharts', JSON.stringify(storedOrgCharts));
+  orgcharts.value.push(duplicatedData);
+  emitter.emit('orgcharts-updated');
+  emitter.emit('orgchart-selected', duplicatedData.id);
+  selectedOrgChart.value = null;
+  isDuplicateModalOpen.value = false;
 };
 </script>
 
