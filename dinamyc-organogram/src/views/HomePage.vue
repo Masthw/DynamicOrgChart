@@ -282,11 +282,10 @@ const handleExport = (id) => {
   selectedOrgChart.value = null;
 };
 
-const handleDeleteConfirm = () => {
-  const updatedOrgCharts = orgcharts.value.filter(
-    (org) => org.id !== selectedOrgChart.value.id
-  );
-  localStorage.removeItem(`orgChartData_${selectedOrgChart.value.id}`);
+const handleDeleteConfirm = (id) => {
+  if (!id) return;
+  const updatedOrgCharts = orgcharts.value.filter((org) => org.id !== id);
+  localStorage.removeItem(`orgChartData_${id}`);
   localStorage.setItem('orgcharts', JSON.stringify(updatedOrgCharts));
   emitter.emit('orgcharts-updated');
   updateOrgCharts(updatedOrgCharts);

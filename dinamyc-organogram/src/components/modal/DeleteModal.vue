@@ -71,7 +71,7 @@ const closeModal = () => {
 };
 
 const confirmDelete = () => {
-  emit('confirm'); // O pai deverá tratar a exclusão (ex: deleteOrgChart)
+  emit('confirm', props.orgchart?.id);
   closeModal();
 };
 </script>
