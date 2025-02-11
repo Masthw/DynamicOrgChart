@@ -117,7 +117,7 @@
             </div>
             <div
               class="action-icon-wrapper"
-              @click.stop="downloadOrgChart(orgchart.id)"
+              @click.stop="exportOrgChart(orgchart.id)"
             >
               <img
                 src="../assets/icons/download.png"
@@ -154,6 +154,11 @@
       :orgchart="selectedOrgChart"
       @share="handleShare"
     />
+    <ExportModal
+      v-model="isExportModalOpen"
+      :orgchart="selectedOrgChart"
+      @export="handleExport"
+    />
   </div>
 </template>
 
@@ -165,6 +170,7 @@ import ButtonComponent from 'src/components/ButtonComponent.vue';
 import EditModal from 'src/components/modal/EditModal.vue';
 import DuplicateModal from 'src/components/modal/DuplicateModal.vue';
 import ShareModal from 'src/components/modal/ShareModal.vue';
+import ExportModal from 'src/components/modal/ExportModal.vue';
 
 const orgcharts = ref([]);
 const router = useRouter();
@@ -172,6 +178,7 @@ const hoverIcons = ref({});
 const isEditModalOpen = ref(false);
 const isDuplicateModalOpen = ref(false);
 const isShareModalOpen = ref(false);
+const isExportModalOpen = ref(false);
 const selectedOrgChart = ref(null);
 
 // Carrega os organogramas do localStorage ao montar a página
@@ -222,9 +229,9 @@ const shareOrgChart = (id) => {
   isShareModalOpen.value = true;
 };
 
-// Baixa um organograma
-const downloadOrgChart = (id) => {
-  console.log(`Baixando organograma com ID: ${id}`);
+const exportOrgChart = (id) => {
+  selectedOrgChart.value = orgcharts.value.find((org) => org.id === id);
+  isExportModalOpen.value = true;
 };
 
 // Exclui um organograma
@@ -261,6 +268,13 @@ const handleShare = (email) => {
   console.log('Compartilhar organograma com o email:', email);
 
   isShareModalOpen.value = false;
+  selectedOrgChart.value = null;
+};
+
+const handleExport = (id) => {
+  console.log('Exportanto organograma', id);
+
+  isExportModalOpen.value = false;
   selectedOrgChart.value = null;
 };
 </script>
