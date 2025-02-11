@@ -149,6 +149,11 @@
       :orgchart="selectedOrgChart"
       @save.once="handleDuplicate"
     />
+    <ShareModal
+      v-model="isShareModalOpen"
+      :orgchart="selectedOrgChart"
+      @share="handleShare"
+    />
   </div>
 </template>
 
@@ -159,12 +164,14 @@ import { emitter } from 'src/eventBus';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
 import EditModal from 'src/components/modal/EditModal.vue';
 import DuplicateModal from 'src/components/modal/DuplicateModal.vue';
+import ShareModal from 'src/components/modal/ShareModal.vue';
 
 const orgcharts = ref([]);
 const router = useRouter();
 const hoverIcons = ref({});
 const isEditModalOpen = ref(false);
 const isDuplicateModalOpen = ref(false);
+const isShareModalOpen = ref(false);
 const selectedOrgChart = ref(null);
 
 // Carrega os organogramas do localStorage ao montar a página
@@ -211,7 +218,8 @@ const duplicateOrgChart = (id) => {
 
 // Compartilha um organograma
 const shareOrgChart = (id) => {
-  console.log(`Compartilhando organograma com ID: ${id}`);
+  selectedOrgChart.value = orgcharts.value.find((org) => org.id === id);
+  isShareModalOpen.value = true;
 };
 
 // Baixa um organograma
@@ -247,6 +255,13 @@ const handleDuplicate = (duplicatedData) => {
   emitter.emit('orgchart-selected', duplicatedData.id);
   selectedOrgChart.value = null;
   isDuplicateModalOpen.value = false;
+};
+
+const handleShare = (email) => {
+  console.log('Compartilhar organograma com o email:', email);
+
+  isShareModalOpen.value = false;
+  selectedOrgChart.value = null;
 };
 </script>
 
