@@ -11,48 +11,25 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
-export default {
-  name: 'OrgChart',
-  setup() {
-    const route = useRoute();
-    const orgChartId = ref(route.params.id);
-    const orgChartUrl = ref(`/orgchart.html#${orgChartId.value}`);
+const route = useRoute();
+const orgChartId = ref(route.params.id);
+const orgChartUrl = ref(`/orgchart.html#${orgChartId.value}`);
+const iframeLoaded = ref(false);
 
-    watch(
-      () => route.params.id,
-      (newId) => {
-        orgChartId.value = newId;
-        orgChartUrl.value = `/orgchart.html#${newId}`;
-      }
-    );
+watch(
+  () => route.params.id,
+  (newId) => {
+    orgChartId.value = newId;
+    orgChartUrl.value = `/orgchart.html#${newId}`;
+  }
+);
 
-    return {
-      orgChartId,
-      orgChartUrl,
-    };
-  },
-  methods: {
-    onIframeLoad() {
-      this.iframeLoaded = true;
-    },
-    onSearchInput(searchTerm) {
-      if (this.iframeLoaded) {
-        const iframe = document.querySelector('iframe');
-        if (iframe && iframe.contentWindow) {
-          iframe.contentWindow.postMessage(searchTerm, '*');
-        }
-      }
-    },
-  },
-  data() {
-    return {
-      iframeLoaded: false,
-    };
-  },
+const onIframeLoad = () => {
+  iframeLoaded.value = true;
 };
 </script>
 

@@ -32,6 +32,11 @@
     <!-- Área do Organograma -->
     <div class="orgchart-wrapper">
       <OrgChart v-if="orgchart" :key="orgchart.id" :data="orgchart.data" />
+      <AddEmployeeModal
+        v-if="showAddEmployeeModal"
+        @close="closeAddEmployeeModal"
+        @confirm="handleAddEmployeeConfirm"
+      />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -57,15 +62,18 @@ import OrgChart from 'components/OrgChart.vue';
 import { useRoute } from 'vue-router';
 import { ref, onMounted, watch } from 'vue';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
+import AddEmployeeModal from 'src/components/modal/AddEmployeeModal.vue';
 
 export default {
   components: {
     OrgChart,
     ButtonComponent,
+    AddEmployeeModal,
   },
   setup() {
     const route = useRoute();
     const orgchart = ref(null);
+    const showAddEmployeeModal = ref(false);
 
     const loadOrgChart = () => {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
@@ -73,17 +81,52 @@ export default {
       orgchart.value = orgcharts.find((o) => o.id === orgChartId);
     };
 
-    onMounted(loadOrgChart);
+    const openAddEmployeeModal = () => {
+      showModal.value = true;
+    };
+
+    const closeAddEmployeeModal = () => {
+      showAddEmployeeModal.value = false;
+      console.log('Modal de AddEmployee fechado');
+    };
+
+    const handleAddEmployeeConfirm = (data) => {
+      console.log('Dados do AddEmployeeModal:', data);
+      // Aqui você pode, por exemplo, enviar os dados para o iframe via postMessage
+      // ou atualizar os dados localmente.
+      closeAddEmployeeModal();
+    };
+
+    onMounted(() => {
+      loadOrgChart();
+      window.addEventListener('message', (event) => {
+        console.log('Mensagem recebida no OrgChartPage:', event.data);
+        if (
+          event.data.type === 'openModal' &&
+          event.data.action === 'addEmployee'
+        ) {
+          console.log(
+            'Evento openModal para addEmployee detectado. NodeId:',
+            event.data.nodeId
+          );
+          showAddEmployeeModal.value = true;
+        }
+      });
+    });
 
     watch(
       () => route.params.id,
-      (orgChartId) => {
-        loadOrgChart(orgChartId);
+      () => {
+        loadOrgChart();
       }
     );
 
     return {
       orgchart,
+      handleAddEmployeeConfirm,
+      closeAddEmployeeModal,
+      openAddEmployeeModal,
+      showAddEmployeeModal,
     };
   },
 };

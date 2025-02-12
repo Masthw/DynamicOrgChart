@@ -616,18 +616,10 @@
     return palette[Math.floor(Math.random() * palette.length)];
   }
 
-  function toggleControls(element) {
-    const controls = element.querySelector('.node-controls');
-    if (controls) {
-      controls.classList.toggle('visible');
-    }
-  }
-
   // Adicione listeners para os elementos do organograma
   document.querySelectorAll('.node-container').forEach((node) => {
     node.addEventListener('click', (e) => {
       if (e.target.closest('.control-btn')) return;
-
       const nodeId = node.id;
       window.parent.postMessage(
         {
@@ -640,11 +632,22 @@
     });
   });
 
+  function addEmployee(nodeId) {
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'addEmployee',
+        nodeId: nodeId,
+      },
+      '*'
+    );
+  }
+
   function generateContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 27;
     return `
-      <div class="node-container" onclick="toggleControls(this)" style='
+      <div class="node-container" style='
       width:${d.width}px;
       height:${d.height}px;
       padding-top:${imageDiffVert - 2}px;
