@@ -40,26 +40,6 @@ svg:not(:root) {
   color: #007bff;
 }
 
-.options-menu {
-  z-index: 9999 !important;
-  overflow: visible;
-}
-
-.options-menu button {
-  width: 100%;
-  padding: 10px;
-  background-color: white;
-  border: none;
-  font-size: 14px;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.options-menu button:hover {
-  background-color: #4999ee;
-}
-
 .node-container {
   position: relative;
   overflow: visible;
