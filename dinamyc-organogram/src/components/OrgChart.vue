@@ -77,10 +77,10 @@ body {
 
 .chart-container {
   width: 100%;
-  height: 100%; /* Faz com que a chart-container ocupe toda a altura disponível */
+  height: 100%;
   display: flex;
-  justify-content: center; /* Alinha o conteúdo do SVG no centro */
-  overflow: hidden; /* Impede barra de rolagem lateral */
+  justify-content: center;
+  overflow: hidden;
 }
 
 iframe {
