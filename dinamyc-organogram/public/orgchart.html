@@ -86,6 +86,18 @@
     }
   });
 
+  window.addEventListener('message', (event) => {
+    if (event.data.type === 'updateChart') {
+      // Lógica para atualizar o organograma
+      updateChartData(event.data);
+    }
+  });
+
+  function updateChartData(data) {
+    // Sua lógica para atualizar o gráfico D3 aqui
+    chart.update();
+  }
+
   function getOrgChartIdFromURL() {
     const hash = window.location.hash; // Captura a parte após o #
     if (!hash) {
@@ -129,7 +141,6 @@
     buttons.forEach((button) => {
       button.addEventListener('click', (event) => {
         const nodeId = event.target.getAttribute('data-id');
-        showOptionsMenu(nodeId);
       });
     });
     chart.render();
@@ -346,14 +357,6 @@
     }
   }
 
-  function countDescendants(node) {
-    if (!node.children || node.children.length === 0) return 0;
-    return node.children.reduce(
-      (acc, child) => acc + 1 + countDescendants(child),
-      0
-    );
-  }
-
   function countDepartments(node) {
     const deptSet = new Set();
     function traverse(n) {
@@ -386,554 +389,6 @@
   }
 
   let activeMenu = null;
-
-  function showOptionsMenu(nodeId) {
-    const nodeData = chart
-      .getChartState()
-      .data.find((node) => node.id === nodeId);
-
-    if (!nodeData) {
-      return;
-    }
-
-    const button = document.querySelector(
-      `.node-options-btn[data-id="${nodeId}"]`
-    );
-    if (!button) {
-      return;
-    }
-
-    if (activeMenu && activeMenu.button === button) {
-      closeMenu();
-      return;
-    }
-
-    if (activeMenu) {
-      closeMenu();
-    }
-
-    const buttonRect = button.getBoundingClientRect();
-
-    const menuHtml = `
-        <div class="options-menu" style="
-       position: fixed;
-       top: ${buttonRect.top}px;
-       left: ${buttonRect.left + buttonRect.width + 5}px;
-       background: white;
-       border: 1px solid #ccc;
-       border-radius: 8px;
-       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-       padding: 10px;
-       min-width: 150px;
-       z-index: 9999;
-     ">
-       <div style="margin-bottom: 8px;">
-         <button class="info-btn">Informações</button>
-       </div>
-       <div>
-         <button class="add-child-btn">Adicionar</button>
-       </div>
-     </div>
-   `;
-
-    const menuElement = document.createElement('div');
-    menuElement.innerHTML = menuHtml;
-    document.body.appendChild(menuElement);
-
-    activeMenu = { menuElement, button };
-
-    document.addEventListener('click', handleOutsideClick);
-
-    function handleOutsideClick(event) {
-      if (!menuElement.contains(event.target) && event.target !== button) {
-        closeMenu();
-      }
-    }
-
-    function closeMenu() {
-      if (activeMenu) {
-        activeMenu.menuElement.remove();
-        document.removeEventListener('click', handleOutsideClick);
-
-        activeMenu = null;
-      }
-    }
-
-    menuElement.querySelector('.info-btn').addEventListener('click', () => {
-      showPersonInfo(nodeId);
-      closeMenu();
-    });
-
-    menuElement
-      .querySelector('.add-child-btn')
-      .addEventListener('click', () => {
-        addChild(nodeId);
-        closeMenu();
-      });
-  }
-
-  function showPersonInfo(nodeId) {
-    const person = chart
-      .getChartState()
-      .data.find((node) => node.id === nodeId);
-
-    if (!person) {
-      return;
-    }
-    const sidebar = document.getElementById('person-info-sidebar');
-    const content = document.getElementById('person-info-content');
-    const overlay = document.getElementById('overlay');
-
-    document.getElementById('person-photo').src =
-      person.image || 'https://via.placeholder.com/50';
-    const fullName = `${person.name} ${person.lastName || ''}`;
-    document.getElementById('person-name').textContent = fullName;
-
-    const salaryRange = `R$ ${parseFloat(person.job_min_salary).toLocaleString(
-      'pt-BR'
-    )} - R$ ${parseFloat(person.job_max_salary).toLocaleString('pt-BR')}`;
-
-    const hireDate = new Date(person.hire_date);
-    const formattedHireDate = hireDate.toLocaleDateString('pt-BR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-
-    const personInfoHtml = `
-      <input type="hidden" id="id" value="${person.id}" />
-       <div>
-         <label>Nome:</label>
-         <input type="text" id="name" value="${fullName.trim()}" />
-       </div>
-       <div>
-         <label>Cargo:</label>
-         <input type="text" id="position" value="${person.position}" />
-       </div>
-       <div>
-         <label>Email:</label>
-         <input type="text" id="email" value="${person.email}" />
-       </div>
-       <div>
-         <label>Telefone:</label>
-         <input type="text" id="phone" value="${person.phone_number}" />
-       </div>
-       <div>
-         <label>Salário:</label>
-         <input type="text" id="salary" value="${person.salary}" />
-       </div>
-       <div>
-          <div>
-      <label>Departamento:</label>
-      <input type="text" id="department" value="${person.department_name}" />
-    </div>
-         <div>
-         <label>Faixa Salarial:</label>
-         <input type="text" id="salaryRange" value="${salaryRange}" readonly />
-       </div>
-       <div>
-         <label>Data de Contratação:</label>
-         <input type="text" id="hireDate" value="${formattedHireDate}" readonly />
-       </div>
-       </div>
-       `;
-    content.innerHTML = personInfoHtml;
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('close-sidebar').addEventListener('click', () => {
-      document.getElementById('person-info-sidebar').classList.remove('active');
-      document.getElementById('overlay').classList.remove('active');
-    });
-
-    document.getElementById('save-info').addEventListener('click', () => {
-      const updatedPerson = {
-        id: document.getElementById('id')?.value || '',
-        name: document.getElementById('name')?.value.split(' ')[0] || '',
-        position: document.getElementById('position')?.value || '',
-        email: document.getElementById('email')?.value || '',
-        phone_number: document.getElementById('phone')?.value || '',
-        salary: document.getElementById('salary')?.value || '',
-        department_name: document.getElementById('department')?.value || '',
-      };
-
-      const chartData = chart.getChartState().data;
-      const personIndex = chartData.findIndex(
-        (node) => node.id === updatedPerson.id
-      );
-      if (personIndex !== -1) {
-        chartData[personIndex] = {
-          ...chartData[personIndex],
-          ...updatedPerson,
-        };
-        chart.data(chartData).render();
-        const orgChartId = getOrgChartIdFromURL();
-        saveChartState(orgChartId);
-      }
-      document.getElementById('person-info-sidebar').classList.remove('active');
-      document.getElementById('overlay').classList.remove('active');
-    });
-
-    document.getElementById('delete-person').addEventListener('click', () => {
-      const personId = document.getElementById('id').value;
-      if (personId) {
-        deletePersonWithConditions(personId);
-        document
-          .getElementById('person-info-sidebar')
-          .classList.remove('active');
-        document.getElementById('overlay').classList.remove('active');
-      }
-    });
-  });
-
-  function deletePersonWithConditions(nodeId) {
-    const chartData = chart.getChartState().data;
-
-    // Encontrar os filhos diretos
-    const children = chartData.filter((node) => node.parentId === nodeId);
-
-    if (children.length === 0) {
-      // Sem filhos, remover diretamente
-      deletePerson(nodeId);
-    } else if (children.length === 1) {
-      // Apenas um filho, perguntar sobre a promoção
-      const confirmPromotion = confirm(
-        `Esta pessoa tem um subordinado direto. Deseja promover ${children[0].name} para ocupar o cargo?`
-      );
-      if (confirmPromotion) {
-        deletePerson(nodeId); // A lógica de promoção está incluída na função deletePerson
-      }
-    } else {
-      // Mais de um filho, abrir diálogo para confirmação
-      openDeleteDialog(nodeId);
-    }
-  }
-
-  function openDeleteDialog(nodeId) {
-    document.getElementById('deleteDialog').style.display = 'block';
-    document.getElementById('deleteOverlay').style.display = 'block';
-    populateSubordinatesSelect(nodeId);
-
-    document.querySelector('button[onclick="promoteSubordinates()"]').onclick =
-      function () {
-        promoteSubordinates(nodeId);
-      };
-    document.querySelector('button[onclick="addNewManager()"]').onclick =
-      function () {
-        addNewManager(nodeId);
-      };
-    document.querySelector('button[onclick="closeDepartment()"]').onclick =
-      function () {
-        closeDepartment(nodeId);
-      };
-  }
-
-  function closeDeleteDialog() {
-    document.getElementById('deleteDialog').style.display = 'none';
-    document.getElementById('deleteOverlay').style.display = 'none';
-  }
-
-  function populateSubordinatesSelect(nodeId) {
-    // Limpar o conteúdo atual do select
-    const selectElement = document.getElementById('subordinateSelect');
-    selectElement.innerHTML =
-      '<option value="">Selecione um subordinado</option>';
-
-    // Obter subordinados do nodeId
-    const chartData = chart.getChartState().data;
-    const children = chartData.filter((node) => node.parentId === nodeId);
-
-    // Adicionar subordinados ao select
-    children.forEach((child) => {
-      const option = document.createElement('option');
-      option.value = child.id;
-      option.textContent = child.name;
-      selectElement.appendChild(option);
-    });
-  }
-
-  // Ações no modal de exclusão
-  function promoteSubordinates(nodeId) {
-    const selectElement = document.getElementById('subordinateSelect');
-    if (!selectElement) {
-      alert('Erro: O seletor de subordinados não foi encontrado.');
-      return;
-    }
-
-    const selectedSubordinateId = selectElement.value;
-
-    if (!nodeId) {
-      alert('Erro: ID do chefe não encontrado.');
-      return;
-    }
-
-    if (selectedSubordinateId && nodeId) {
-      const chartData = chart.getChartState().data;
-
-      const selectedSubordinate = chartData.find(
-        (node) => node.id === selectedSubordinateId
-      );
-      const selectedParent = chartData.find((node) => node.id === nodeId);
-
-      if (selectedSubordinate && selectedParent) {
-        // Atualizar o parentId dos outros subordinados do nó excluído
-        const otherSubordinates = chartData.filter(
-          (node) =>
-            node.parentId === nodeId && node.id !== selectedSubordinateId
-        );
-
-        otherSubordinates.forEach((subordinate) => {
-          subordinate.parentId = selectedSubordinateId;
-        });
-
-        // Promover o subordinado selecionado
-        selectedSubordinate.parentId = selectedParent.parentId;
-
-        const updatedChartData = chartData.filter((node) => node.id !== nodeId);
-
-        // Redesenhar o gráfico com os dados atualizados
-        chart.data(updatedChartData).render();
-
-        // Atualizar o estado original com os dados do organograma
-        originalData = [...updatedChartData];
-
-        const orgChartId = getOrgChartIdFromURL();
-        saveChartState(orgChartId);
-
-        // Fechar o modal
-        closeDeleteDialog();
-      }
-    } else {
-      alert('Por favor, selecione um subordinado e um chefe para promover.');
-    }
-  }
-
-  function addNewManager(nodeId) {
-    const chartData = chart.getChartState().data;
-
-    // Verificar se o nó a ser excluído existe
-    const deletedNode = chartData.find((node) => node.id === nodeId);
-    if (!deletedNode) {
-      alert('Erro: Nó para exclusão não encontrado.');
-      return;
-    }
-
-    // Criar a nova pessoa (gerente em branco)
-    const newManager = {
-      id: Date.now().toString(), // Gera um ID único para o novo nó
-      parentId: deletedNode.parentId, // O novo gerente herda o chefe do nó excluído
-      name: 'Novo Gerente', // Nome padrão para ser editado posteriormente
-      position: 'Cargo Padrão', // Posição padrão
-      department_name: 'Departamento Padrão', // Departamento padrão
-      image: 'https://via.placeholder.com/150', // Imagem padrão
-    };
-
-    // Adiciona o novo gerente ao organograma
-    chartData.push(newManager);
-
-    // Reatribuir os subordinados ao novo gerente
-    const children = chartData.filter((node) => node.parentId === nodeId);
-    children.forEach((child) => {
-      child.parentId = newManager.id;
-    });
-
-    // Remove o nó excluído
-    const index = chartData.findIndex((node) => node.id === nodeId);
-    if (index !== -1) {
-      chartData.splice(index, 1);
-    }
-
-    // Atualizar os dados e renderizar o organograma
-    originalData = [...chartData];
-    const orgChartId = getOrgChartIdFromURL();
-    saveChartState(orgChartId);
-
-    // Renderizar o gráfico atualizado
-    chart.data(chartData).render();
-    closeDeleteDialog();
-  }
-
-  function closeDepartment(nodeId) {
-    const chartData = chart.getChartState().data;
-
-    function getAllSubordinates(nodeId, data) {
-      const directSubordinates = data.filter(
-        (node) => node.parentId === nodeId
-      );
-      let allSubordinates = [...directSubordinates];
-      directSubordinates.forEach((subordinate) => {
-        allSubordinates = allSubordinates.concat(
-          getAllSubordinates(subordinate.id, data)
-        );
-      });
-      return allSubordinates;
-    }
-
-    const allSubordinates = getAllSubordinates(nodeId, chartData);
-    const allIdsToDelete = [...allSubordinates.map((node) => node.id), nodeId];
-
-    allIdsToDelete.reverse().forEach((id) => {
-      deletePerson(id); // Reutiliza a função deletePerson
-    });
-    closeDeleteDialog();
-  }
-
-  function attachModalEventListeners(nodeId) {
-    const chartData = chart.getChartState().data;
-
-    document
-      .querySelector(`#delete-modal-${nodeId} .promote-child`)
-      .addEventListener('click', () => {
-        const selectedChildId = document.querySelector(
-          `#delete-modal-${nodeId} .child-selector`
-        ).value;
-        if (selectedChildId) {
-          promoteChild(nodeId, selectedChildId);
-          redistributeChildren(nodeId, selectedChildId); // Redistribui os outros filhos
-          closeModal(nodeId);
-        } else {
-          alert('Por favor, selecione um subordinado para promover.');
-        }
-      });
-
-    document
-      .querySelector(`#delete-modal-${nodeId} .add-new-person`)
-      .addEventListener('click', () => {
-        addNewPerson(nodeId);
-        closeModal(nodeId);
-      });
-
-    document
-      .querySelector(`#delete-modal-${nodeId} .close-department`)
-      .addEventListener('click', () => {
-        const confirmClose = confirm(
-          'Tem certeza de que deseja encerrar este setor e remover todas as pessoas subordinadas?'
-        );
-        if (confirmClose) {
-          deletePerson(nodeId);
-          closeModal(nodeId);
-        }
-      });
-
-    document
-      .querySelector(`#delete-modal-${nodeId} .close-modal`)
-      .addEventListener('click', () => closeModal(nodeId));
-  }
-
-  function closeModal() {
-    const modal = document.getElementById(`delete-modal-${nodeId}`);
-    if (modal) modal.remove();
-  }
-
-  function promoteChild(subordinateId, parentId) {
-    const chartData = chart.getChartState().data;
-
-    // Encontrar os nós relevantes no gráfico
-    const subordinate = chartData.find((node) => node.id === subordinateId);
-    const parent = chartData.find((node) => node.id === parentId);
-
-    if (!subordinate || !parent) {
-      alert('Erro ao encontrar as pessoas selecionadas.');
-      return;
-    }
-
-    // Promover o subordinado para ocupar a posição do pai
-    subordinate.parentId = parent.parentId;
-
-    // Ajustar os filhos do subordinado para que apontem para ele
-    const children = chartData.filter(
-      (node) => node.parentId === subordinateId
-    );
-    children.forEach((child) => {
-      child.parentId = subordinate.id;
-    });
-
-    // Redesenhar o gráfico com os dados atualizados
-    chart.data(chartData).render();
-    originalData = [...chartData];
-
-    // Salvar as alterações no localStorage
-    const orgChartId = getOrgChartIdFromURL();
-    saveChartState(orgChartId);
-  }
-
-  function deletePerson(nodeId) {
-    const chartData = [...originalData];
-
-    const positionFilter = document.getElementById('positionFilter').value;
-    const departmentFilter = document.getElementById('departmentFilter').value;
-    const locationFilter = document.getElementById('locationFilter').value;
-
-    clearFilters();
-
-    const personToDelete = chartData.find((node) => node.id === nodeId);
-    if (!personToDelete) {
-      return;
-    }
-
-    const parentId = personToDelete.parentId;
-
-    const children = chartData.filter((node) => node.parentId === nodeId);
-
-    if (children.length === 1) {
-      // Se há apenas um filho, ele assume o lugar da pessoa deletada
-      children[0].parentId = parentId;
-    } else if (children.length > 1) {
-      // Se há mais de um filho, os filhos são promovidos para o nível do avô
-      children.forEach((child) => {
-        child.parentId = parentId;
-      });
-    }
-
-    // Remover a pessoa deletada do organograma
-    const index = chartData.findIndex((node) => node.id === nodeId);
-    if (index !== -1) {
-      chartData.splice(index, 1);
-    }
-
-    // Atualizar o estado original e salvar no localStorage
-    originalData = [...chartData];
-    const orgChartId = getOrgChartIdFromURL();
-    saveChartState(orgChartId);
-
-    if (positionFilter)
-      document.getElementById('positionFilter').value = positionFilter;
-    if (departmentFilter)
-      document.getElementById('departmentFilter').value = departmentFilter;
-    if (locationFilter)
-      document.getElementById('locationFilter').value = locationFilter;
-    applyFilters();
-    chart.render();
-  }
-
-  function redistributeChildren(oldParentId, newParentId) {
-    const chartData = chart.getChartState().data;
-
-    // Atribuir os filhos do antigo pai para o novo pai
-    const children = chartData.filter((node) => node.parentId === oldParentId);
-    children.forEach((child) => {
-      child.parentId = newParentId;
-    });
-  }
-
-  function addChild(nodeId) {
-    const newChild = {
-      id: Date.now().toString(),
-      parentId: nodeId,
-      //Adicionar informações sobre a pesoa nova para serem editadas, apenas um exemplo abaixo
-      name: 'Novo Filho',
-      position: 'Cargo Padrão',
-      department_name: 'Default Dp',
-      image: 'https://via.placeholder.com/150',
-    };
-    const chartState = chart.getChartState();
-    chartState.data.push(newChild);
-    chart.data(chartState.data).render();
-
-    const orgChartId = getOrgChartIdFromURL();
-    saveChartState(orgChartId);
-  }
 
   //Filtro
   function getAncestors(
@@ -1056,20 +511,15 @@
   }
 
   function clearFilters() {
-    // Resetar os valores dos filtros para o estado inicial
     document.getElementById('positionFilter').value = '';
     document.getElementById('departmentFilter').value = '';
     document.getElementById('locationFilter').value = '';
 
-    // Limpar os filtros aplicados na interface
     const appliedFiltersDiv = document.getElementById('appliedFilters');
     appliedFiltersDiv.style.display = 'none';
     appliedFiltersDiv.innerHTML = '';
 
-    // Limpar o array de filtros aplicados
     appliedFilters = [];
-
-    // Reaplicar os filtros (sem nenhum filtro, exibe tudo)
     applyFilters();
   }
 
@@ -1089,7 +539,6 @@
       (d._expanded = false), (d._highlighted = false);
     });
 
-    // Verifica se o valor pesquisado está no nome, cargo ou departamento
     data.forEach((d) => {
       const name = d.name ? d.name.toLowerCase() : '';
       const position = d.position ? d.position.toLowerCase() : '';
@@ -1125,25 +574,18 @@
         delete d._highlighted;
       });
       localStorage.setItem(`orgChartData_${id}`, JSON.stringify(updatedData));
-      forceChartUpdate();
     }
   }
 
   function getNodeColor(d) {
-    // Se não há pai, é o CEO
     if (!d.parent) {
       return '#000000';
-    }
-    // Se o pai é o CEO (ou seja, d.parent não tem pai), este é um líder
-    else if (!d.parent.parent) {
-      // Se ainda não foi definido, gera e armazena a cor para este líder
+    } else if (!d.parent.parent) {
       if (!d.data.circleColor) {
         d.data.circleColor = getLeaderColor(d.data.id);
       }
       return d.data.circleColor;
-    }
-    // Para outros nós, herda a cor do pai
-    else {
+    } else {
       return d.parent.data.circleColor || getNodeColor(d.parent);
     }
   }
@@ -1180,6 +622,45 @@
       controls.classList.toggle('visible');
     }
   }
+
+  function addEmployee(nodeId) {
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'addEmployee',
+        nodeId: nodeId,
+      },
+      '*'
+    );
+  }
+
+  function addDepartment(nodeId) {
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'addDepartment',
+        nodeId: nodeId,
+      },
+      '*'
+    );
+  }
+
+  // Adicione listeners para os elementos do organograma
+  document.querySelectorAll('.node-container').forEach((node) => {
+    node.addEventListener('click', (e) => {
+      if (e.target.closest('.control-btn')) return;
+
+      const nodeId = node.id;
+      window.parent.postMessage(
+        {
+          type: 'openModal',
+          action: 'nodeClick',
+          nodeId: nodeId,
+        },
+        '*'
+      );
+    });
+  });
 
   function generateContent(d) {
     const color = '#FFFFFF';
@@ -1255,7 +736,6 @@
       <img src="src/assets/icons/map_search.png" alt="Organizar" />
       Organizar
     </button>
-
     <!-- Filtro (botão circular) -->
     <button id="filterButton" class="icon-button" onclick="openFilterDialog()">
       <img src="src/assets/icons/lan.png" alt="Filtros" />
@@ -1264,7 +744,6 @@
     <button class="icon-button" onclick="chart.zoomIn()">
       <img src="src/assets/icons/zoom_in.png" alt="Zoom In" />
     </button>
-
     <!-- Zoom Out -->
     <button class="icon-button" onclick="chart.zoomOut()">
       <img src="src/assets/icons/zoom_out.png" alt="Zoom Out" />
@@ -1284,31 +763,6 @@
 
 <div id="appliedFilters" class="applied-filters"></div>
 <div class="chart-container"></div>
-
-<div id="person-info-sidebar" class="sidebar hidden">
-  <div class="sidebar-header">
-    <div style="display: flex; align-items: center">
-      <img
-        id="person-photo"
-        src=""
-        alt="Foto da Pessoa"
-        style="
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          margin-right: 10px;
-        "
-      />
-      <h3 id="person-name">Nome da Pessoa</h3>
-    </div>
-    <button id="close-sidebar" class="close-btn">&times;</button>
-  </div>
-  <div id="person-info-content" class="sidebar-content"></div>
-  <div class="sidebar-footer">
-    <button id="save-info" class="save-btn">Salvar</button>
-    <button id="delete-person" class="delete-btn">Excluir</button>
-  </div>
-</div>
 <div id="overlay" class="overlay"></div>
 
 <!-- Filtro -->
@@ -1339,24 +793,3 @@
   </div>
 </div>
 <div id="modalOverlay" class="overlay"></div>
-<!-- Modal de Exclusão -->
-<div id="deleteDialog" class="modal">
-  <div class="delete-modal-content">
-    <h3>Excluir Pessoa</h3>
-    <p>Esta pessoa possui múltiplos subordinados. Como deseja prosseguir?</p>
-    <div id="subordinate-selection-container">
-      <label for="subordinateSelect"
-        >Selecione um subordinado para promover:</label
-      >
-      <select id="subordinateSelect">
-        <!-- Opções de subordinados serão adicionadas dinamicamente -->
-      </select>
-    </div>
-
-    <button onclick="promoteSubordinates()">Promover Subordinado</button>
-    <button onclick="addNewManager()">Adicionar Novo Gerente</button>
-    <button onclick="closeDepartment()">Encerrar Setor</button>
-    <button onclick="closeDeleteDialog()">Cancelar</button>
-  </div>
-</div>
-<div id="deleteOverlay" class="overlay"></div>
