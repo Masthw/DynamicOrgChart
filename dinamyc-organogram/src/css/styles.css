@@ -54,7 +54,8 @@ svg:not(:root) {
   gap: 4px;
 }
 
-.node-controls.visible {
+.node-container:hover .node-controls,
+.node-controls:hover {
   display: flex;
 }
 

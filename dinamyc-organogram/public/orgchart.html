@@ -623,28 +623,6 @@
     }
   }
 
-  function addEmployee(nodeId) {
-    window.parent.postMessage(
-      {
-        type: 'openModal',
-        action: 'addEmployee',
-        nodeId: nodeId,
-      },
-      '*'
-    );
-  }
-
-  function addDepartment(nodeId) {
-    window.parent.postMessage(
-      {
-        type: 'openModal',
-        action: 'addDepartment',
-        nodeId: nodeId,
-      },
-      '*'
-    );
-  }
-
   // Adicione listeners para os elementos do organograma
   document.querySelectorAll('.node-container').forEach((node) => {
     node.addEventListener('click', (e) => {
