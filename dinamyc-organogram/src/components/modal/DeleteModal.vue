@@ -41,7 +41,6 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import { defineProps, defineEmits } from 'vue';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
 
 const props = defineProps({
