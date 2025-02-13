@@ -289,7 +289,6 @@ export default {
 
     confirm() {
       this.$emit('confirm', this.formData);
-      this.startClose();
     },
     triggerPhotoUpload() {
       this.$refs.photoInput.click();
