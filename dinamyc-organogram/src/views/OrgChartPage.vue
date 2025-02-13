@@ -37,6 +37,11 @@
         @close="closeAddEmployeeModal"
         @confirm="handleAddEmployeeConfirm"
       />
+      <AddDepartmentModal
+        v-if="showAddDepartmentModal"
+        @close="closeAddDepartmentModal"
+        @confirm="handleAddDepartmentConfirm"
+      />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -63,26 +68,25 @@ import { useRoute } from 'vue-router';
 import { ref, onMounted, watch } from 'vue';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
 import AddEmployeeModal from 'src/components/modal/AddEmployeeModal.vue';
+import AddDepartmentModal from 'src/components/modal/AddDepartmentModal.vue';
 
 export default {
   components: {
     OrgChart,
     ButtonComponent,
     AddEmployeeModal,
+    AddDepartmentModal,
   },
   setup() {
     const route = useRoute();
     const orgchart = ref(null);
     const showAddEmployeeModal = ref(false);
+    const showAddDepartmentModal = ref(false);
 
     const loadOrgChart = () => {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
       const orgChartId = Number(route.params.id);
       orgchart.value = orgcharts.find((o) => o.id === orgChartId);
-    };
-
-    const openAddEmployeeModal = () => {
-      showModal.value = true;
     };
 
     const closeAddEmployeeModal = () => {
@@ -95,6 +99,16 @@ export default {
       // Aqui você pode, por exemplo, enviar os dados para o iframe via postMessage
       // ou atualizar os dados localmente.
       closeAddEmployeeModal();
+    };
+
+    const closeAddDepartmentModal = () => {
+      showAddDepartmentModal.value = false;
+      console.log('Modal de AddDepartment fechado');
+    };
+
+    const handleAddDepartmentConfirm = (data) => {
+      console.log('Dados do AddDepartmentModal:', data);
+      closeAddDepartmentModal();
     };
 
     onMounted(() => {
@@ -111,6 +125,13 @@ export default {
           );
           showAddEmployeeModal.value = true;
         }
+        if (event.data.action === 'addDepartment') {
+          console.log(
+            'Evento openModal para addDepartment detectado. NodeId:',
+            event.data.nodeId
+          );
+          showAddDepartmentModal.value = true;
+        }
       });
     });
 
@@ -125,8 +146,10 @@ export default {
       orgchart,
       handleAddEmployeeConfirm,
       closeAddEmployeeModal,
-      openAddEmployeeModal,
       showAddEmployeeModal,
+      showAddDepartmentModal,
+      closeAddDepartmentModal,
+      handleAddDepartmentConfirm,
     };
   },
 };

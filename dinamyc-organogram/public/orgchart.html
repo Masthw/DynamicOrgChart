@@ -605,13 +605,15 @@
 
   function generateRandomColor() {
     const palette = [
-      '#FF6F61',
-      '#6B5B95',
-      '#88B04B',
-      '#F7CAC9',
-      '#92A8D1',
-      '#955251',
-      '#B565A7',
+      '#414141',
+      '#D9D9D9',
+      '#0072CE',
+      '#460A78',
+      '#10B12D',
+      '#F58746',
+      '#FF3700',
+      '#BF2900',
+      '#7F1B00',
     ];
     return palette[Math.floor(Math.random() * palette.length)];
   }
@@ -637,6 +639,17 @@
       {
         type: 'openModal',
         action: 'addEmployee',
+        nodeId: nodeId,
+      },
+      '*'
+    );
+  }
+
+  function addDepartment(nodeId) {
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'addDepartment',
         nodeId: nodeId,
       },
       '*'
