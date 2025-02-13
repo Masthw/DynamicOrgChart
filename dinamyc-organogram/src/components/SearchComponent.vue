@@ -1,10 +1,6 @@
 <template>
   <div class="search-component">
-    <input
-      type="text"
-      placeholder="Buscar Funcionário ou Departamento"
-      @input="onInput"
-    />
+    <input type="text" :placeholder="placeholder" @input="onInput" />
     <img src="src/assets/icons/search.png" alt="Buscar" class="search-icon" />
   </div>
 </template>
@@ -12,7 +8,12 @@
 <script>
 export default {
   name: 'SearchComponent',
-
+  props: {
+    placeholder: {
+      type: String,
+      default: 'Buscar Funcionário ou Departamento',
+    },
+  },
   methods: {
     onInput(event) {
       const searchTerm = event.target.value;
