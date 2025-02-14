@@ -42,6 +42,11 @@
         @close="closeAddDepartmentModal"
         @confirm="handleAddDepartmentConfirm"
       />
+      <AddJobModal
+        v-if="showAddJobModal"
+        @close="closeAddJobModal"
+        @confirm="handleAddJobConfirm"
+      />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -69,6 +74,7 @@ import { ref, onMounted, watch } from 'vue';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
 import AddEmployeeModal from 'src/components/modal/AddEmployeeModal.vue';
 import AddDepartmentModal from 'src/components/modal/AddDepartmentModal.vue';
+import AddJobModal from 'src/components/modal/AddJobModal.vue';
 
 export default {
   components: {
@@ -76,12 +82,14 @@ export default {
     ButtonComponent,
     AddEmployeeModal,
     AddDepartmentModal,
+    AddJobModal,
   },
   setup() {
     const route = useRoute();
     const orgchart = ref(null);
     const showAddEmployeeModal = ref(false);
     const showAddDepartmentModal = ref(false);
+    const showAddJobModal = ref(false);
 
     const loadOrgChart = () => {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
@@ -111,6 +119,15 @@ export default {
       closeAddDepartmentModal();
     };
 
+    const closeAddJobModal = () => {
+      showAddJobModal.value = false;
+      console.log('Modal de AddJob fechado');
+    };
+    const handleAddJobConfirm = (data) => {
+      console.log('Dados do AddJobModal:', data);
+      closeAddJobModal();
+    };
+
     onMounted(() => {
       loadOrgChart();
       window.addEventListener('message', (event) => {
@@ -132,6 +149,13 @@ export default {
           );
           showAddDepartmentModal.value = true;
         }
+        if (event.data.action === 'addJob') {
+          console.log(
+            'Evento openModal para addJob detectado. NodeId:',
+            event.data.nodeId
+          );
+          showAddJobModal.value = true;
+        }
       });
     });
 
@@ -150,6 +174,9 @@ export default {
       showAddDepartmentModal,
       closeAddDepartmentModal,
       handleAddDepartmentConfirm,
+      showAddJobModal,
+      closeAddJobModal,
+      handleAddJobConfirm,
     };
   },
 };

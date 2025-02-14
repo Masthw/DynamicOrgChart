@@ -656,6 +656,17 @@
     );
   }
 
+  function addJob(nodeId) {
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'addJob',
+        nodeId: nodeId,
+      },
+      '*'
+    );
+  }
+
   function generateContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 27;
