@@ -70,6 +70,7 @@ svg:not(:root) {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  position: relative;
   transition: background-color 0.3s, border-color 0.3s;
 }
 
@@ -88,6 +89,29 @@ svg:not(:root) {
 
 .control-btn:hover img {
   filter: brightness(0) invert(1);
+}
+
+.control-btn .tooltip {
+  position: absolute;
+  bottom: -110%; /* posicionado acima do botão */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff3700;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  margin-bottom: 4px;
+}
+
+.control-btn:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
 }
 
 .controls {
