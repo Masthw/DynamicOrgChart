@@ -47,6 +47,14 @@
         @close="closeAddJobModal"
         @confirm="handleAddJobConfirm"
       />
+      <ViewSuccessionPlanModal
+        v-if="showViewSuccessionPlanModal"
+        :successionPlan="
+          Array.isArray(successionPlanData) ? successionPlanData : []
+        "
+        @close="closeViewSuccessionPlanModal"
+        @confirm="handleViewSuccessionPlanConfirm"
+      />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -75,6 +83,7 @@ import ButtonComponent from 'src/components/ButtonComponent.vue';
 import AddEmployeeModal from 'src/components/modal/AddEmployeeModal.vue';
 import AddDepartmentModal from 'src/components/modal/AddDepartmentModal.vue';
 import AddJobModal from 'src/components/modal/AddJobModal.vue';
+import ViewSuccessionPlanModal from 'src/components/modal/ViewSuccessionPlanModal.vue';
 
 export default {
   components: {
@@ -83,6 +92,7 @@ export default {
     AddEmployeeModal,
     AddDepartmentModal,
     AddJobModal,
+    ViewSuccessionPlanModal,
   },
   setup() {
     const route = useRoute();
@@ -90,6 +100,9 @@ export default {
     const showAddEmployeeModal = ref(false);
     const showAddDepartmentModal = ref(false);
     const showAddJobModal = ref(false);
+    const showViewSuccessionPlanModal = ref(false);
+
+    const successionPlanData = ref([]);
 
     const loadOrgChart = () => {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
@@ -128,8 +141,19 @@ export default {
       closeAddJobModal();
     };
 
+    const closeViewSuccessionPlanModal = () => {
+      showViewSuccessionPlanModal.value = false;
+      console.log('Modal succession fechado');
+    };
+
+    const handleViewSuccessionPlanConfirm = (data) => {
+      console.log('dados do plano de sucessão:', data);
+      closeViewSuccessionPlanModal();
+    };
+
     onMounted(() => {
       loadOrgChart();
+
       window.addEventListener('message', (event) => {
         console.log('Mensagem recebida no OrgChartPage:', event.data);
         if (
@@ -156,6 +180,17 @@ export default {
           );
           showAddJobModal.value = true;
         }
+        if (event.data.action === 'viewSuccessionPlan') {
+          console.log(
+            'Evento openModal para succession detectado. NodeId:',
+            event.data.nodeId
+          );
+          successionPlanData.value = Array.isArray(event.data.children)
+            ? event.data.children.slice(0, 4)
+            : [];
+          console.log(successionPlanData.value);
+          showViewSuccessionPlanModal.value = true;
+        }
       });
     });
 
@@ -177,6 +212,10 @@ export default {
       showAddJobModal,
       closeAddJobModal,
       handleAddJobConfirm,
+      showViewSuccessionPlanModal,
+      closeViewSuccessionPlanModal,
+      handleViewSuccessionPlanConfirm,
+      successionPlanData,
     };
   },
 };

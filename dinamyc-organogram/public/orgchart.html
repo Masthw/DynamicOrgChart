@@ -667,6 +667,31 @@
     );
   }
 
+  function getChildren(nodeId) {
+    const data = chart.getChartState().data;
+    console.log('Dados do organograma:', data);
+
+    const children = data.filter((node) => {
+      return String(node.parentId) === String(nodeId);
+    });
+
+    console.log(`Filhos do nó ${nodeId}:`, children);
+    return children;
+  }
+
+  function viewSuccessionPlan(nodeId) {
+    const children = getChildren(nodeId);
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'viewSuccessionPlan',
+        nodeId: nodeId,
+        children: children,
+      },
+      '*'
+    );
+  }
+
   function generateContent(d) {
     const color = '#FFFFFF';
     const imageDiffVert = 27;
