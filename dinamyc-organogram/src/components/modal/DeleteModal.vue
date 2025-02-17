@@ -45,7 +45,7 @@ import ButtonComponent from 'src/components/ButtonComponent.vue';
 
 const props = defineProps({
   modelValue: Boolean,
-  orgchart: Object, // Organograma a ser excluído
+  orgchart: Object,
 });
 
 const emit = defineEmits(['update:modelValue', 'confirm']);
@@ -53,7 +53,6 @@ const emit = defineEmits(['update:modelValue', 'confirm']);
 const isOpen = ref(props.modelValue);
 const orgchartName = ref(props.orgchart?.name || '');
 
-// Atualiza o nome do organograma quando o modal é aberto ou quando as props mudam
 watch(
   () => props.modelValue,
   (newVal) => {

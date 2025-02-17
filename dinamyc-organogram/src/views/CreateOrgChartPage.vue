@@ -101,7 +101,6 @@ const createOrgChart = () => {
     modifiedDate: new Date().toLocaleDateString(),
   };
 
-  // Adiciona o novo organograma à lista e salva no localStorage
   storedOrgCharts.push(newOrgChart);
   localStorage.setItem('orgcharts', JSON.stringify(storedOrgCharts));
   setTimeout(() => {

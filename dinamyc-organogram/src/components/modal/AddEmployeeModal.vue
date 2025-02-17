@@ -269,7 +269,7 @@ export default {
           : '';
       },
       set(value) {
-        this.formData.hire_date = value; // já está no formato correto
+        this.formData.hire_date = value;
       },
     },
   },

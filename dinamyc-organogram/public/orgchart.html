@@ -88,18 +88,16 @@
 
   window.addEventListener('message', (event) => {
     if (event.data.type === 'updateChart') {
-      // Lógica para atualizar o organograma
       updateChartData(event.data);
     }
   });
 
   function updateChartData(data) {
-    // Sua lógica para atualizar o gráfico D3 aqui
     chart.update();
   }
 
   function getOrgChartIdFromURL() {
-    const hash = window.location.hash; // Captura a parte após o #
+    const hash = window.location.hash;
     if (!hash) {
       console.error('Hash ausente ou inválido na URL');
       return null;
@@ -171,8 +169,6 @@
       document
         .querySelector('.chart-container')
         .classList.add('dragging-active');
-
-      // Eleva o nó arrastado para o topo da pilha de renderização (Z-Index)
       g.raise();
 
       const descendants = dragEvent.subject.descendants();
@@ -371,7 +367,6 @@
       }
     }
     let initialChildren = node.children || node._children;
-    // Caso a árvore original esteja armazenada em node.data.children (dependendo de como você estruturou os dados):
     if (!initialChildren && node.data && node.data.children) {
       initialChildren = node.data.children;
     }
@@ -618,7 +613,6 @@
     return palette[Math.floor(Math.random() * palette.length)];
   }
 
-  // Adicione listeners para os elementos do organograma
   document.querySelectorAll('.node-container').forEach((node) => {
     node.addEventListener('click', (e) => {
       if (e.target.closest('.control-btn')) return;
@@ -640,7 +634,6 @@
   }
 
   function addEmployee(nodeId, isEdit = false) {
-    // Se for edição, recupera os dados do funcionário; senão, envia objeto vazio
     const employee = isEdit ? getEmployeeData(nodeId) : {};
     window.parent.postMessage(
       {

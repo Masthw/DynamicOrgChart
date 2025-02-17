@@ -46,7 +46,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-// Computed para gerenciar o v-model
 const localValue = computed({
   get() {
     return props.modelValue;

@@ -124,15 +124,15 @@ export default {
   scrollbar-color: $orange transparent;
 
   &::-webkit-scrollbar {
-    width: 6px; // Barra fininha
+    width: 6px;
   }
 
   &::-webkit-scrollbar-track {
-    background: transparent; // Fundo transparente para o track
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: $orange; // Cor laranja para a thumb
+    background: $orange;
     border-radius: 3px;
   }
 }

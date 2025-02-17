@@ -57,7 +57,6 @@ export default {
 
   methods: {
     loadOrgCharts() {
-      // Recupera os organogramas salvos do localStorage
       const storedOrgCharts =
         JSON.parse(localStorage.getItem('orgcharts')) || [];
       if (storedOrgCharts.length > 0) {
@@ -83,7 +82,6 @@ export default {
     selectedOption(newVal) {
       this.showSearch = newVal !== '';
       if (newVal && this.$route.params.id !== newVal) {
-        // Força a navegação mesmo se já estiver na mesma rota
         this.$router.push({ path: `/orgchart/${newVal}`, force: true });
       }
     },

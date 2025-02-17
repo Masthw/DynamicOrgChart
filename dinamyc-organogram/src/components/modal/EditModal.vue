@@ -59,7 +59,6 @@ const isFormValid = computed(() => {
   return editedName.value.trim().length > 0;
 });
 
-// Sincroniza abertura do modal
 watch(
   () => props.modelValue,
   (newVal) => {
@@ -89,24 +88,20 @@ function generateUniqueName(name, orgcharts, currentId) {
   return newName;
 }
 
-// Fecha o modal
 const closeModal = () => {
   emit('update:modelValue', false);
 };
 
-// Salva as alterações
 const saveChanges = () => {
   const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
-  const currentId = props.orgchart.id; // ID do organograma que está sendo editado
+  const currentId = props.orgchart.id;
 
-  // Gera um nome único caso já exista um organograma com o mesmo nome
   const uniqueName = generateUniqueName(
     editedName.value.trim(),
     storedOrgCharts,
     currentId
   );
 
-  // Emite os dados editados, incluindo o modifiedDate atualizado
   emit('save', {
     name: uniqueName,
     description: editedDescription.value,

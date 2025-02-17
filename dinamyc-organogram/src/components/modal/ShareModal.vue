@@ -61,12 +61,10 @@ const emit = defineEmits(['update:modelValue', 'share']);
 const isOpen = ref(props.modelValue);
 const email = ref('');
 
-// Validação: o email não pode estar vazio (você pode adicionar uma validação de formato se desejar)
 const isFormValid = computed(() => {
   return email.value.trim().length > 0;
 });
 
-// Quando o modal abre, limpa o campo
 watch(
   () => props.modelValue,
   (newVal) => {

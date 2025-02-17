@@ -119,8 +119,6 @@ export default {
 
     const handleAddEmployeeConfirm = (data) => {
       console.log('Dados do AddEmployeeModal:', data);
-      // Aqui você pode, por exemplo, enviar os dados para o iframe via postMessage
-      // ou atualizar os dados localmente.
       closeAddEmployeeModal();
     };
 
