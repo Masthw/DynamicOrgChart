@@ -23,6 +23,10 @@
           :key="candidate.id"
           class="candidate-card"
         >
+          <div
+            class="circle-indicator"
+            :style="{ backgroundColor: candidate.circleColor }"
+          ></div>
           <!-- Foto do Candidato -->
           <div class="candidate-icon">
             <img :src="candidate.image" alt="Candidato" />
@@ -30,8 +34,10 @@
 
           <!-- Nome e Cargo -->
           <div class="candidate-info">
-            <h4>{{ candidate.name }} {{ candidate.lastName }}</h4>
-            <p>{{ candidate.position }}</p>
+            <p class="candidate-name">
+              {{ candidate.name }} {{ candidate.lastName }}
+            </p>
+            <p class="candidate-position">{{ candidate.position }}</p>
             <p class="salary">R$ {{ candidate.salary }}</p>
           </div>
         </div>
@@ -144,6 +150,15 @@ export default {
   font-weight: normal;
 }
 
+.circle-indicator {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
 .candidate-cards {
   display: flex;
   flex-wrap: wrap;
@@ -152,7 +167,7 @@ export default {
 }
 
 .candidate-card {
-  width: 200px;
+  width: 250px;
   padding: 12px;
   margin-bottom: 20px;
   border: 1px solid $background-gray;
@@ -181,25 +196,30 @@ export default {
 }
 
 .candidate-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   font-size: 14px;
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
-.candidate-info h4 {
-  font-size: 16px;
+.candidate-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: $gray;
   margin: 0;
-  margin-left: 10px;
+  text-align: left;
 }
 
-.candidate-info p {
+.candidate-position {
   color: $gray;
   font-size: 12px;
   margin: 0;
 }
 
 .salary {
-  font-weight: bold;
-  color: $background-gray;
+  font-size: 12px;
+  color: $gray;
 }
 
 .button-container {
