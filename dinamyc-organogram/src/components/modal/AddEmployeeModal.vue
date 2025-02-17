@@ -30,7 +30,7 @@
     <div class="side-modal-body">
       <form @submit.prevent="confirm">
         <div v-if="activeTab === 'sobre'" class="tab-content">
-          <!-- Área para a foto: componente inline de foto -->
+          <!-- Área para a foto-->
           <div class="photo-container">
             <img
               :src="photoUrl"
