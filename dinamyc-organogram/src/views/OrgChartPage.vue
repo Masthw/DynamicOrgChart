@@ -34,6 +34,7 @@
       <OrgChart v-if="orgchart" :key="orgchart.id" :data="orgchart.data" />
       <AddEmployeeModal
         v-if="showAddEmployeeModal"
+        :employeeData="employeeData"
         @close="closeAddEmployeeModal"
         @confirm="handleAddEmployeeConfirm"
       />
@@ -103,6 +104,7 @@ export default {
     const showViewSuccessionPlanModal = ref(false);
 
     const successionPlanData = ref([]);
+    const employeeData = ref({});
 
     const loadOrgChart = () => {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
@@ -161,9 +163,10 @@ export default {
           event.data.action === 'addEmployee'
         ) {
           console.log(
-            'Evento openModal para addEmployee detectado. NodeId:',
-            event.data.nodeId
+            'Evento openModal para addEmployee detectado. Dados:',
+            event.data.employee
           );
+          employeeData.value = event.data.employee;
           showAddEmployeeModal.value = true;
         }
         if (event.data.action === 'addDepartment') {
@@ -216,6 +219,7 @@ export default {
       closeViewSuccessionPlanModal,
       handleViewSuccessionPlanConfirm,
       successionPlanData,
+      employeeData,
     };
   },
 };

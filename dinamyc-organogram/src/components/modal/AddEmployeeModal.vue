@@ -50,7 +50,7 @@
           <div class="form-group">
             <label>Primeiro Nome *</label>
             <TextFieldComponent
-              v-model="formData.firstName"
+              v-model="formData.name"
               placeholder="Primeiro Nome"
               required
             />
@@ -81,21 +81,21 @@
           </div>
           <div class="form-group">
             <label>Data de Admissão</label>
-            <input type="date" v-model="formData.admissionDate" />
+            <input type="date" v-model="formattedHireDate" />
           </div>
         </div>
         <div v-else-if="activeTab === 'conexoes'" class="tab-content">
           <div class="form-group">
             <label>Gestor Imediato</label>
             <TextFieldComponent
-              v-model="formData.manager"
+              v-model="formData.parentId"
               placeholder="Nome do Gestor"
             />
           </div>
           <div class="form-group">
             <label>Departamento</label>
             <TextFieldComponent
-              v-model="formData.department"
+              v-model="formData.department_name"
               placeholder="Departamento"
             />
           </div>
@@ -180,7 +180,7 @@
           <div class="form-group">
             <label>Localização</label>
             <TextFieldComponent
-              v-model="formData.location"
+              v-model="formData.location_state"
               placeholder="Localização"
             />
           </div>
@@ -226,37 +226,13 @@ export default {
     SearchComponent,
   },
   props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
+    show: Boolean,
+    employeeData: Object,
   },
   data() {
     return {
-      formData: {
-        firstName: '',
-        lastName: '',
-        position: '',
-        gender: '',
-        admissionDate: '',
-        manager: '',
-        department: '',
-        departmentAcronym: '',
-        salary: '',
-        benefits: '',
-        workingHours: '',
-        education: '',
-        courses: '',
-        certifications: '',
-        languages: '',
-        technicalSkills: '',
-        costCenter: '',
-        area: '',
-        location: '',
-        branch: '',
-        workMode: '',
-      },
-      photoUrl: 'https://via.placeholder.com/150',
+      formData: { ...this.employeeData },
+      photoUrl: this.employeeData.image || 'https://via.placeholder.com/150',
       tabs: [
         {
           name: 'sobre',
@@ -281,6 +257,18 @@ export default {
       ],
       activeTab: 'sobre',
     };
+  },
+  computed: {
+    formattedHireDate: {
+      get() {
+        return this.formData.hire_date
+          ? this.formData.hire_date.split('T')[0]
+          : '';
+      },
+      set(value) {
+        this.formData.hire_date = value; // já está no formato correto
+      },
+    },
   },
   methods: {
     close() {

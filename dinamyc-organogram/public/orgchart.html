@@ -634,12 +634,20 @@
     });
   });
 
-  function addEmployee(nodeId) {
+  function getEmployeeData(nodeId) {
+    const data = chart.getChartState().data;
+    return data.find((node) => String(node.id) === String(nodeId));
+  }
+
+  function addEmployee(nodeId, isEdit = false) {
+    // Se for edição, recupera os dados do funcionário; senão, envia objeto vazio
+    const employee = isEdit ? getEmployeeData(nodeId) : {};
     window.parent.postMessage(
       {
         type: 'openModal',
         action: 'addEmployee',
         nodeId: nodeId,
+        employee: employee,
       },
       '*'
     );
@@ -702,11 +710,11 @@
       padding-top:${imageDiffVert - 2}px;
       padding-left:1px;
       padding-right:1px'>
-              <div class="content-container" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
-                d.width - 2
-              }px;height:${
-      d.height - imageDiffVert
-    }px;border-radius:10px;border: ${
+              <div class="content-container"  onclick="addEmployee(${
+                d.data.id
+              }, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
+      d.width - 2
+    }px;height:${d.height - imageDiffVert}px;border-radius:10px;border: ${
       d.data._highlighted || d.data._upToTheRootHighlighted
         ? '5px solid #ff3700"'
         : '1px solid #E4E2E9"'
@@ -736,7 +744,7 @@
       <div class="node-controls">
         <button class="control-btn" onclick="addEmployee(${
           d.data.id
-        }); event.stopPropagation();">
+        }, false); event.stopPropagation();">
           <img src="src/assets/icons/person_add.png" alt="Adicionar Funcionário" />
           <span class="tooltip">Adicionar Funcionário</span>
         </button>
