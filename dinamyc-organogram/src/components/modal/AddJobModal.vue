@@ -1,202 +1,205 @@
 <template>
-  <div class="side-modal" v-if="visible">
-    <div class="side-modal-header">
-      <h2>Adicionar Vaga</h2>
-      <q-btn
-        flat
-        dense
-        round
-        icon="close"
-        class="close-button"
-        @click="close"
-      />
-    </div>
-
-    <div class="side-modal-tabs">
-      <div
-        v-for="tab in tabs"
-        :key="tab.name"
-        :class="['tab-item', { active: activeTab === tab.name }]"
-        @click="activeTab = tab.name"
-      >
-        <img :src="tab.icon" alt="" class="tab-icon" />
-        <span class="tab-text">{{ tab.label }}</span>
+  <div v-if="visible">
+    <div class="modal-overlay"></div>
+    <div class="side-modal">
+      <div class="side-modal-header">
+        <h2>Adicionar Vaga</h2>
+        <q-btn
+          flat
+          dense
+          round
+          icon="close"
+          class="close-button"
+          @click="close"
+        />
       </div>
-    </div>
 
-    <div class="side-modal-body">
-      <form @submit.prevent="confirm">
-        <!-- Aba "Sobre" -->
-        <div v-if="activeTab === 'sobre'" class="tab-content">
-          <div class="form-group">
-            <label>Título da Vaga</label>
-            <TextFieldComponent
-              v-model="formData.jobTitle"
-              placeholder="Título da Vaga"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label>Departamento/Setor</label>
-            <TextFieldComponent
-              v-model="formData.jobDepartment"
-              placeholder="Departamento/Setor"
-            />
-          </div>
-          <div class="form-group">
-            <label>Unidade/Filial</label>
-            <TextFieldComponent
-              v-model="formData.jobBranch"
-              placeholder="Unidade/Filial"
-            />
-          </div>
-          <div class="form-group">
-            <label>Gestor Responsável</label>
-            <TextFieldComponent
-              v-model="formData.jobManager"
-              placeholder="Nome do Gestor"
-            />
-          </div>
-          <div class="form-group">
-            <label>Superior Imediato</label>
-            <TextFieldComponent
-              v-model="formData.jobImmediateSuperior"
-              placeholder="Nome do Imediato"
-            />
-          </div>
+      <div class="side-modal-tabs">
+        <div
+          v-for="tab in tabs"
+          :key="tab.name"
+          :class="['tab-item', { active: activeTab === tab.name }]"
+          @click="activeTab = tab.name"
+        >
+          <img :src="tab.icon" alt="" class="tab-icon" />
+          <span class="tab-text">{{ tab.label }}</span>
         </div>
+      </div>
 
-        <!-- Aba "Detalhes" -->
-        <div v-else-if="activeTab === 'detalhes'" class="tab-content">
-          <div class="form-group">
-            <label>Nível Hierárquico</label>
-            <TextFieldComponent
-              v-model="formData.hierarchyLevel"
-              placeholder="Nível Hierárquico"
-            />
+      <div class="side-modal-body">
+        <form @submit.prevent="confirm">
+          <!-- Aba "Sobre" -->
+          <div v-if="activeTab === 'sobre'" class="tab-content">
+            <div class="form-group">
+              <label>Título da Vaga</label>
+              <TextFieldComponent
+                v-model="formData.jobTitle"
+                placeholder="Título da Vaga"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Departamento/Setor</label>
+              <TextFieldComponent
+                v-model="formData.jobDepartment"
+                placeholder="Departamento/Setor"
+              />
+            </div>
+            <div class="form-group">
+              <label>Unidade/Filial</label>
+              <TextFieldComponent
+                v-model="formData.jobBranch"
+                placeholder="Unidade/Filial"
+              />
+            </div>
+            <div class="form-group">
+              <label>Gestor Responsável</label>
+              <TextFieldComponent
+                v-model="formData.jobManager"
+                placeholder="Nome do Gestor"
+              />
+            </div>
+            <div class="form-group">
+              <label>Superior Imediato</label>
+              <TextFieldComponent
+                v-model="formData.jobImmediateSuperior"
+                placeholder="Nome do Imediato"
+              />
+            </div>
           </div>
-          <div class="form-group">
-            <label>Tipo de Contratação</label>
-            <TextFieldComponent
-              v-model="formData.contractType"
-              placeholder="Tipo de Contratação"
-            />
-          </div>
-          <div class="form-group">
-            <label>Modelo de Trabalho</label>
-            <TextFieldComponent
-              v-model="formData.jobModality"
-              placeholder="Modelo de Trabalho"
-            />
-          </div>
-          <div class="form-group">
-            <label>Jornada de Trabalho</label>
-            <TextFieldComponent
-              v-model="formData.workingDay"
-              placeholder="Jornada de Trabalho"
-            />
-          </div>
-          <div class="form-group">
-            <label>Faixa Salarial</label>
-            <TextFieldComponent
-              v-model="formData.salaryRange"
-              placeholder="Modelo de Trabalho"
-            />
-          </div>
-          <div class="form-group">
-            <label>Benefícios Oferecidos</label>
-            <TextFieldComponent
-              v-model="formData.jobBenefits"
-              placeholder="Benefícios"
-            />
-          </div>
-        </div>
 
-        <!-- Aba "Requisitos" -->
-        <div v-else-if="activeTab === 'requisitos'" class="tab-content">
-          <div class="form-group">
-            <label>Formação Acadêmica</label>
-            <TextFieldComponent
-              v-model="formData.educationRequirement"
-              placeholder="Formação Acadêmica"
-            />
+          <!-- Aba "Detalhes" -->
+          <div v-else-if="activeTab === 'detalhes'" class="tab-content">
+            <div class="form-group">
+              <label>Nível Hierárquico</label>
+              <TextFieldComponent
+                v-model="formData.hierarchyLevel"
+                placeholder="Nível Hierárquico"
+              />
+            </div>
+            <div class="form-group">
+              <label>Tipo de Contratação</label>
+              <TextFieldComponent
+                v-model="formData.contractType"
+                placeholder="Tipo de Contratação"
+              />
+            </div>
+            <div class="form-group">
+              <label>Modelo de Trabalho</label>
+              <TextFieldComponent
+                v-model="formData.jobModality"
+                placeholder="Modelo de Trabalho"
+              />
+            </div>
+            <div class="form-group">
+              <label>Jornada de Trabalho</label>
+              <TextFieldComponent
+                v-model="formData.workingDay"
+                placeholder="Jornada de Trabalho"
+              />
+            </div>
+            <div class="form-group">
+              <label>Faixa Salarial</label>
+              <TextFieldComponent
+                v-model="formData.salaryRange"
+                placeholder="Modelo de Trabalho"
+              />
+            </div>
+            <div class="form-group">
+              <label>Benefícios Oferecidos</label>
+              <TextFieldComponent
+                v-model="formData.jobBenefits"
+                placeholder="Benefícios"
+              />
+            </div>
           </div>
-          <div class="form-group">
-            <label>Certificações Necessárias</label>
-            <TextFieldComponent
-              v-model="formData.requiredCertifications"
-              placeholder="Certificações Necessárias"
-            />
-          </div>
-          <div class="form-group">
-            <label>Experiência Mínima Requerida</label>
-            <TextFieldComponent
-              v-model="formData.minimumExperience"
-              placeholder="Experiência Mínima Requerida"
-            />
-          </div>
-          <div class="form-group">
-            <label>Habilidades Técnicas</label>
-            <TextFieldComponent
-              v-model="formData.technicalSkills"
-              placeholder="Habilidades Técnicas"
-            />
-          </div>
-          <div class="form-group">
-            <label>Idiomas Necessários</label>
-            <TextFieldComponent
-              v-model="formData.requiredLanguages"
-              placeholder="Idiomas Necessários"
-            />
-          </div>
-        </div>
 
-        <!-- Aba "Informações" -->
-        <div v-else-if="activeTab === 'informacoes'" class="tab-content">
-          <div class="form-group">
-            <label>Data de Abertura da Vaga</label>
-            <TextFieldComponent
-              v-model="formData.jobOpeningDate"
-              placeholder="Data de Abertura da Vaga"
-            />
+          <!-- Aba "Requisitos" -->
+          <div v-else-if="activeTab === 'requisitos'" class="tab-content">
+            <div class="form-group">
+              <label>Formação Acadêmica</label>
+              <TextFieldComponent
+                v-model="formData.educationRequirement"
+                placeholder="Formação Acadêmica"
+              />
+            </div>
+            <div class="form-group">
+              <label>Certificações Necessárias</label>
+              <TextFieldComponent
+                v-model="formData.requiredCertifications"
+                placeholder="Certificações Necessárias"
+              />
+            </div>
+            <div class="form-group">
+              <label>Experiência Mínima Requerida</label>
+              <TextFieldComponent
+                v-model="formData.minimumExperience"
+                placeholder="Experiência Mínima Requerida"
+              />
+            </div>
+            <div class="form-group">
+              <label>Habilidades Técnicas</label>
+              <TextFieldComponent
+                v-model="formData.technicalSkills"
+                placeholder="Habilidades Técnicas"
+              />
+            </div>
+            <div class="form-group">
+              <label>Idiomas Necessários</label>
+              <TextFieldComponent
+                v-model="formData.requiredLanguages"
+                placeholder="Idiomas Necessários"
+              />
+            </div>
           </div>
-          <div class="form-group">
-            <label>Prazo para Candidaturas</label>
-            <TextFieldComponent
-              v-model="formData.jobFinalDate"
-              placeholder="Prazo para Candidaturas"
-            />
-          </div>
-          <div class="form-group">
-            <label>Status da Vaga</label>
-            <TextFieldComponent
-              v-model="formData.jobStatus"
-              placeholder="Status da Vaga"
-            />
-          </div>
-          <div class="form-group">
-            <label>Motivo da Criação da Vaga</label>
-            <TextFieldComponent
-              v-model="formData.jobCreateReason"
-              placeholder="Motivo da Criação da Vaga"
-            />
-          </div>
-          <div class="form-group">
-            <label>KPIs</label>
-            <TextFieldComponent v-model="formData.kpis" placeholder="KPIs" />
-          </div>
-        </div>
 
-        <div class="side-modal-footer">
-          <ButtonComponent
-            type="button"
-            variant="primary"
-            label="Cancelar"
-            @click="close"
-          />
-          <ButtonComponent type="submit" variant="secondary" label="Salvar" />
-        </div>
-      </form>
+          <!-- Aba "Informações" -->
+          <div v-else-if="activeTab === 'informacoes'" class="tab-content">
+            <div class="form-group">
+              <label>Data de Abertura da Vaga</label>
+              <TextFieldComponent
+                v-model="formData.jobOpeningDate"
+                placeholder="Data de Abertura da Vaga"
+              />
+            </div>
+            <div class="form-group">
+              <label>Prazo para Candidaturas</label>
+              <TextFieldComponent
+                v-model="formData.jobFinalDate"
+                placeholder="Prazo para Candidaturas"
+              />
+            </div>
+            <div class="form-group">
+              <label>Status da Vaga</label>
+              <TextFieldComponent
+                v-model="formData.jobStatus"
+                placeholder="Status da Vaga"
+              />
+            </div>
+            <div class="form-group">
+              <label>Motivo da Criação da Vaga</label>
+              <TextFieldComponent
+                v-model="formData.jobCreateReason"
+                placeholder="Motivo da Criação da Vaga"
+              />
+            </div>
+            <div class="form-group">
+              <label>KPIs</label>
+              <TextFieldComponent v-model="formData.kpis" placeholder="KPIs" />
+            </div>
+          </div>
+
+          <div class="side-modal-footer">
+            <ButtonComponent
+              type="button"
+              variant="primary"
+              label="Cancelar"
+              @click="close"
+            />
+            <ButtonComponent type="submit" variant="secondary" label="Salvar" />
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -280,6 +283,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
 .side-modal {
   position: absolute;
   top: 50%;

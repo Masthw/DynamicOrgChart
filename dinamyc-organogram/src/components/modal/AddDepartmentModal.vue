@@ -1,67 +1,74 @@
 <template>
-  <div class="side-modal" v-if="true">
-    <div class="side-modal-header">
-      <SearchComponent
-        placeholder="Buscar Departamento"
-        class="search-component"
-      />
-      <q-btn
-        flat
-        dense
-        round
-        icon="close"
-        class="close-button"
-        @click="close"
-      />
-    </div>
-    <div class="side-modal-tabs">
-      <div class="tab-item active">
-        <img src="src/assets/icons/contact_mail.png" alt="" class="tab-icon" />
-        <span class="tab-text">Sobre</span>
+  <div v-if="true">
+    <div class="modal-overlay"></div>
+    <div class="side-modal">
+      <div class="side-modal-header">
+        <SearchComponent
+          placeholder="Buscar Departamento"
+          class="search-component"
+        />
+        <q-btn
+          flat
+          dense
+          round
+          icon="close"
+          class="close-button"
+          @click="close"
+        />
       </div>
-    </div>
-    <div class="side-modal-body">
-      <form @submit.prevent="confirm">
-        <div class="tab-content">
-          <div class="form-group">
-            <label>Nome *</label>
-            <TextFieldComponent
-              v-model="formData.departmentName"
-              placeholder="Digite o nome do departamento"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label>Descrição</label>
-            <TextFieldComponent
-              v-model="formData.departmentDescription"
-              placeholder="Insira a descrição"
-            />
-          </div>
-          <div class="form-group">
-            <label>Cor</label>
-            <div class="color-options">
-              <div
-                v-for="color in colors"
-                :key="color"
-                :style="{ backgroundColor: color }"
-                class="color-circle"
-                @click="selectColor(color)"
-                :class="{ selected: formData.departmentColor === color }"
-              ></div>
+      <div class="side-modal-tabs">
+        <div class="tab-item active">
+          <img
+            src="src/assets/icons/contact_mail.png"
+            alt=""
+            class="tab-icon"
+          />
+          <span class="tab-text">Sobre</span>
+        </div>
+      </div>
+      <div class="side-modal-body">
+        <form @submit.prevent="confirm">
+          <div class="tab-content">
+            <div class="form-group">
+              <label>Nome *</label>
+              <TextFieldComponent
+                v-model="formData.departmentName"
+                placeholder="Digite o nome do departamento"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Descrição</label>
+              <TextFieldComponent
+                v-model="formData.departmentDescription"
+                placeholder="Insira a descrição"
+              />
+            </div>
+            <div class="form-group">
+              <label>Cor</label>
+              <div class="color-options">
+                <div
+                  v-for="color in colors"
+                  :key="color"
+                  :style="{ backgroundColor: color }"
+                  class="color-circle"
+                  @click="selectColor(color)"
+                  :class="{ selected: formData.departmentColor === color }"
+                ></div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="side-modal-footer">
-          <ButtonComponent
-            type="button"
-            variant="primary"
-            label="Cancelar"
-            @click="close"
-          />
-          <ButtonComponent type="submit" variant="secondary" label="Salvar" />
-        </div>
-      </form>
+          <div class="side-modal-footer">
+            <ButtonComponent
+              type="button"
+              variant="primary"
+              label="Cancelar"
+              @click="close"
+            />
+            <ButtonComponent type="submit" variant="secondary" label="Salvar" />
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -119,6 +126,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
 .side-modal {
   position: absolute;
   top: 50%;

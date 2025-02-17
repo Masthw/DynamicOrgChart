@@ -1,214 +1,217 @@
 <template>
-  <div class="side-modal" v-if="true">
-    <div class="side-modal-header">
-      <SearchComponent
-        placeholder="Buscar Funcionário"
-        class="search-component"
-      />
-      <q-btn
-        flat
-        dense
-        round
-        icon="close"
-        class="close-button"
-        @click="close"
-      />
-    </div>
-
-    <div class="side-modal-tabs">
-      <div
-        v-for="tab in tabs"
-        :key="tab.name"
-        :class="['tab-item', { active: activeTab === tab.name }]"
-        @click="activeTab = tab.name"
-      >
-        <img :src="tab.icon" alt="" class="tab-icon" />
-        <span class="tab-text">{{ tab.label }}</span>
+  <div v-if="true">
+    <div class="modal-overlay"></div>
+    <div class="side-modal">
+      <div class="side-modal-header">
+        <SearchComponent
+          placeholder="Buscar Funcionário"
+          class="search-component"
+        />
+        <q-btn
+          flat
+          dense
+          round
+          icon="close"
+          class="close-button"
+          @click="close"
+        />
       </div>
-    </div>
 
-    <div class="side-modal-body">
-      <form @submit.prevent="confirm">
-        <div v-if="activeTab === 'sobre'" class="tab-content">
-          <!-- Área para a foto-->
-          <div class="photo-container">
-            <img
-              :src="photoUrl"
-              alt="Foto do Funcionário"
-              class="employee-photo"
-            />
-            <input
-              ref="photoInput"
-              type="file"
-              accept="image/*"
-              @change="handlePhotoChange"
-              @click="triggerPhotoUpload"
-              hidden
-            />
-          </div>
+      <div class="side-modal-tabs">
+        <div
+          v-for="tab in tabs"
+          :key="tab.name"
+          :class="['tab-item', { active: activeTab === tab.name }]"
+          @click="activeTab = tab.name"
+        >
+          <img :src="tab.icon" alt="" class="tab-icon" />
+          <span class="tab-text">{{ tab.label }}</span>
+        </div>
+      </div>
 
-          <div class="form-group">
-            <label>Primeiro Nome *</label>
-            <TextFieldComponent
-              v-model="formData.name"
-              placeholder="Primeiro Nome"
-              required
+      <div class="side-modal-body">
+        <form @submit.prevent="confirm">
+          <div v-if="activeTab === 'sobre'" class="tab-content">
+            <!-- Área para a foto-->
+            <div class="photo-container">
+              <img
+                :src="photoUrl"
+                alt="Foto do Funcionário"
+                class="employee-photo"
+              />
+              <input
+                ref="photoInput"
+                type="file"
+                accept="image/*"
+                @change="handlePhotoChange"
+                @click="triggerPhotoUpload"
+                hidden
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Primeiro Nome *</label>
+              <TextFieldComponent
+                v-model="formData.name"
+                placeholder="Primeiro Nome"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Sobrenome *</label>
+              <TextFieldComponent
+                v-model="formData.lastName"
+                placeholder="Sobrenome"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Cargo</label>
+              <TextFieldComponent
+                v-model="formData.position"
+                placeholder="Cargo"
+              />
+            </div>
+            <div class="form-group">
+              <label>Gênero</label>
+              <select v-model="formData.gender">
+                <option value="">Selecione</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Data de Admissão</label>
+              <input type="date" v-model="formattedHireDate" />
+            </div>
+          </div>
+          <div v-else-if="activeTab === 'conexoes'" class="tab-content">
+            <div class="form-group">
+              <label>Gestor Imediato</label>
+              <TextFieldComponent
+                v-model="formData.parentId"
+                placeholder="Nome do Gestor"
+              />
+            </div>
+            <div class="form-group">
+              <label>Departamento</label>
+              <TextFieldComponent
+                v-model="formData.department_name"
+                placeholder="Departamento"
+              />
+            </div>
+            <div class="form-group">
+              <label>Sigla</label>
+              <TextFieldComponent
+                v-model="formData.departmentAcronym"
+                placeholder="Sigla do Departamento"
+              />
+            </div>
+            <div class="form-group">
+              <label>Salário</label>
+              <TextFieldComponent
+                v-model="formData.salary"
+                placeholder="Salário"
+              />
+            </div>
+            <div class="form-group">
+              <label>Benefícios</label>
+              <TextFieldComponent
+                v-model="formData.benefits"
+                placeholder="Benefícios"
+              />
+            </div>
+            <div class="form-group">
+              <label>Horas de Trabalho</label>
+              <TextFieldComponent
+                v-model="formData.workingHours"
+                placeholder="Horas de Trabalho"
+              />
+            </div>
+          </div>
+          <div v-else-if="activeTab === 'formacao'" class="tab-content">
+            <div class="form-group">
+              <label>Escolaridade</label>
+              <TextFieldComponent
+                v-model="formData.education"
+                placeholder="Escolaridade"
+              />
+            </div>
+            <div class="form-group">
+              <label>Cursos</label>
+              <TextFieldComponent
+                v-model="formData.courses"
+                placeholder="Cursos"
+              />
+            </div>
+            <div class="form-group">
+              <label>Certificações</label>
+              <TextFieldComponent
+                v-model="formData.certifications"
+                placeholder="Certificações"
+              />
+            </div>
+            <div class="form-group">
+              <label>Idiomas</label>
+              <TextFieldComponent
+                v-model="formData.languages"
+                placeholder="Idiomas"
+              />
+            </div>
+            <div class="form-group">
+              <label>Habilidades Técnicas</label>
+              <TextFieldComponent
+                v-model="formData.technicalSkills"
+                placeholder="Habilidades Técnicas"
+              />
+            </div>
+          </div>
+          <div v-else-if="activeTab === 'localizacao'" class="tab-content">
+            <div class="form-group">
+              <label>Centro de Custo</label>
+              <TextFieldComponent
+                v-model="formData.costCenter"
+                placeholder="Centro de Custo"
+              />
+            </div>
+            <div class="form-group">
+              <label>Área</label>
+              <TextFieldComponent v-model="formData.area" placeholder="Área" />
+            </div>
+            <div class="form-group">
+              <label>Localização</label>
+              <TextFieldComponent
+                v-model="formData.location_state"
+                placeholder="Localização"
+              />
+            </div>
+            <div class="form-group">
+              <label>Unidade/Filial</label>
+              <TextFieldComponent
+                v-model="formData.branch"
+                placeholder="Unidade/Filial"
+              />
+            </div>
+            <div class="form-group">
+              <label>Modalidade de Trabalho</label>
+              <TextFieldComponent
+                v-model="formData.workMode"
+                placeholder="Modalidade de Trabalho"
+              />
+            </div>
+          </div>
+          <div class="side-modal-footer">
+            <ButtonComponent
+              type="button"
+              variant="primary"
+              label="Cancelar"
+              @click="close"
             />
+            <ButtonComponent type="submit" variant="secondary" label="Salvar" />
           </div>
-          <div class="form-group">
-            <label>Sobrenome *</label>
-            <TextFieldComponent
-              v-model="formData.lastName"
-              placeholder="Sobrenome"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label>Cargo</label>
-            <TextFieldComponent
-              v-model="formData.position"
-              placeholder="Cargo"
-            />
-          </div>
-          <div class="form-group">
-            <label>Gênero</label>
-            <select v-model="formData.gender">
-              <option value="">Selecione</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Feminino">Feminino</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Data de Admissão</label>
-            <input type="date" v-model="formattedHireDate" />
-          </div>
-        </div>
-        <div v-else-if="activeTab === 'conexoes'" class="tab-content">
-          <div class="form-group">
-            <label>Gestor Imediato</label>
-            <TextFieldComponent
-              v-model="formData.parentId"
-              placeholder="Nome do Gestor"
-            />
-          </div>
-          <div class="form-group">
-            <label>Departamento</label>
-            <TextFieldComponent
-              v-model="formData.department_name"
-              placeholder="Departamento"
-            />
-          </div>
-          <div class="form-group">
-            <label>Sigla</label>
-            <TextFieldComponent
-              v-model="formData.departmentAcronym"
-              placeholder="Sigla do Departamento"
-            />
-          </div>
-          <div class="form-group">
-            <label>Salário</label>
-            <TextFieldComponent
-              v-model="formData.salary"
-              placeholder="Salário"
-            />
-          </div>
-          <div class="form-group">
-            <label>Benefícios</label>
-            <TextFieldComponent
-              v-model="formData.benefits"
-              placeholder="Benefícios"
-            />
-          </div>
-          <div class="form-group">
-            <label>Horas de Trabalho</label>
-            <TextFieldComponent
-              v-model="formData.workingHours"
-              placeholder="Horas de Trabalho"
-            />
-          </div>
-        </div>
-        <div v-else-if="activeTab === 'formacao'" class="tab-content">
-          <div class="form-group">
-            <label>Escolaridade</label>
-            <TextFieldComponent
-              v-model="formData.education"
-              placeholder="Escolaridade"
-            />
-          </div>
-          <div class="form-group">
-            <label>Cursos</label>
-            <TextFieldComponent
-              v-model="formData.courses"
-              placeholder="Cursos"
-            />
-          </div>
-          <div class="form-group">
-            <label>Certificações</label>
-            <TextFieldComponent
-              v-model="formData.certifications"
-              placeholder="Certificações"
-            />
-          </div>
-          <div class="form-group">
-            <label>Idiomas</label>
-            <TextFieldComponent
-              v-model="formData.languages"
-              placeholder="Idiomas"
-            />
-          </div>
-          <div class="form-group">
-            <label>Habilidades Técnicas</label>
-            <TextFieldComponent
-              v-model="formData.technicalSkills"
-              placeholder="Habilidades Técnicas"
-            />
-          </div>
-        </div>
-        <div v-else-if="activeTab === 'localizacao'" class="tab-content">
-          <div class="form-group">
-            <label>Centro de Custo</label>
-            <TextFieldComponent
-              v-model="formData.costCenter"
-              placeholder="Centro de Custo"
-            />
-          </div>
-          <div class="form-group">
-            <label>Área</label>
-            <TextFieldComponent v-model="formData.area" placeholder="Área" />
-          </div>
-          <div class="form-group">
-            <label>Localização</label>
-            <TextFieldComponent
-              v-model="formData.location_state"
-              placeholder="Localização"
-            />
-          </div>
-          <div class="form-group">
-            <label>Unidade/Filial</label>
-            <TextFieldComponent
-              v-model="formData.branch"
-              placeholder="Unidade/Filial"
-            />
-          </div>
-          <div class="form-group">
-            <label>Modalidade de Trabalho</label>
-            <TextFieldComponent
-              v-model="formData.workMode"
-              placeholder="Modalidade de Trabalho"
-            />
-          </div>
-        </div>
-        <div class="side-modal-footer">
-          <ButtonComponent
-            type="button"
-            variant="primary"
-            label="Cancelar"
-            @click="close"
-          />
-          <ButtonComponent type="submit" variant="secondary" label="Salvar" />
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -296,6 +299,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
 .side-modal {
   position: absolute;
   top: 50%;
