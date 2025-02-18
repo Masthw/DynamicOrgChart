@@ -222,7 +222,7 @@ import SearchComponent from '../SearchComponent.vue';
 import TextFieldComponent from '../TextFieldComponent.vue';
 
 export default {
-  name: 'AddEmployeeModal',
+  name: 'EmployeeModal',
   components: {
     ButtonComponent,
     TextFieldComponent,

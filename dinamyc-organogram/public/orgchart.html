@@ -642,12 +642,12 @@
     return data.find((node) => String(node.id) === String(nodeId));
   }
 
-  function addEmployee(nodeId, isEdit = false) {
+  function Employee(nodeId, isEdit = false) {
     const employee = isEdit ? getEmployeeData(nodeId) : {};
     window.parent.postMessage(
       {
         type: 'openModal',
-        action: 'addEmployee',
+        action: 'employee',
         nodeId: nodeId,
         employee: employee,
       },
@@ -712,7 +712,7 @@
       padding-top:${imageDiffVert - 2}px;
       padding-left:1px;
       padding-right:1px'>
-              <div class="content-container"  onclick="addEmployee(${
+              <div class="content-container"  onclick="Employee(${
                 d.data.id
               }, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
       d.width - 2
@@ -744,7 +744,7 @@
 
               </div>
       <div class="node-controls">
-        <button class="control-btn" onclick="addEmployee(${
+        <button class="control-btn" onclick="Employee(${
           d.data.id
         }, false); event.stopPropagation();">
           <img src="src/assets/icons/person_add.png" alt="Adicionar Funcionário" />

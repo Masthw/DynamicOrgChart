@@ -79,7 +79,7 @@ import SearchComponent from '../SearchComponent.vue';
 import TextFieldComponent from '../TextFieldComponent.vue';
 
 export default {
-  name: 'AddEmployeeModal',
+  name: 'DepartmentModal',
   components: {
     ButtonComponent,
     TextFieldComponent,

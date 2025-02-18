@@ -32,11 +32,11 @@
     <!-- Área do Organograma -->
     <div class="orgchart-wrapper">
       <OrgChart v-if="orgchart" :key="orgchart.id" :data="orgchart.data" />
-      <AddEmployeeModal
-        v-if="showAddEmployeeModal"
+      <EmployeeModal
+        v-if="showEmployeeModal"
         :employeeData="employeeData"
-        @close="closeAddEmployeeModal"
-        @confirm="handleAddEmployeeConfirm"
+        @close="closeEmployeeModal"
+        @confirm="handleEmployeeConfirm"
       />
       <AddDepartmentModal
         v-if="showAddDepartmentModal"
@@ -82,7 +82,7 @@ import { emitter } from 'src/eventBus';
 import { useRoute } from 'vue-router';
 import { ref, onMounted, watch } from 'vue';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
-import AddEmployeeModal from 'src/components/modal/AddEmployeeModal.vue';
+import EmployeeModal from 'src/components/modal/EmployeeModal.vue';
 import AddDepartmentModal from 'src/components/modal/AddDepartmentModal.vue';
 import AddJobModal from 'src/components/modal/AddJobModal.vue';
 import ViewSuccessionPlanModal from 'src/components/modal/ViewSuccessionPlanModal.vue';
@@ -91,7 +91,7 @@ export default {
   components: {
     OrgChart,
     ButtonComponent,
-    AddEmployeeModal,
+    EmployeeModal,
     AddDepartmentModal,
     AddJobModal,
     ViewSuccessionPlanModal,
@@ -99,7 +99,7 @@ export default {
   setup() {
     const route = useRoute();
     const orgchart = ref(null);
-    const showAddEmployeeModal = ref(false);
+    const showEmployeeModal = ref(false);
     const showAddDepartmentModal = ref(false);
     const showAddJobModal = ref(false);
     const showViewSuccessionPlanModal = ref(false);
@@ -113,14 +113,14 @@ export default {
       orgchart.value = orgcharts.find((o) => o.id === orgChartId);
     };
 
-    const closeAddEmployeeModal = () => {
-      showAddEmployeeModal.value = false;
-      console.log('Modal de AddEmployee fechado');
+    const closeEmployeeModal = () => {
+      showEmployeeModal.value = false;
+      console.log('Modal de Employee fechado');
     };
 
-    const handleAddEmployeeConfirm = (data) => {
-      console.log('Dados do AddEmployeeModal:', data);
-      closeAddEmployeeModal();
+    const handleEmployeeConfirm = (data) => {
+      console.log('Dados do EmployeeModal:', data);
+      closeEmployeeModal();
     };
 
     const closeAddDepartmentModal = () => {
@@ -159,14 +159,14 @@ export default {
         console.log('Mensagem recebida no OrgChartPage:', event.data);
         if (
           event.data.type === 'openModal' &&
-          event.data.action === 'addEmployee'
+          event.data.action === 'employee'
         ) {
           console.log(
-            'Evento openModal para addEmployee detectado. Dados:',
+            'Evento openModal para Employee detectado. Dados:',
             event.data.employee
           );
           employeeData.value = event.data.employee;
-          showAddEmployeeModal.value = true;
+          showEmployeeModal.value = true;
         }
         if (event.data.action === 'addDepartment') {
           console.log(
@@ -211,9 +211,9 @@ export default {
 
     return {
       orgchart,
-      handleAddEmployeeConfirm,
-      closeAddEmployeeModal,
-      showAddEmployeeModal,
+      handleEmployeeConfirm,
+      closeEmployeeModal,
+      showEmployeeModal,
       showAddDepartmentModal,
       closeAddDepartmentModal,
       handleAddDepartmentConfirm,
