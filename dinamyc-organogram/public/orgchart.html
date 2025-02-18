@@ -280,21 +280,24 @@
     document.getElementById('dragActions').classList.remove('hide');
   }
 
-  function disableDrag() {
+  function disableDrag(saveState = true) {
     dragEnabled = false;
     document.querySelector('.chart-container').classList.remove('drag-enabled');
     document.getElementById('enableDragButton').classList.remove('hide');
     document.getElementById('dragActions').classList.add('hide');
     undoActions = [];
     redoActions = [];
-    const orgChartId = getOrgChartIdFromURL();
-    saveChartState(orgChartId);
+
+    if (saveState) {
+      const orgChartId = getOrgChartIdFromURL();
+      saveChartState(orgChartId);
+    }
     updateDragActions();
   }
 
   function cancelDrag() {
     if (undoActions.length === 0) {
-      disableDrag();
+      disableDrag(false);
       return;
     }
 
@@ -304,7 +307,7 @@
       node.parentId = action.parentId;
     });
 
-    disableDrag();
+    disableDrag(false);
     chart.render();
   }
 
