@@ -147,7 +147,7 @@
     <DuplicateModal
       v-model="isDuplicateModalOpen"
       :orgchart="selectedOrgChart"
-      @save.once="handleDuplicate"
+      @save="handleDuplicate"
     />
     <ShareModal
       v-model="isShareModalOpen"
@@ -199,7 +199,7 @@ onMounted(() => {
 });
 
 const updateOrgCharts = (newList) => {
-  orgcharts.value = newList;
+  orgcharts.value = [...newList];
   localStorage.setItem('orgcharts', JSON.stringify(newList, null, 0));
   emitter.emit('orgcharts-updated');
 };
