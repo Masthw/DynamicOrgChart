@@ -14,9 +14,9 @@
 
       <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
-        <h2 class="modal-title">Compartilhar Organograma</h2>
+        <h2 class="modal-title">Compartilhar Simulação</h2>
         <p class="modal-text">
-          Informe o email para o qual deseja enviar o organograma.
+          Informe o email para o qual deseja enviar a simulação.
         </p>
       </q-card-section>
 

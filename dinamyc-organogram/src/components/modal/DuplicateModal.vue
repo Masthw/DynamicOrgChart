@@ -14,10 +14,10 @@
 
       <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
-        <h2 class="modal-title">Duplicar Organograma</h2>
+        <h2 class="modal-title">Duplicar Simulação</h2>
         <p class="modal-text">
-          Esta ação copiará o organograma selecionado. <br />
-          Informe abaixo o nome do novo organograma.
+          Esta ação copiará a simulação selecionada. <br />
+          Informe abaixo o nome da nova simulação.
         </p>
       </q-card-section>
 

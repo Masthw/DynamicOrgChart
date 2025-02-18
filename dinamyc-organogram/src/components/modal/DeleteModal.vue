@@ -14,9 +14,9 @@
 
       <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
-        <h2 class="modal-title">Excluir Organograma</h2>
+        <h2 class="modal-title">Excluir Simulação</h2>
         <p class="modal-text">
-          Deseja realmente excluir o organograma
+          Deseja realmente excluir a simulação
           <strong>{{ orgchartName }}</strong
           >?
         </p>

@@ -14,7 +14,7 @@
 
       <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
-        <h2 class="modal-title">Exportar Organograma</h2>
+        <h2 class="modal-title">Exportar Simulação</h2>
         <p class="modal-text">
           Você está prestes a fazer o download do
           <strong>{{ orgchartName }}.</strong> <br />

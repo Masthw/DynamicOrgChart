@@ -10,7 +10,7 @@
 
       <!-- Conteúdo do modal -->
       <q-card-section>
-        <h2 class="modal-title">Editar Organograma</h2>
+        <h2 class="modal-title">Editar Simulação</h2>
         <p class="modal-text">
           Digite o novo nome ou descrição abaixo e salve <br />
           para confirmar a alteração.

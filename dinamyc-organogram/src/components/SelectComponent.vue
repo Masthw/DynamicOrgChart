@@ -10,7 +10,7 @@
     </div>
     <div v-if="isOpen" class="options-list">
       <div v-if="options.length === 0" class="empty-option">
-        Nenhum organograma cadastrado
+        Nenhuma simulação cadastrada
       </div>
       <div
         v-for="option in options"

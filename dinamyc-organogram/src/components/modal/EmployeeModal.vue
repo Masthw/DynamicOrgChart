@@ -4,7 +4,7 @@
     <div class="side-modal">
       <div class="side-modal-header">
         <SearchComponent
-          placeholder="Buscar Funcionário"
+          placeholder="Buscar Empregado"
           class="search-component"
         />
         <q-btn
@@ -36,7 +36,7 @@
             <div class="photo-container">
               <img
                 :src="photoUrl"
-                alt="Foto do Funcionário"
+                alt="Foto do Empregado"
                 class="employee-photo"
               />
               <input

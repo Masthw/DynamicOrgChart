@@ -11,7 +11,7 @@ export default {
   props: {
     placeholder: {
       type: String,
-      default: 'Buscar Funcionário ou Departamento',
+      default: 'Buscar Empregado ou Departamento',
     },
   },
   methods: {

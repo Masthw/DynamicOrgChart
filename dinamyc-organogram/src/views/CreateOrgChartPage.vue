@@ -16,7 +16,7 @@
       <img src="../assets/images/organiza_logo.png" alt="Logo" class="logo" />
       <TextFieldComponent
         v-model="orgchartName"
-        label="Nome do Organograma"
+        label="Nome da Simulação"
         placeholder="exemplo: Planta Tubarão"
         :rules="[(val) => !!val || 'Campo obrigatório']"
         :required="true"
@@ -40,7 +40,7 @@
     <div class="image-container">
       <img
         src="../assets/images/createorgchart.png"
-        alt="Organograma Ilustrativo"
+        alt="Simulação Ilustrativa"
         class="illustration"
       />
 

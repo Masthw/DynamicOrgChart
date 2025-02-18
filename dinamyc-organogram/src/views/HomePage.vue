@@ -4,7 +4,7 @@
     <div class="title-container">
       <h1 class="title-text">
         GERENCIAR <br />
-        ORGANOGRAMAS
+        SIMULAÇÕES
       </h1>
       <ButtonComponent
         label="Criar Nova Simulação"
@@ -21,8 +21,8 @@
         <div v-if="orgcharts.length === 0" class="orgchart-empty-card">
           <p class="empty-text">
             Não existem <br />
-            organogramas <br />
-            cadastrados no <br />
+            simulações <br />
+            cadastradas no <br />
             sistema.
           </p>
           <ButtonComponent
@@ -59,13 +59,13 @@
             <img
               v-show="!hoverIcons[orgchart.id]"
               src="../assets/icons/lan.png"
-              alt="Ícone do Organograma"
+              alt="Ícone da Simulação"
               class="icon"
             />
             <img
               v-show="hoverIcons[orgchart.id]"
               src="../assets/icons/arrow_forward.png"
-              alt="Abrir Organograma"
+              alt="Abrir Simulação"
               class="icon"
             />
           </div>
@@ -75,7 +75,7 @@
 
           <!-- Descrição do Organograma -->
           <p class="orgchart-description">
-            {{ orgchart.description || 'Descrição do organograma.' }}
+            {{ orgchart.description || 'Descrição da simulação.' }}
           </p>
 
           <!-- Data de Atualização -->

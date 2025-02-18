@@ -12,7 +12,7 @@
     <SelectComponent
       v-model="selectedOption"
       :options="options"
-      placeholder="Selecione o Organograma"
+      placeholder="Selecione a Simulação"
     />
     <SearchComponent v-if="showSearch" @search-input="onSearchInput" />
     <div class="icons">
