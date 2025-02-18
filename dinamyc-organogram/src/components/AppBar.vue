@@ -14,7 +14,10 @@
       :options="options"
       placeholder="Selecione a Simulação"
     />
-    <SearchComponent v-if="showSearch" @search-input="onSearchInput" />
+    <SearchComponent
+      v-if="showSearch && shouldShowSearch"
+      @search-input="onSearchInput"
+    />
     <div class="icons">
       <img
         src="../assets/icons/notifications_white.png"
@@ -46,6 +49,12 @@ export default {
       options: [],
       showSearch: false,
     };
+  },
+  computed: {
+    shouldShowSearch() {
+      const pdfRoutes = ['VisualizarAlteracoes', 'VisualizarPortaria'];
+      return !pdfRoutes.includes(this.$route.name);
+    },
   },
   created() {
     this.loadOrgCharts();

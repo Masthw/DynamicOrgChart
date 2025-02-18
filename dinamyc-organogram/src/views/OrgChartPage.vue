@@ -11,6 +11,7 @@
           label="Visualizar Alterações"
           icon="src/assets/icons/view.png"
           variant="secondary"
+          @click="viewPdfAlteracoes"
         />
         <ButtonComponent
           label="Análise de Impacto"
@@ -26,6 +27,7 @@
           label="Visualizar Portaria"
           icon="src/assets/icons/inventory.png"
           variant="secondary"
+          @click="viewPdfPortaria"
         />
       </div>
     </div>
@@ -80,6 +82,7 @@
 import OrgChart from 'components/OrgChart.vue';
 import { emitter } from 'src/eventBus';
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { ref, onMounted, watch } from 'vue';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
 import EmployeeModal from 'src/components/modal/EmployeeModal.vue';
@@ -98,6 +101,7 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const orgchart = ref(null);
     const showEmployeeModal = ref(false);
     const showAddDepartmentModal = ref(false);
@@ -111,6 +115,18 @@ export default {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
       const orgChartId = Number(route.params.id);
       orgchart.value = orgcharts.find((o) => o.id === orgChartId);
+    };
+
+    const viewPdfAlteracoes = () => {
+      if (orgchart.value && orgchart.value.id) {
+        router.push(`/orgchart/${orgchart.value.id}/visualizar-alteracoes`);
+      }
+    };
+
+    const viewPdfPortaria = () => {
+      if (orgchart.value && orgchart.value.id) {
+        router.push(`/orgchart/${orgchart.value.id}/visualizar-portaria`);
+      }
     };
 
     const closeEmployeeModal = () => {
@@ -225,6 +241,8 @@ export default {
       handleViewSuccessionPlanConfirm,
       successionPlanData,
       employeeData,
+      viewPdfAlteracoes,
+      viewPdfPortaria,
     };
   },
 };

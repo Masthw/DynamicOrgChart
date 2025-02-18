@@ -3,6 +3,7 @@ import OrgChartPage from 'src/views/OrgChartPage.vue';
 import DefaultLayout from 'layouts/DefaultLayout.vue';
 import HomePage from '../views/HomePage.vue';
 import CreateOrgChartPage from 'src/views/CreateOrgChartPage.vue';
+import PdfViewer from 'src/components/PdfViewer.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -17,6 +18,24 @@ const routes: RouteRecordRaw[] = [
         path: '/orgchart/:id',
         component: OrgChartPage,
         props: true,
+      },
+      {
+        path: 'orgchart/:id/visualizar-alteracoes',
+        name: 'VisualizarAlteracoes',
+        component: PdfViewer,
+        props: (route) => ({
+          pdfUrl: '/pdfs/alteracoes.pdf',
+          id: route.params.id,
+        }),
+      },
+      {
+        path: 'orgchart/:id/visualizar-portaria',
+        name: 'VisualizarPortaria',
+        component: PdfViewer,
+        props: (route) => ({
+          pdfUrl: '/pdfs/portaria.pdf',
+          id: route.params.id,
+        }),
       },
     ],
   },
