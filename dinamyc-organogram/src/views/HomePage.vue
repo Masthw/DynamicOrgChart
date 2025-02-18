@@ -292,6 +292,9 @@ const handleDeleteConfirm = (id) => {
   background-color: $white;
   padding: 2rem;
   box-sizing: border-box;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: $background-gray transparent;
 }
 
 .title-container {
