@@ -569,6 +569,15 @@
         delete d._highlighted;
       });
       localStorage.setItem(`orgChartData_${id}`, JSON.stringify(updatedData));
+      const newModifiedDate = new Date().toLocaleDateString();
+      window.parent.postMessage(
+        {
+          type: 'orgchart-modified',
+          id: id,
+          modifiedDate: newModifiedDate,
+        },
+        '*'
+      );
     }
   }
 

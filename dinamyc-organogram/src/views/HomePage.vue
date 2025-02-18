@@ -196,6 +196,24 @@ onMounted(() => {
     description: orgchart.description || '',
   }));
   console.log(storedOrgCharts);
+
+  const handleOrgchartModified = (data) => {
+    const { id, modifiedDate } = data;
+    const numId = Number(id);
+    const index = orgcharts.value.findIndex((org) => org.id === numId);
+    if (index !== -1) {
+      orgcharts.value[index].modifiedDate = modifiedDate;
+      localStorage.setItem(
+        'orgcharts',
+        JSON.stringify(orgcharts.value, null, 0)
+      );
+      console.log(
+        `HomePage atualizou o orgchart ${numId} com data ${modifiedDate}`
+      );
+    }
+  };
+
+  emitter.on('orgchart-modified', handleOrgchartModified);
 });
 
 const updateOrgCharts = (newList) => {

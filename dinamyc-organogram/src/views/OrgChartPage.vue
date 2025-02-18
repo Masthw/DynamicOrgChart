@@ -78,6 +78,7 @@
 
 <script>
 import OrgChart from 'components/OrgChart.vue';
+import { emitter } from 'src/eventBus';
 import { useRoute } from 'vue-router';
 import { ref, onMounted, watch } from 'vue';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
@@ -191,6 +192,12 @@ export default {
             : [];
           console.log(successionPlanData.value);
           showViewSuccessionPlanModal.value = true;
+        }
+        if (event.data && event.data.type === 'orgchart-modified') {
+          const { id, modifiedDate } = event.data;
+          console.log('OrgChartPage recebeu mensagem:', event.data);
+          // Emite para a HomePage via emitter
+          emitter.emit('orgchart-modified', { id, modifiedDate });
         }
       });
     });
