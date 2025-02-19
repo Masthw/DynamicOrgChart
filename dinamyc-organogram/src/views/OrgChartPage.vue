@@ -22,6 +22,7 @@
           label="Submeter Alterações"
           icon="src/assets/icons/send.png"
           variant="secondary"
+          @click="openSubmitChangesModal"
         />
         <ButtonComponent
           label="Visualizar Portaria"
@@ -75,6 +76,10 @@
         <span class="subtitle-label">Simulação Não Permitida</span>
       </div>
     </div>
+    <SubmitChangesModal
+      v-model="showSubmitChangesModal"
+      @submit="handleSubmitChanges"
+    />
   </div>
 </template>
 
@@ -89,6 +94,7 @@ import EmployeeModal from 'src/components/modal/EmployeeModal.vue';
 import AddDepartmentModal from 'src/components/modal/AddDepartmentModal.vue';
 import AddJobModal from 'src/components/modal/AddJobModal.vue';
 import ViewSuccessionPlanModal from 'src/components/modal/ViewSuccessionPlanModal.vue';
+import SubmitChangesModal from 'src/components/modal/SubmitChangesModal.vue';
 
 export default {
   components: {
@@ -98,6 +104,7 @@ export default {
     AddDepartmentModal,
     AddJobModal,
     ViewSuccessionPlanModal,
+    SubmitChangesModal,
   },
   setup() {
     const route = useRoute();
@@ -107,6 +114,7 @@ export default {
     const showAddDepartmentModal = ref(false);
     const showAddJobModal = ref(false);
     const showViewSuccessionPlanModal = ref(false);
+    const showSubmitChangesModal = ref(false);
 
     const successionPlanData = ref([]);
     const employeeData = ref({});
@@ -127,6 +135,16 @@ export default {
       if (orgchart.value && orgchart.value.id) {
         router.push(`/orgchart/${orgchart.value.id}/view-ordinance`);
       }
+    };
+
+    const openSubmitChangesModal = () => {
+      showSubmitChangesModal.value = true;
+    };
+
+    const handleSubmitChanges = (email) => {
+      console.log('Submeter alterações para o email:', email);
+      // Aqui você pode implementar a lógica para enviar as alterações
+      // Por exemplo, disparar um postMessage ou chamar uma API
     };
 
     const closeEmployeeModal = () => {
@@ -243,6 +261,9 @@ export default {
       employeeData,
       viewPdfAlteracoes,
       viewPdfPortaria,
+      openSubmitChangesModal,
+      showSubmitChangesModal,
+      handleSubmitChanges,
     };
   },
 };
