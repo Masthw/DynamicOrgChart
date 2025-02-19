@@ -14,9 +14,10 @@
           @click="viewPdfAlteracoes"
         />
         <ButtonComponent
-          label="Análise de Impacto"
+          label="Registro de Alterações"
           icon="src/assets/icons/monitoring.png"
           variant="secondary"
+          @click="openChangeLogModal"
         />
         <ButtonComponent
           label="Submeter Alterações"
@@ -59,6 +60,10 @@
         @close="closeViewSuccessionPlanModal"
         @confirm="handleViewSuccessionPlanConfirm"
       />
+      <ChangeLogModal
+        v-if="showChangeLogModal"
+        @close="showChangeLogModal = false"
+      />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -95,6 +100,7 @@ import AddDepartmentModal from 'src/components/modal/AddDepartmentModal.vue';
 import AddJobModal from 'src/components/modal/AddJobModal.vue';
 import ViewSuccessionPlanModal from 'src/components/modal/ViewSuccessionPlanModal.vue';
 import SubmitChangesModal from 'src/components/modal/SubmitChangesModal.vue';
+import ChangeLogModal from 'src/components/modal/ChangeLogModal.vue';
 
 export default {
   components: {
@@ -105,6 +111,7 @@ export default {
     AddJobModal,
     ViewSuccessionPlanModal,
     SubmitChangesModal,
+    ChangeLogModal,
   },
   setup() {
     const route = useRoute();
@@ -115,6 +122,7 @@ export default {
     const showAddJobModal = ref(false);
     const showViewSuccessionPlanModal = ref(false);
     const showSubmitChangesModal = ref(false);
+    const showChangeLogModal = ref(false);
 
     const successionPlanData = ref([]);
     const employeeData = ref({});
@@ -139,6 +147,11 @@ export default {
 
     const openSubmitChangesModal = () => {
       showSubmitChangesModal.value = true;
+    };
+
+    const openChangeLogModal = () => {
+      showChangeLogModal.value = true;
+      console.log('estado do log modal:', showChangeLogModal.value);
     };
 
     const handleSubmitChanges = (email) => {
@@ -264,6 +277,8 @@ export default {
       openSubmitChangesModal,
       showSubmitChangesModal,
       handleSubmitChanges,
+      openChangeLogModal,
+      showChangeLogModal,
     };
   },
 };
