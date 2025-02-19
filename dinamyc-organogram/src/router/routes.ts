@@ -20,7 +20,7 @@ const routes: RouteRecordRaw[] = [
         props: true,
       },
       {
-        path: 'orgchart/:id/visualizar-alteracoes',
+        path: 'orgchart/:id/view-changes',
         name: 'VisualizarAlteracoes',
         component: PdfViewer,
         props: (route) => ({
@@ -29,7 +29,7 @@ const routes: RouteRecordRaw[] = [
         }),
       },
       {
-        path: 'orgchart/:id/visualizar-portaria',
+        path: 'orgchart/:id/view-ordinance',
         name: 'VisualizarPortaria',
         component: PdfViewer,
         props: (route) => ({

@@ -119,13 +119,13 @@ export default {
 
     const viewPdfAlteracoes = () => {
       if (orgchart.value && orgchart.value.id) {
-        router.push(`/orgchart/${orgchart.value.id}/visualizar-alteracoes`);
+        router.push(`/orgchart/${orgchart.value.id}/view-changes`);
       }
     };
 
     const viewPdfPortaria = () => {
       if (orgchart.value && orgchart.value.id) {
-        router.push(`/orgchart/${orgchart.value.id}/visualizar-portaria`);
+        router.push(`/orgchart/${orgchart.value.id}/view-ordinance`);
       }
     };
 
