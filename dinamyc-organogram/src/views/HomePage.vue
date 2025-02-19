@@ -94,6 +94,7 @@
                 alt="Editar"
                 class="action-icon"
               />
+              <span class="tooltip">Editar</span>
             </div>
             <div
               class="action-icon-wrapper"
@@ -104,6 +105,7 @@
                 alt="Copiar"
                 class="action-icon"
               />
+              <span class="tooltip">Duplicar</span>
             </div>
             <div
               class="action-icon-wrapper"
@@ -114,6 +116,7 @@
                 alt="Compartilhar"
                 class="action-icon"
               />
+              <span class="tooltip">Compartilhar</span>
             </div>
             <div
               class="action-icon-wrapper"
@@ -124,6 +127,7 @@
                 alt="Baixar"
                 class="action-icon"
               />
+              <span class="tooltip">Download</span>
             </div>
             <div
               class="action-icon-wrapper"
@@ -134,6 +138,7 @@
                 alt="Excluir"
                 class="action-icon"
               />
+              <span class="tooltip">Remover</span>
             </div>
           </div>
         </div>
@@ -423,6 +428,7 @@ const handleDeleteConfirm = (id) => {
 }
 
 .action-icon-wrapper {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -431,13 +437,37 @@ const handleDeleteConfirm = (id) => {
   border-radius: 50%;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
 
-  &:hover {
-    background-color: $orange;
-    .action-icon {
-      filter: brightness(0) invert(1);
-    }
-  }
+.action-icon-wrapper:hover {
+  background-color: $orange;
+}
+
+.action-icon-wrapper:hover .action-icon {
+  filter: brightness(0) invert(1);
+}
+
+.action-icon-wrapper .tooltip {
+  position: absolute;
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background-color: $orange;
+  color: $white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.action-icon-wrapper:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0px);
 }
 
 .action-icon {
