@@ -93,7 +93,7 @@ svg:not(:root) {
 
 .control-btn .tooltip {
   position: absolute;
-  bottom: -110%; /* posicionado acima do botão */
+  bottom: -110%;
   left: 50%;
   transform: translateX(-50%);
   background-color: #ff3700;
@@ -151,13 +151,37 @@ svg:not(:root) {
 }
 
 .icon-button {
-  width: 25;
-  height: 25;
+  position: relative;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.icon-button .tooltip {
+  position: absolute;
+  bottom: -110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff3700;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  margin-bottom: 4px;
+}
+
+.icon-button:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
 }
 
 .text-button {

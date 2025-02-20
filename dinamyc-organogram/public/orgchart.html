@@ -747,6 +747,12 @@
 
               </div>
       <div class="node-controls">
+        <button class="control-btn" onclick="addJob(${d.data.id}, '${
+      d.data.name
+    }'); event.stopPropagation();">
+          <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
+          <span class="tooltip">Adicionar Vaga</span>
+        </button>
         <button class="control-btn" onclick="Employee(${
           d.data.id
         }, false); event.stopPropagation();">
@@ -758,12 +764,6 @@
         }); event.stopPropagation();">
           <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
           <span class="tooltip">Adicionar Departamento</span>
-        </button>
-        <button class="control-btn" onclick="addJob(${
-          d.data.id
-        }); event.stopPropagation();">
-          <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
-          <span class="tooltip">Adicionar Vaga</span>
         </button>
         <button class="control-btn" onclick="viewSuccessionPlan(${
           d.data.id
@@ -786,14 +786,17 @@
     <!-- Filtro (botão circular) -->
     <button id="filterButton" class="icon-button" onclick="openFilterDialog()">
       <img src="src/assets/icons/lan.png" alt="Filtros" />
+      <span class="tooltip">Filtros</span>
     </button>
     <!-- Zoom In -->
     <button class="icon-button" onclick="chart.zoomIn()">
       <img src="src/assets/icons/zoom_in.png" alt="Zoom In" />
+      <span class="tooltip">Aumentar Zoom</span>
     </button>
     <!-- Zoom Out -->
     <button class="icon-button" onclick="chart.zoomOut()">
       <img src="src/assets/icons/zoom_out.png" alt="Zoom Out" />
+      <span class="tooltip">Diminuir Zoom</span>
     </button>
     <button id="resetViewButton" class="icon-button" onclick="resetView()">
       Redefinir Visualização
