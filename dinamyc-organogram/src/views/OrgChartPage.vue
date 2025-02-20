@@ -250,12 +250,6 @@ export default {
           console.log('OrgChartPage recebeu mensagem:', event.data);
           emitter.emit('orgchart-modified', { id, modifiedDate });
         }
-
-        if (event.data.type === 'confirmAddJob') {
-          console.log('ConfirmAddJob recebida:', event.data.data);
-          // Aqui, você poderá chamar uma função addChild passando event.data.data para adicionar o novo nó ao organograma.
-          // Por enquanto, apenas exibimos o console.log.
-        }
       });
     });
 
@@ -302,7 +296,7 @@ export default {
   border-left: 4px solid $blue;
   justify-content: space-between;
   padding-left: 0.5rem;
-  margin: 1rem 2rem 0rem 10rem;
+  margin: 1rem 0.5rem 0rem 10rem;
 }
 
 .title-text {

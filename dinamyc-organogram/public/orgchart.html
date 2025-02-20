@@ -521,10 +521,26 @@
     applyFilters();
   }
 
+  //Adicionar vaga
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'confirmAddJob') {
+      console.log('Organograma recebeu:', event.data);
+      const formData = event.data.data;
+      // Crie um ID único para o novo nó; aqui usamos o timestamp
+      const newNodeId = 'job-' + Date.now();
+      // Se não houver um superior imediato definido, use um valor padrão (por exemplo, a raiz)
+      const parentId = formData.nodeId || 'root';
+      // Aqui você pode chamar sua função addChild(formData) para adicionar o nó
+      console.log('Novo Node ID:', newNodeId, 'Parent ID:', parentId);
+    }
+  });
+
   //BUSCA
   window.addEventListener('message', function (event) {
-    const searchTerm = event.data;
-    filterChart(searchTerm);
+    if (typeof event.data === 'string') {
+      const searchTerm = event.data;
+      filterChart(searchTerm);
+    }
   });
 
   function filterChart(searchTerm) {
@@ -669,12 +685,13 @@
     );
   }
 
-  function addJob(nodeId) {
+  function addJob(nodeId, name) {
     window.parent.postMessage(
       {
         type: 'openModal',
         action: 'addJob',
         nodeId: nodeId,
+        name: name,
       },
       '*'
     );

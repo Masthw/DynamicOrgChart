@@ -294,10 +294,15 @@ export default {
     },
     confirm() {
       const dataToSend = JSON.parse(JSON.stringify(this.formData));
-      window.parent.postMessage(
-        { type: 'confirmAddJob', data: dataToSend },
-        '*'
-      );
+      const orgchartIframe = window.parent.document.querySelector('iframe');
+      if (orgchartIframe && orgchartIframe.contentWindow) {
+        orgchartIframe.contentWindow.postMessage(
+          { type: 'confirmAddJob', data: dataToSend },
+          '*'
+        );
+      } else {
+        console.warn('Orgchart iframe não foi encontrado.');
+      }
       this.$emit('confirm', this.formData);
       this.close();
     },
