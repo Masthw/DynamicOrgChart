@@ -16,7 +16,7 @@
       <q-card-section class="modal-header">
         <h2 class="modal-title">Compartilhar Simulação</h2>
         <p class="modal-text">
-          Informe o email para o qual deseja enviar a simulação.
+          Informe o email para o qual deseja enviar uma cópia da simulação.
         </p>
       </q-card-section>
 
