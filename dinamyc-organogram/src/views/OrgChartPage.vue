@@ -302,7 +302,7 @@ export default {
   border-left: 4px solid $blue;
   justify-content: space-between;
   padding-left: 0.5rem;
-  margin: 2rem 2rem 0rem 12rem;
+  margin: 1rem 2rem 0rem 10rem;
 }
 
 .title-text {

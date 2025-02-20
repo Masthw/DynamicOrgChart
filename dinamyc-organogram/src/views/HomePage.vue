@@ -313,7 +313,7 @@ const handleDeleteConfirm = (id) => {
   flex-grow: 1;
   height: 100%;
   background-color: $white;
-  padding: 2rem;
+  padding: 1rem 2rem;
   box-sizing: border-box;
   overflow-y: scroll;
   scrollbar-width: thin;
@@ -326,7 +326,7 @@ const handleDeleteConfirm = (id) => {
   border-left: 4px solid $blue;
   justify-content: space-between;
   padding-left: 0.5rem;
-  margin-left: 10rem;
+  margin-left: 9rem;
   margin-right: 10rem;
 }
 
