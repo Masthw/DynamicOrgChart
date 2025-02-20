@@ -26,6 +26,7 @@ const props = defineProps({
 
 <style scoped lang="scss">
 .custom-button {
+  height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
