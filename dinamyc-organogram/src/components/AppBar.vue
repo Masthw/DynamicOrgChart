@@ -2,12 +2,15 @@
   <div class="app-bar">
     <img src="../assets/images/organiza_ai_logo.png" alt="Logo" class="logo" />
     <router-link to="/" class="home-icon">
-      <img
-        src="../assets/icons/home_white.png"
-        alt="Home"
-        class="icon"
-        @click="clearSelection"
-      />
+      <div class="icon-button">
+        <img
+          src="../assets/icons/home_white.png"
+          alt="Home"
+          class="icon"
+          @click="clearSelection"
+        />
+        <span class="tooltip">Home</span>
+      </div>
     </router-link>
     <SelectComponent
       v-model="selectedOption"
@@ -19,16 +22,22 @@
       @search-input="onSearchInput"
     />
     <div class="icons">
-      <img
-        src="../assets/icons/notifications_white.png"
-        alt="Notificações"
-        class="icon"
-      />
-      <img
-        src="../assets/icons/account_circle_white.png"
-        alt="Usuário"
-        class="icon"
-      />
+      <div class="icon-button">
+        <img
+          src="../assets/icons/notifications_white.png"
+          alt="Notificações"
+          class="icon"
+        />
+        <span class="tooltip">Notificações</span>
+      </div>
+      <div class="icon-button">
+        <img
+          src="../assets/icons/account_circle_white.png"
+          alt="Usuário"
+          class="icon"
+        />
+        <span class="tooltip">Usuário</span>
+      </div>
     </div>
   </div>
 </template>
@@ -133,6 +142,40 @@ select {
 .notification-icon,
 .user-icon {
   font-size: 24px;
+}
+
+.icon-button {
+  position: relative;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-button .tooltip {
+  position: absolute;
+  bottom: -150%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff3700;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  margin-bottom: 4px;
+}
+
+.icon-button:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
 }
 
 .icon {
