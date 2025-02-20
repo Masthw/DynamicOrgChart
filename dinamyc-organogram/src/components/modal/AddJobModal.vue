@@ -71,10 +71,10 @@
           <!-- Aba "Detalhes" -->
           <div v-else-if="activeTab === 'detalhes'" class="tab-content">
             <div class="form-group">
-              <label>Nível Hierárquico</label>
+              <label>Maturidade</label>
               <TextFieldComponent
-                v-model="formData.hierarchyLevel"
-                placeholder="Nível Hierárquico"
+                v-model="formData.maturity"
+                placeholder="Maturidade"
               />
             </div>
             <div class="form-group">
@@ -239,7 +239,7 @@ export default {
         jobBranch: '',
         jobManager: '',
         jobImmediateSuperior: '',
-        hierarchyLevel: '',
+        maturity: '',
         contractType: '',
         jobModality: '',
         workingDay: '',
