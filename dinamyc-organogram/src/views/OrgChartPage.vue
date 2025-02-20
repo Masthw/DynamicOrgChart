@@ -326,20 +326,27 @@ export default {
 .subtitle-color {
   width: 20px;
   height: 20px;
-  border-radius: 50%;
+  background-color: transparent;
   display: inline-block;
+  border: 2px solid transparent;
 }
 
 .subtitle-allowed {
-  background-color: $green;
+  border-color: $green;
 }
 
 .subtitle-allowed-with-reason {
-  @include gradient;
+  border-image: linear-gradient(
+      to right,
+      $purple-gradient,
+      $red-gradient,
+      $orange-gradient
+    )
+    1;
 }
 
 .subtitle-not-allowed {
-  background-color: $red;
+  border-color: $red;
 }
 
 .subtitle-label {
