@@ -196,7 +196,12 @@
               label="Cancelar"
               @click="close"
             />
-            <ButtonComponent type="submit" variant="secondary" label="Salvar" />
+            <ButtonComponent
+              type="submit"
+              variant="secondary"
+              label="Salvar"
+              @click="confirm"
+            />
           </div>
         </form>
       </div>
@@ -219,11 +224,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    initialData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
       visible: true,
       formData: {
+        nodeId: '',
         jobTitle: '',
         jobDepartment: '',
         jobBranch: '',
@@ -271,12 +281,25 @@ export default {
       activeTab: 'sobre',
     };
   },
+  mounted() {
+    if (this.initialData) {
+      this.formData.jobImmediateSuperior =
+        this.initialData.jobImmediateSuperior;
+      this.formData.nodeId = this.initialData.nodeId;
+    }
+  },
   methods: {
     close() {
       this.$emit('close');
     },
     confirm() {
+      const dataToSend = JSON.parse(JSON.stringify(this.formData));
+      window.parent.postMessage(
+        { type: 'confirmAddJob', data: dataToSend },
+        '*'
+      );
       this.$emit('confirm', this.formData);
+      this.close();
     },
   },
 };

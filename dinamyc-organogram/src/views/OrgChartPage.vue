@@ -49,6 +49,7 @@
       />
       <AddJobModal
         v-if="showAddJobModal"
+        :initialData="addJobInitialData"
         @close="closeAddJobModal"
         @confirm="handleAddJobConfirm"
       />
@@ -126,6 +127,7 @@ export default {
 
     const successionPlanData = ref([]);
     const employeeData = ref({});
+    const addJobInitialData = ref({});
 
     const loadOrgChart = () => {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
@@ -156,8 +158,6 @@ export default {
 
     const handleSubmitChanges = (email) => {
       console.log('Submeter alterações para o email:', email);
-      // Aqui você pode implementar a lógica para enviar as alterações
-      // Por exemplo, disparar um postMessage ou chamar uma API
     };
 
     const closeEmployeeModal = () => {
@@ -184,6 +184,7 @@ export default {
       showAddJobModal.value = false;
       console.log('Modal de AddJob fechado');
     };
+
     const handleAddJobConfirm = (data) => {
       console.log('Dados do AddJobModal:', data);
       closeAddJobModal();
@@ -227,6 +228,10 @@ export default {
             'Evento openModal para addJob detectado. NodeId:',
             event.data.nodeId
           );
+          addJobInitialData.value = {
+            jobImmediateSuperior: event.data.name,
+            nodeId: event.data.nodeId,
+          };
           showAddJobModal.value = true;
         }
         if (event.data.action === 'viewSuccessionPlan') {
@@ -243,8 +248,13 @@ export default {
         if (event.data && event.data.type === 'orgchart-modified') {
           const { id, modifiedDate } = event.data;
           console.log('OrgChartPage recebeu mensagem:', event.data);
-          // Emite para a HomePage via emitter
           emitter.emit('orgchart-modified', { id, modifiedDate });
+        }
+
+        if (event.data.type === 'confirmAddJob') {
+          console.log('ConfirmAddJob recebida:', event.data.data);
+          // Aqui, você poderá chamar uma função addChild passando event.data.data para adicionar o novo nó ao organograma.
+          // Por enquanto, apenas exibimos o console.log.
         }
       });
     });
@@ -279,6 +289,7 @@ export default {
       handleSubmitChanges,
       openChangeLogModal,
       showChangeLogModal,
+      addJobInitialData,
     };
   },
 };
