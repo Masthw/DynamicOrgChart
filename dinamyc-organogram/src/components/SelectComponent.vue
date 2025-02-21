@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-select">
+  <div :class="['custom-select', customClass]">
     <div class="selected-option" @click="toggleDropdown">
       <span>{{ selectedLabel || placeholder }}</span>
       <img
@@ -39,7 +39,11 @@ export default {
       default: 'Selecione uma opção',
     },
     modelValue: {
-      type: [String, Number],
+      type: [String, Number, Array],
+      default: '',
+    },
+    customClass: {
+      type: String,
       default: '',
     },
   },
