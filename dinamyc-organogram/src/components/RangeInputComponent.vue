@@ -136,6 +136,7 @@ export default {
   border-radius: 14px;
   height: 38px;
   border: 1px solid $background-gray;
+  color: $background-gray;
   transition: border-color 0.3s;
 }
 
