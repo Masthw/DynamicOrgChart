@@ -479,5 +479,7 @@ export default {
   box-shadow: none;
   border: 1px solid $background-gray;
   border-radius: 14px;
+  padding-left: 0px;
+  font-size: 14px;
 }
 </style>
