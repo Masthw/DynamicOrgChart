@@ -526,14 +526,32 @@
     if (event.data && event.data.type === 'confirmAddJob') {
       console.log('Organograma recebeu:', event.data);
       const formData = event.data.data;
-      // Crie um ID único para o novo nó; aqui usamos o timestamp
-      const newNodeId = 'job-' + Date.now();
-      // Se não houver um superior imediato definido, use um valor padrão (por exemplo, a raiz)
-      const parentId = formData.nodeId || 'root';
-      // Aqui você pode chamar sua função addChild(formData) para adicionar o nó
-      console.log('Novo Node ID:', newNodeId, 'Parent ID:', parentId);
+      addNode(formData);
     }
   });
+
+  function addNode(formData) {
+    if (chart) {
+      const newNodeId = Date.now();
+      const parentId = formData.nodeId;
+      const newNode = {
+        id: newNodeId,
+        parentId: parentId,
+        name: '?',
+        position: formData.jobTitle || '',
+        image: 'src/assets/images/add_node.png',
+        _centered: true,
+      };
+      chart.addNode(newNode).render();
+
+      console.log(
+        'Novo Node adicionado com ID:',
+        newNodeId,
+        'ao Parent ID:',
+        parentId
+      );
+    }
+  }
 
   //BUSCA
   window.addEventListener('message', function (event) {
