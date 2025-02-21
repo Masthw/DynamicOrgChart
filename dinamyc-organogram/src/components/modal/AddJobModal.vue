@@ -39,9 +39,11 @@
           </div>
           <div class="form-group">
             <label>Departamento/Setor</label>
-            <TextFieldComponent
+            <SelectComponent
               v-model="formData.jobDepartment"
+              :options="departmentOptions"
               placeholder="Departamento/Setor"
+              customClass="larger-select"
             />
           </div>
           <div class="form-group">
@@ -101,7 +103,7 @@
             <label>Faixa Salarial</label>
             <TextFieldComponent
               v-model="formData.salaryRange"
-              placeholder="Modelo de Trabalho"
+              placeholder="Faixa Salarial"
             />
           </div>
           <div class="form-group">
@@ -209,6 +211,7 @@
 
 <script>
 import ButtonComponent from '../ButtonComponent.vue';
+import SelectComponent from '../SelectComponent.vue';
 import TextFieldComponent from '../TextFieldComponent.vue';
 
 export default {
@@ -216,6 +219,7 @@ export default {
   components: {
     ButtonComponent,
     TextFieldComponent,
+    SelectComponent,
   },
   props: {
     show: {
@@ -226,7 +230,12 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    departments: {
+      type: Array,
+      required: true,
+    },
   },
+
   data() {
     return {
       visible: true,
@@ -285,12 +294,22 @@ export default {
       this.formData.jobImmediateSuperior =
         this.initialData.jobImmediateSuperior;
       this.formData.nodeId = this.initialData.nodeId;
+      this.formData.jobDepartment = this.initialData.departments;
     }
+  },
+  computed: {
+    departmentOptions() {
+      return this.departments.map((department) => ({
+        value: department,
+        label: department,
+      }));
+    },
   },
   methods: {
     close() {
       this.$emit('close');
     },
+
     confirm(event) {
       if (this.confirming) return;
       this.confirming = true;
@@ -453,5 +472,12 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 30px;
+}
+
+.larger-select {
+  width: 100%;
+  box-shadow: none;
+  border: 1px solid $background-gray;
+  border-radius: 14px;
 }
 </style>

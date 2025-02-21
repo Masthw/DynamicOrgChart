@@ -50,6 +50,7 @@
       <AddJobModal
         v-if="showAddJobModal"
         :initialData="addJobInitialData"
+        :departments="addJobInitialData.departments"
         @close="closeAddJobModal"
         @confirm="handleAddJobConfirm"
       />
@@ -231,6 +232,7 @@ export default {
           addJobInitialData.value = {
             jobImmediateSuperior: event.data.name,
             nodeId: event.data.nodeId,
+            departments: event.data.departments,
           };
           showAddJobModal.value = true;
         }

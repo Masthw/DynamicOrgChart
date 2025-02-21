@@ -386,6 +386,41 @@
     return deptSet.size;
   }
 
+  function getOrgChartData() {
+    const orgChartId = getOrgChartIdFromURL();
+    if (!orgChartId) {
+      console.error('ID do organograma não encontrado na URL');
+      return null;
+    }
+
+    const savedData = localStorage.getItem(`orgChartData_${orgChartId}`);
+    if (savedData) {
+      return JSON.parse(savedData);
+    } else {
+      console.error('Dados do organograma não encontrados no localStorage');
+      return null;
+    }
+  }
+
+  function getDepartments() {
+    const data = getOrgChartData();
+    if (!data) {
+      return [];
+    }
+
+    const deptSet = new Set();
+
+    data.forEach((item) => {
+      if (item.department_name) {
+        deptSet.add(item.department_name);
+      }
+    });
+
+    const departmentsArray = Array.from(deptSet);
+    console.log('Departamentos coletados:', departmentsArray);
+    return departmentsArray;
+  }
+
   let activeMenu = null;
 
   //Filtro
@@ -534,13 +569,17 @@
     if (chart) {
       const newNodeId = Date.now();
       const parentId = formData.nodeId;
+      const department_name = formData.jobDepartment;
       const newNode = {
         id: newNodeId,
         parentId: parentId,
         name: '?',
         position: formData.jobTitle || '',
         image: 'src/assets/images/add_node.png',
+        department_name: formData.jobDepartment,
         _centered: true,
+        type: 'vacancy',
+        salaryRange: formData.salaryRange,
       };
       chart.addNode(newNode).render();
 
@@ -548,7 +587,9 @@
         'Novo Node adicionado com ID:',
         newNodeId,
         'ao Parent ID:',
-        parentId
+        parentId,
+        'departamento:',
+        department_name
       );
     }
   }
@@ -704,12 +745,14 @@
   }
 
   function addJob(nodeId, name) {
+    const departments = getDepartments();
     window.parent.postMessage(
       {
         type: 'openModal',
         action: 'addJob',
         nodeId: nodeId,
         name: name,
+        departments: departments,
       },
       '*'
     );
@@ -776,9 +819,13 @@
                   <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
                     d.data.position
                   } </div>
-                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
-                      'R$ ' + d.data.salary
-                    } </div>
+                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;">
+            ${
+              d.data.type === 'vacancy' && d.data.salaryRange
+                ? 'R$ ' + d.data.salaryRange
+                : 'R$ ' + d.data.salary
+            }
+          </div>
 
               </div>
       <div class="node-controls">
