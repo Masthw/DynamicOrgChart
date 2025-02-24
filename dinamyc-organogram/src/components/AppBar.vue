@@ -34,9 +34,45 @@
         <img
           src="../assets/icons/account_circle_white.png"
           alt="Usuário"
-          class="icon"
+          class="user-icon"
+          @click="toggleUserMenu"
         />
         <span class="tooltip">Usuário</span>
+
+        <div class="user-menu-container">
+          <q-menu
+            v-model="showUserMenu"
+            anchor="bottom right"
+            self="top right"
+            class="relative-position"
+          >
+            <q-card class="user-menu">
+              <q-card-section class="user-menu-section">
+                <span class="user-name">Nome Usuário</span>
+                <img
+                  src="../assets/icons/close.png"
+                  alt="Fechar"
+                  class="close-icon"
+                  @click="showUserMenu = false"
+                />
+              </q-card-section>
+              <q-card-section class="user-menu-section">
+                <p class="user-email">nomeusuario@arcellor.org.br</p>
+              </q-card-section>
+              <q-separator />
+              <q-card-actions align="left" style="padding: 0">
+                <q-btn flat @click="logout" class="logout-btn">
+                  <img
+                    src="../assets/icons/logout.png"
+                    alt="Sair"
+                    class="logout-icon"
+                  />
+                  <span class="logout-text">Sair</span>
+                </q-btn>
+              </q-card-actions>
+            </q-card>
+          </q-menu>
+        </div>
       </div>
     </div>
   </div>
@@ -57,6 +93,7 @@ export default {
       selectedOption: '',
       options: [],
       showSearch: false,
+      showUserMenu: false,
     };
   },
   computed: {
@@ -95,6 +132,15 @@ export default {
         iframe.contentWindow.postMessage(searchTerm, '*');
       }
     },
+    toggleUserMenu() {
+      this.showUserMenu = !this.showUserMenu;
+      console.log('showUserMenu:', this.showUserMenu);
+    },
+
+    logout() {
+      console.log('logout');
+      this.showUserMenu = false;
+    },
   },
   watch: {
     selectedOption(newVal) {
@@ -107,7 +153,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .app-bar {
   display: flex;
   align-items: center;
@@ -160,8 +206,8 @@ select {
   bottom: -150%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #ff3700;
-  color: #fff;
+  background-color: $orange;
+  color: $white;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 10px;
@@ -182,5 +228,80 @@ select {
   width: 25px;
   height: 25px;
   cursor: pointer;
+}
+
+.user-menu {
+  min-width: 240px;
+  background: $white;
+  padding: 7px;
+}
+
+.user-menu .close-icon {
+  position: absolute;
+  top: 2px;
+  right: 10px;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  transition: color 0.3s ease !important;
+}
+
+.user-menu-section {
+  padding: 1px;
+}
+
+.user-menu .close-icon:hover {
+  color: $orange !important;
+}
+
+.logout-icon {
+  cursor: pointer;
+  transition: color 0.3s ease !important;
+}
+
+.logout-icon:hover {
+  color: $orange !important;
+}
+
+.logout-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+}
+.logout-btn {
+  margin-top: 2px;
+  font-weight: normal;
+  font-size: 0.8em;
+}
+
+.user-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+}
+.user-menu-container {
+  height: min-content;
+}
+
+.user-name {
+  font-weight: 600;
+  margin-left: 5px;
+  color: $gray;
+}
+
+.user-email {
+  color: $gray;
+  font-size: 0.9em;
+  margin: 0 0 0 05px;
+}
+
+.q-separator {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.logout-text {
+  text-transform: capitalize;
 }
 </style>
