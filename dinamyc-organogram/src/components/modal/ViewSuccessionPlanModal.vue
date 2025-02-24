@@ -18,7 +18,11 @@
 
       <!-- Cards de Candidatos -->
       <q-card-section class="candidate-cards">
+        <div v-if="successionPlan.length === 0" class="no-plan-text">
+          Não existe plano de sucessão para essa vaga.
+        </div>
         <div
+          v-else
           v-for="candidate in successionPlan"
           :key="candidate.id"
           class="candidate-card"
@@ -161,6 +165,7 @@ export default {
 
 .candidate-cards {
   display: flex;
+  justify-content: center !important;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 10px;
@@ -229,5 +234,12 @@ export default {
 }
 .ok-button {
   width: 300px;
+}
+
+.no-plan-text {
+  text-align: center;
+  color: $background-gray;
+  font-size: 1rem;
+  padding-bottom: 20px;
 }
 </style>
