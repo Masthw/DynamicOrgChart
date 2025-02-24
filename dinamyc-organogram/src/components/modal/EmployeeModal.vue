@@ -67,9 +67,12 @@
             </div>
             <div class="form-group">
               <label>Cargo</label>
-              <TextFieldComponent
+              <SelectComponent
                 v-model="formData.position"
+                :options="vacancyOptions"
                 placeholder="Cargo"
+                customClass="larger-select"
+                required
               />
             </div>
             <div class="form-group">
@@ -220,6 +223,7 @@
 import ButtonComponent from '../ButtonComponent.vue';
 import SearchComponent from '../SearchComponent.vue';
 import TextFieldComponent from '../TextFieldComponent.vue';
+import SelectComponent from '../SelectComponent.vue';
 
 export default {
   name: 'EmployeeModal',
@@ -227,10 +231,42 @@ export default {
     ButtonComponent,
     TextFieldComponent,
     SearchComponent,
+    SelectComponent,
   },
   props: {
-    show: Boolean,
-    employeeData: Object,
+    employeeData: {
+      type: Object,
+      default: () => ({}),
+    },
+    vacancies: {
+      type: Array,
+      default: () => [
+        {
+          id: 1740402427263,
+          jobTitle: '?',
+          position: 'aaaa',
+          type: 'vacancy',
+          department_name: 'IT',
+          salaryRange: '10000',
+        },
+        {
+          id: 1740402427265,
+          jobTitle: 'Desenvolvedor Frontend',
+          position: 'Desenvolvedor Frontend',
+          type: 'vacancy',
+          department_name: 'IT',
+          salaryRange: '20000-30000',
+        },
+        {
+          id: 1740402427266,
+          jobTitle: 'Analista de Sistemas',
+          position: 'Analista de Sistemas',
+          type: 'vacancy',
+          department_name: 'TI',
+          salaryRange: '15000-25000',
+        },
+      ],
+    },
   },
   data() {
     return {
@@ -271,6 +307,16 @@ export default {
       set(value) {
         this.formData.hire_date = value;
       },
+    },
+    vacancyOptions() {
+      return this.vacancies
+        .filter(
+          (vacancy) => vacancy.type === 'vacancy' || vacancy.jobTitle === '?'
+        )
+        .map((vacancy) => ({
+          value: vacancy.id,
+          label: vacancy.jobTitle !== '?' ? vacancy.jobTitle : vacancy.position,
+        }));
     },
   },
   methods: {
@@ -452,5 +498,14 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 30px;
+}
+
+.larger-select {
+  width: 100%;
+  box-shadow: none;
+  border: 1px solid $background-gray;
+  border-radius: 14px;
+  padding-left: 0px;
+  font-size: 14px;
 }
 </style>
