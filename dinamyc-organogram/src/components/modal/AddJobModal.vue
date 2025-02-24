@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible">
+  <div v-if="true">
     <div class="modal-overlay"></div>
     <div class="side-modal">
       <div class="side-modal-header">
@@ -238,7 +238,6 @@ export default {
 
   data() {
     return {
-      visible: true,
       confirming: false,
       formData: {
         nodeId: '',
