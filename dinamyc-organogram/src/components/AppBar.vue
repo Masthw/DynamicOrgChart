@@ -62,27 +62,29 @@
                   <div class="col col-delete">Excluir</div>
                 </div>
                 <!-- Linhas de dados -->
-                <div
-                  class="notification-row"
-                  v-for="(item, index) in notifications"
-                  :key="index"
-                >
-                  <div class="col col-name">{{ item.fileName }}</div>
-                  <div class="col col-download">
-                    <img
-                      src="../assets/icons/download_green.png"
-                      alt="Download"
-                      class="action-icon"
-                      @click.stop="downloadFile(item)"
-                    />
-                  </div>
-                  <div class="col col-delete">
-                    <img
-                      src="../assets/icons/delete_red.png"
-                      alt="Excluir"
-                      class="action-icon"
-                      @click.stop="deleteFile(item)"
-                    />
+                <div class="notification-list">
+                  <div
+                    class="notification-row"
+                    v-for="(item, index) in notifications"
+                    :key="index"
+                  >
+                    <div class="col col-name">{{ item.fileName }}</div>
+                    <div class="col col-download">
+                      <img
+                        src="../assets/icons/download_green.png"
+                        alt="Download"
+                        class="action-icon"
+                        @click.stop="downloadFile(item)"
+                      />
+                    </div>
+                    <div class="col col-delete">
+                      <img
+                        src="../assets/icons/delete_red.png"
+                        alt="Excluir"
+                        class="action-icon"
+                        @click.stop="deleteFile(item)"
+                      />
+                    </div>
                   </div>
                 </div>
               </q-card-section>
@@ -170,6 +172,14 @@ export default {
         { fileName: 'Arquivo1' },
         { fileName: 'Relatório' },
         { fileName: 'Simulação aaaaaaaaaaaaaaaaaaaa3333333333' },
+        { fileName: 'Arquivo1' },
+        { fileName: 'Arquivo1' },
+        { fileName: 'Arquivo1' },
+        { fileName: 'Arquivo1' },
+        { fileName: 'Arquivo1' },
+        { fileName: 'Arquivo1' },
+        { fileName: 'Arquivo1' },
+        { fileName: 'Arquivo1' },
       ],
     };
   },
@@ -398,9 +408,13 @@ select {
   width: 500px;
   background: $white;
   padding: 10px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
 }
 
 .notifications-menu-header {
+  flex-shrink: 0;
   position: relative;
   padding: 8px 0;
   text-align: center;
@@ -430,7 +444,14 @@ select {
 }
 
 .notifications-table {
+  overflow: hidden;
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+
+  > .header-row {
+    flex-shrink: 0;
+  }
 }
 
 .notification-row {
@@ -453,12 +474,35 @@ select {
   }
 
   &:not(.header-row) {
+    overflow-y: auto;
+    max-height: calc(100% - 40px);
+    flex-grow: 1;
     border-bottom: 1px solid $background-white;
 
     .col-name {
       color: $gray;
       font-weight: 400;
     }
+  }
+}
+
+.notifications-table > :not(.header-row) {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: 0;
+
+  &::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $background-white;
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $orange;
+    border-radius: 3px;
   }
 }
 
@@ -501,6 +545,7 @@ select {
 }
 
 .notifications-actions {
+  flex-shrink: 0;
   padding: 8px 0;
   margin-top: 10px;
 }
