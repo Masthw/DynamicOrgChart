@@ -27,52 +27,121 @@
           src="../assets/icons/notifications_white.png"
           alt="Notificações"
           class="icon"
+          @click="toggleNotifications"
         />
         <span class="tooltip">Notificações</span>
-      </div>
-      <div class="icon-button">
-        <img
-          src="../assets/icons/account_circle_white.png"
-          alt="Usuário"
-          class="user-icon"
-          @click="toggleUserMenu"
-        />
-        <span class="tooltip">Usuário</span>
-
-        <div class="user-menu-container">
+        <div class="notifications-menu-container">
           <q-menu
-            v-model="showUserMenu"
+            v-model="showNotifications"
             anchor="bottom right"
             self="top right"
             class="relative-position"
           >
-            <q-card class="user-menu">
-              <q-card-section class="user-menu-section">
-                <span class="user-name">Nome Usuário</span>
-                <img
-                  src="../assets/icons/close.png"
-                  alt="Fechar"
-                  class="close-icon"
-                  @click="showUserMenu = false"
+            <q-card class="notifications-menu">
+              <!-- Cabeçalho geral do menu -->
+              <q-card-section class="notifications-menu-header">
+                <div class="header-content">
+                  <span class="notifications-title">Notificações</span>
+                </div>
+                <q-btn
+                  flat
+                  dense
+                  round
+                  icon="close"
+                  class="close-button"
+                  @click="showNotifications = false"
                 />
               </q-card-section>
-              <q-card-section class="user-menu-section">
-                <p class="user-email">nomeusuario@arcellor.org.br</p>
+
+              <!-- Tabela de Notificações -->
+              <q-card-section class="notifications-table">
+                <!-- Cabeçalho das colunas -->
+                <div class="notification-row header-row">
+                  <div class="col col-name">Nome do Arquivo</div>
+                  <div class="col col-download">Download</div>
+                  <div class="col col-delete">Excluir</div>
+                </div>
+                <!-- Linhas de dados -->
+                <div
+                  class="notification-row"
+                  v-for="(item, index) in notifications"
+                  :key="index"
+                >
+                  <div class="col col-name">{{ item.fileName }}</div>
+                  <div class="col col-download">
+                    <img
+                      src="../assets/icons/download_green.png"
+                      alt="Download"
+                      class="action-icon"
+                      @click.stop="downloadFile(item)"
+                    />
+                  </div>
+                  <div class="col col-delete">
+                    <img
+                      src="../assets/icons/delete_red.png"
+                      alt="Excluir"
+                      class="action-icon"
+                      @click.stop="deleteFile(item)"
+                    />
+                  </div>
+                </div>
               </q-card-section>
-              <q-separator />
-              <q-card-actions align="left" style="padding: 0">
-                <q-btn flat @click="logout" class="logout-btn">
-                  <img
-                    src="../assets/icons/logout.png"
-                    alt="Sair"
-                    class="logout-icon"
-                  />
-                  <span class="logout-text">Sair</span>
-                </q-btn>
+
+              <!-- Ações -->
+              <q-card-actions class="notifications-actions" align="center">
+                <ButtonComponent
+                  label="OK"
+                  @click="closeNotifications"
+                  class="ok-button"
+                />
               </q-card-actions>
             </q-card>
           </q-menu>
         </div>
+      </div>
+    </div>
+    <div class="icon-button">
+      <img
+        src="../assets/icons/account_circle_white.png"
+        alt="Usuário"
+        class="user-icon"
+        @click="toggleUserMenu"
+      />
+      <span class="tooltip">Usuário</span>
+
+      <div class="user-menu-container">
+        <q-menu
+          v-model="showUserMenu"
+          anchor="bottom right"
+          self="top right"
+          class="relative-position"
+        >
+          <q-card class="user-menu">
+            <q-card-section class="user-menu-section">
+              <span class="user-name">Nome Usuário</span>
+              <img
+                src="../assets/icons/close.png"
+                alt="Fechar"
+                class="close-icon"
+                @click="showUserMenu = false"
+              />
+            </q-card-section>
+            <q-card-section class="user-menu-section">
+              <p class="user-email">nomeusuario@arcellor.org.br</p>
+            </q-card-section>
+            <q-separator />
+            <q-card-actions align="left" style="padding: 0">
+              <q-btn flat @click="logout" class="logout-btn">
+                <img
+                  src="../assets/icons/logout.png"
+                  alt="Sair"
+                  class="logout-icon"
+                />
+                <span class="logout-text">Sair</span>
+              </q-btn>
+            </q-card-actions>
+          </q-card>
+        </q-menu>
       </div>
     </div>
   </div>
@@ -81,12 +150,14 @@
 <script>
 import SearchComponent from './SearchComponent.vue';
 import SelectComponent from './SelectComponent.vue';
+import ButtonComponent from './ButtonComponent.vue';
 import { emitter } from 'src/eventBus';
 
 export default {
   components: {
     SearchComponent,
     SelectComponent,
+    ButtonComponent,
   },
   data() {
     return {
@@ -94,6 +165,12 @@ export default {
       options: [],
       showSearch: false,
       showUserMenu: false,
+      showNotifications: false,
+      notifications: [
+        { fileName: 'Arquivo1' },
+        { fileName: 'Relatório' },
+        { fileName: 'Simulação aaaaaaaaaaaaaaaaaaaa3333333333' },
+      ],
     };
   },
   computed: {
@@ -136,10 +213,22 @@ export default {
       this.showUserMenu = !this.showUserMenu;
       console.log('showUserMenu:', this.showUserMenu);
     },
-
+    toggleNotifications() {
+      this.showNotifications = !this.showNotifications;
+      console.log('showNotifications:', this.showNotifications);
+    },
     logout() {
       console.log('logout');
       this.showUserMenu = false;
+    },
+    downloadFile(item) {
+      console.log('Download do arquivo:', item.fileName);
+    },
+    deleteFile(item) {
+      console.log('Excluir o arquivo:', item.fileName);
+    },
+    closeNotifications() {
+      this.showNotifications = false;
     },
   },
   watch: {
@@ -303,5 +392,116 @@ select {
 
 .logout-text {
   text-transform: capitalize;
+}
+
+.notifications-menu {
+  width: 500px;
+  background: $white;
+  padding: 10px;
+}
+
+.notifications-menu-header {
+  position: relative;
+  padding: 8px 0;
+  text-align: center;
+
+  .header-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .notifications-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: $gray;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    color: $gray;
+
+    &:hover {
+      color: $orange;
+    }
+  }
+}
+
+.notifications-table {
+  margin-top: 10px;
+}
+
+.notification-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+
+  &.header-row {
+    border-bottom: 1px solid $background-white;
+    font-weight: bold;
+    color: $gray;
+    font-size: 13px;
+    padding: 8px 0;
+
+    .col-name {
+      color: $gray;
+      font-weight: bold;
+      font-size: 13px;
+    }
+  }
+
+  &:not(.header-row) {
+    border-bottom: 1px solid $background-white;
+
+    .col-name {
+      color: $gray;
+      font-weight: 400;
+    }
+  }
+}
+
+.col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-sizing: border-box;
+
+  &-name {
+    justify-content: flex-start;
+    text-align: left;
+    font-size: 12px;
+    padding-left: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-download,
+  &-delete {
+    width: 60px;
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.action-icon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.notifications-actions {
+  padding: 8px 0;
+  margin-top: 10px;
 }
 </style>
