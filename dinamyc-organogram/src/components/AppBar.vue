@@ -36,6 +36,7 @@
             anchor="bottom right"
             self="top right"
             class="relative-position"
+            style="border-radius: 18px"
           >
             <q-card class="notifications-menu">
               <!-- Cabeçalho geral do menu -->
@@ -117,14 +118,17 @@
           anchor="bottom right"
           self="top right"
           class="relative-position"
+          style="border-radius: 14px"
         >
           <q-card class="user-menu">
             <q-card-section class="user-menu-section">
               <span class="user-name">Nome Usuário</span>
-              <img
-                src="../assets/icons/close.png"
-                alt="Fechar"
-                class="close-icon"
+              <q-btn
+                flat
+                dense
+                round
+                icon="close"
+                class="close-button"
                 @click="showUserMenu = false"
               />
             </q-card-section>
@@ -258,7 +262,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 75px;
-  padding: 15px;
+  padding: 25px;
   @include app-bar-gradient;
 }
 
@@ -282,6 +286,7 @@ select {
   margin-left: auto;
   display: flex;
   gap: 20px;
+  margin-right: 20px;
 }
 
 .notification-icon,
@@ -346,11 +351,19 @@ select {
 }
 
 .user-menu-section {
-  padding: 1px;
+  padding: 2px;
 }
 
-.user-menu .close-icon:hover {
-  color: $orange !important;
+.close-button {
+  position: absolute;
+  font-size: 10px;
+  top: 0;
+  right: 10px;
+  color: $gray;
+
+  &:hover {
+    color: $orange;
+  }
 }
 
 .logout-icon {
@@ -371,6 +384,15 @@ select {
   margin-top: 2px;
   font-weight: normal;
   font-size: 0.8em;
+
+  &:hover {
+    background-color: $orange;
+    color: $white;
+
+    .logout-icon {
+      filter: brightness(0) invert(1);
+    }
+  }
 }
 
 .user-menu-header {
