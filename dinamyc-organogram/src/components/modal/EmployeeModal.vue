@@ -31,7 +31,7 @@
 
       <div class="side-modal-body">
         <form @submit.prevent="confirm">
-          <div v-if="activeTab === 'sobre'" class="tab-content">
+          <div v-if="activeTab === 'personalData'" class="tab-content">
             <!-- Área para a foto-->
             <div class="photo-container">
               <img
@@ -48,159 +48,292 @@
                 hidden
               />
             </div>
-
             <div class="form-group">
-              <label>Primeiro Nome *</label>
               <TextFieldComponent
-                v-model="formData.name"
+                label="Matrícula"
+                v-model="formData.id"
+                placeholder="Matrícula"
+                :required="true"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Nome"
+                v-model="fullName"
                 placeholder="Primeiro Nome"
-                required
+                :required="true"
               />
             </div>
             <div class="form-group">
-              <label>Sobrenome *</label>
               <TextFieldComponent
-                v-model="formData.lastName"
-                placeholder="Sobrenome"
-                required
+                label="Data de Nascimento"
+                v-model="formData.birthDate"
+                placeholder="Data de nascimento"
               />
             </div>
             <div class="form-group">
-              <label>Cargo</label>
-              <SelectComponent
-                v-model="formData.position"
-                :options="vacancyOptions"
-                placeholder="Cargo"
-                customClass="larger-select"
-                required
+              <TextFieldComponent
+                label="Idade"
+                v-model="formData.age"
+                placeholder="Idade"
               />
             </div>
             <div class="form-group">
-              <label>Gênero</label>
-              <select v-model="formData.gender">
-                <option value="">Selecione</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Feminino">Feminino</option>
-                <option value="Outro">Outro</option>
-              </select>
+              <TextFieldComponent
+                label="Gênero"
+                v-model="formData.gender"
+                placeholder="Gênero"
+              />
             </div>
             <div class="form-group">
-              <label>Data de Admissão</label>
-              <input type="date" v-model="formattedHireDate" />
+              <TextFieldComponent
+                label="Raça/Cor"
+                v-model="formData.ethnicity"
+                placeholder="Raça/Cor"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Deficiência"
+                v-model="formData.deficiency"
+                placeholder="Deficiência"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Plano de Previdência"
+                v-model="formData.pensionPlan"
+                placeholder="Plano de Previdência"
+              />
             </div>
           </div>
-          <div v-else-if="activeTab === 'conexoes'" class="tab-content">
+          <div
+            v-else-if="activeTab === 'organizationalData'"
+            class="tab-content"
+          >
             <div class="form-group">
-              <label>Gestor Imediato</label>
               <TextFieldComponent
-                v-model="formData.parentId"
-                placeholder="Nome do Gestor"
+                label="Site"
+                v-model="formData.site"
+                placeholder="Site"
               />
             </div>
             <div class="form-group">
-              <label>Departamento</label>
               <TextFieldComponent
+                label="Sigla"
+                v-model="formData.job_id"
+                placeholder="Sigla"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Área"
                 v-model="formData.department_name"
-                placeholder="Departamento"
+                placeholder="Área"
               />
             </div>
             <div class="form-group">
-              <label>Sigla</label>
               <TextFieldComponent
-                v-model="formData.departmentAcronym"
-                placeholder="Sigla do Departamento"
+                label="Data de Admissão"
+                v-model="formData.hire_date"
+                placeholder="Data de Admissão"
               />
             </div>
             <div class="form-group">
-              <label>Salário</label>
               <TextFieldComponent
-                v-model="formData.salary"
-                placeholder="Salário"
+                label="Tempo de Empresa"
+                v-model="formData.company_time"
+                placeholder="Tempo de empresa"
               />
             </div>
             <div class="form-group">
-              <label>Benefícios</label>
               <TextFieldComponent
-                v-model="formData.benefits"
-                placeholder="Benefícios"
+                label="Status Empregado"
+                v-model="formData.employee_status"
+                placeholder="Status Empregado"
               />
             </div>
             <div class="form-group">
-              <label>Horas de Trabalho</label>
               <TextFieldComponent
-                v-model="formData.workingHours"
-                placeholder="Horas de Trabalho"
-              />
-            </div>
-          </div>
-          <div v-else-if="activeTab === 'formacao'" class="tab-content">
-            <div class="form-group">
-              <label>Escolaridade</label>
-              <TextFieldComponent
-                v-model="formData.education"
-                placeholder="Escolaridade"
+                label="Cargo"
+                v-model="formData.position"
+                placeholder="Cargo"
               />
             </div>
             <div class="form-group">
-              <label>Cursos</label>
               <TextFieldComponent
-                v-model="formData.courses"
-                placeholder="Cursos"
+                label="Subgrupo"
+                v-model="formData.sub_group"
+                placeholder="Subgrupo"
               />
             </div>
             <div class="form-group">
-              <label>Certificações</label>
               <TextFieldComponent
-                v-model="formData.certifications"
-                placeholder="Certificações"
+                label="Tempo no Cargo"
+                v-model="formData.time_in_position"
+                placeholder="Tempo no Cargo"
               />
             </div>
             <div class="form-group">
-              <label>Idiomas</label>
               <TextFieldComponent
-                v-model="formData.languages"
-                placeholder="Idiomas"
+                label="Jornada de Trabalho"
+                v-model="formData.work_journey"
+                placeholder="Jornada de Trabalho"
               />
             </div>
             <div class="form-group">
-              <label>Habilidades Técnicas</label>
               <TextFieldComponent
-                v-model="formData.technicalSkills"
-                placeholder="Habilidades Técnicas"
-              />
-            </div>
-          </div>
-          <div v-else-if="activeTab === 'localizacao'" class="tab-content">
-            <div class="form-group">
-              <label>Centro de Custo</label>
-              <TextFieldComponent
-                v-model="formData.costCenter"
+                label="Centro de Custo"
+                v-model="formData.cost_center"
                 placeholder="Centro de Custo"
               />
             </div>
+          </div>
+          <div v-else-if="activeTab === 'remuneration'" class="tab-content">
             <div class="form-group">
-              <label>Área</label>
-              <TextFieldComponent v-model="formData.area" placeholder="Área" />
-            </div>
-            <div class="form-group">
-              <label>Localização</label>
               <TextFieldComponent
-                v-model="formData.location_state"
-                placeholder="Localização"
+                label="Salário Atual"
+                v-model="formData.salary"
+                placeholder="Salário Atual"
               />
             </div>
             <div class="form-group">
-              <label>Unidade/Filial</label>
               <TextFieldComponent
-                v-model="formData.branch"
-                placeholder="Unidade/Filial"
+                label="Remuneração Atual"
+                v-model="formData.total_remuneration"
+                placeholder="Remuneração Atual"
               />
             </div>
             <div class="form-group">
-              <label>Modalidade de Trabalho</label>
               <TextFieldComponent
-                v-model="formData.workMode"
-                placeholder="Modalidade de Trabalho"
+                label="Faixa Salarial Atual"
+                v-model="formData.salaryRange"
+                placeholder="Faixa Salarial Atual"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Posicionamento na Faixa"
+                v-model="formData.lane_position"
+                placeholder="Posicionamento na Faixa"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Salário Proposto"
+                v-model="formData.proposed_salary"
+                placeholder="Salário Proposto"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Remuneração Proposta"
+                v-model="formData.proposed_remuneration"
+                placeholder="Remuneração Proposta"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Faixa Salarial Proposta"
+                v-model="formData.proposed_salaryRange"
+                placeholder="Faixa Salarial Proposta"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Posicionamento na Faixa"
+                v-model="formData.proposed_lane_position"
+                placeholder="Posicionamento na Faixa"
+              />
+            </div>
+          </div>
+          <div v-else-if="activeTab === 'degree'" class="tab-content">
+            <div class="form-group">
+              <TextFieldComponent
+                label="Grau de Escolaridade"
+                v-model="formData.level_education"
+                placeholder="Grau de Escolaridade"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Curso"
+                v-model="formData.course"
+                placeholder="Curso"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Proficiência Inglês (Nota)"
+                v-model="formData.english_proficiency_grade"
+                placeholder="Proficiência Inglês (Nota)"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Proficiência Inglês (Nível)"
+                v-model="formData.english_proficiency_level"
+                placeholder="Proficiência Inglês (Nível)"
+              />
+            </div>
+          </div>
+          <div v-else-if="activeTab === 'career'" class="tab-content">
+            <div class="form-group">
+              <TextFieldComponent
+                label="Performance Atual"
+                v-model="formData.employee_performance"
+                placeholder="Performance Atual"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Potencial Atual"
+                v-model="formData.employee_potential"
+                placeholder="Potencial Atual"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Performance Anterior"
+                v-model="formData.employee_last_performance"
+                placeholder="Performance Anterior"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Potencial Anterior"
+                v-model="formData.employee_last_potential"
+                placeholder="Potencial Anterior"
+              />
+            </div>
+
+            <h2 class="succession-text">PLANO DE SUCESSÃO</h2>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Sigla"
+                v-model="formData.job_id"
+                placeholder="Sigla"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Área"
+                v-model="formData.department_name"
+                placeholder="Área"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Posição"
+                v-model="formData.position"
+                placeholder="Posição"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Prontidão"
+                v-model="formData.readiness"
+                placeholder="Prontidão"
               />
             </div>
           </div>
@@ -223,7 +356,6 @@
 import ButtonComponent from '../ButtonComponent.vue';
 import SearchComponent from '../SearchComponent.vue';
 import TextFieldComponent from '../TextFieldComponent.vue';
-import SelectComponent from '../SelectComponent.vue';
 
 export default {
   name: 'EmployeeModal',
@@ -231,7 +363,6 @@ export default {
     ButtonComponent,
     TextFieldComponent,
     SearchComponent,
-    SelectComponent,
   },
   props: {
     employeeData: {
@@ -274,30 +405,45 @@ export default {
       photoUrl: this.employeeData.image || 'https://via.placeholder.com/150',
       tabs: [
         {
-          name: 'sobre',
-          label: 'Sobre',
+          name: 'personalData',
+          label: 'Dados Pessoais',
           icon: 'src/assets/icons/contact_mail.png',
         },
         {
-          name: 'conexoes',
-          label: 'Conexões',
+          name: 'organizationalData',
+          label: 'Dados Organizacionais',
           icon: 'src/assets/icons/connect_without_contact.png',
         },
         {
-          name: 'formacao',
+          name: 'remuneration',
+          label: 'Remuneração',
+          icon: 'src/assets/icons/paid.png',
+        },
+        {
+          name: 'degree',
           label: 'Formação',
           icon: 'src/assets/icons/import_contacts.png',
         },
         {
-          name: 'localizacao',
-          label: 'Localização',
-          icon: 'src/assets/icons/location.png',
+          name: 'career',
+          label: 'Carreira e Sucessão',
+          icon: 'src/assets/icons/lan.png',
         },
       ],
-      activeTab: 'sobre',
+      activeTab: 'personalData',
     };
   },
   computed: {
+    fullName: {
+      get() {
+        return `${this.formData.name} ${this.formData.lastName}`.trim();
+      },
+      set(value) {
+        const parts = value.split(' ');
+        this.formData.name = parts.shift() || '';
+        this.formData.lastName = parts.join(' ') || '';
+      },
+    },
     formattedHireDate: {
       get() {
         return this.formData.hire_date
@@ -346,12 +492,12 @@ export default {
 
 <style scoped lang="scss">
 .modal-overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
   z-index: 9999;
 }
 
@@ -359,8 +505,8 @@ export default {
   position: absolute;
   top: 50%;
   right: 20px;
-  transform: translateY(-40%);
-  width: 450px;
+  transform: translateY(-45%);
+  width: 550px;
   height: auto;
   max-height: 90vh;
   justify-content: center;
@@ -368,7 +514,7 @@ export default {
   z-index: 10000;
   display: flex;
   border-radius: 16px;
-  border: 1px solid $background-gray;
+
   flex-direction: column;
   overflow: hidden;
 }
@@ -407,13 +553,12 @@ export default {
 }
 .tab-item {
   flex: 1;
-  padding: 8px 10px;
-  text-align: left;
+  padding: 2px 8px;
+  text-align: center;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  font-size: 10px;
   color: $background-gray;
   border-top: 1px solid $background-gray;
   border-left: 1px solid $background-gray;
@@ -422,7 +567,7 @@ export default {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   background: $white;
-  justify-content: center;
+  justify-content: space-evenly;
 }
 
 .tab-item.active {
@@ -433,7 +578,7 @@ export default {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   background: $white;
-  margin-bottom: -1px;
+  margin-bottom: -1.5px;
 }
 
 .tab-icon {
@@ -467,20 +612,31 @@ export default {
 }
 
 .side-modal-body {
-  padding: 16px;
+  padding: 10px 16px 12px 16px;
   flex: 1;
   overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $background-white;
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $orange;
+    border-radius: 2px;
+  }
 }
 
 .form-group {
   margin-bottom: 16px;
 }
 
-.form-group label {
+:deep(.field-label) {
+  font-size: 14px !important;
   color: $background-gray;
-  display: block;
-  margin-bottom: 4px;
-  font-weight: bold;
 }
 
 .form-group input,
@@ -507,5 +663,15 @@ export default {
   border-radius: 14px;
   padding-left: 0px;
   font-size: 14px;
+}
+
+.succession-text {
+  display: flex;
+  font-size: 18px;
+  margin: 0;
+  font-weight: bold;
+  color: $gray;
+  justify-content: center;
+  padding: 0;
 }
 </style>
