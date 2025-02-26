@@ -30,16 +30,16 @@
         <form @submit.prevent="confirm">
           <div class="tab-content">
             <div class="form-group">
-              <label>Nome *</label>
               <TextFieldComponent
-                v-model="formData.departmentName"
-                placeholder="Digite o nome do departamento"
-                required
+                label="Sigla"
+                v-model="formData.department_id"
+                placeholder="Sigla"
+                :required="true"
               />
             </div>
             <div class="form-group">
-              <label>Descrição</label>
               <TextFieldComponent
+                label="Descrição"
                 v-model="formData.departmentDescription"
                 placeholder="Insira a descrição"
               />
@@ -148,7 +148,6 @@ export default {
   z-index: 10000;
   display: flex;
   border-radius: 16px;
-  border: 1px solid $background-gray;
   flex-direction: column;
   overflow: hidden;
 }
@@ -212,7 +211,7 @@ export default {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   background: $white;
-  margin-bottom: -1px;
+  margin-bottom: -2px;
 }
 
 .tab-icon {
@@ -289,5 +288,10 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 30px;
+}
+
+:deep(.field-label) {
+  font-size: 14px !important;
+  color: $background-gray;
 }
 </style>
