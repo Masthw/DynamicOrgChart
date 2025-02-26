@@ -94,7 +94,7 @@ export default {
   data() {
     return {
       formData: {
-        departmentName: '',
+        department_id: '',
         departmentDescription: '',
         departmentColor: '',
       },
