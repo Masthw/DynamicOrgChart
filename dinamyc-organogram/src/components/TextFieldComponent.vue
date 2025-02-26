@@ -75,5 +75,8 @@ const localValue = computed({
     border-radius: 14px;
     background: $white;
   }
+  .text-input :deep(.q-field__native) {
+    color: $background-gray;
+  }
 }
 </style>
