@@ -567,30 +567,33 @@
 
   function addNode(formData) {
     if (chart) {
-      const newNodeId = Date.now();
       const parentId = formData.nodeId;
-      const department_name = formData.jobDepartment;
-      const newNode = {
-        id: newNodeId,
-        parentId: parentId,
-        name: '?',
-        position: formData.jobTitle || '',
-        image: 'src/assets/images/add_node.png',
-        department_name: formData.jobDepartment,
-        _centered: true,
-        type: 'vacancy',
-        salaryRange: formData.salaryRange,
-      };
-      chart.addNode(newNode).render();
+      const department_name = formData.job_department_name;
+      for (let i = 0; i < formData.vacanciesCount; i++) {
+        const newNodeId = Date.now() + i;
+        const newNode = {
+          id: newNodeId,
+          parentId: parentId,
+          name: '?',
+          position: formData.job_title || '',
+          image: 'src/assets/images/add_node.png',
+          department_name: formData.job_department_name,
+          _centered: true,
+          type: 'vacancy',
+          job_id: formData.job_id,
+        };
+        chart.addNode(newNode);
 
-      console.log(
-        'Novo Node adicionado com ID:',
-        newNodeId,
-        'ao Parent ID:',
-        parentId,
-        'departamento:',
-        department_name
-      );
+        console.log(
+          'Novo Node adicionado com ID:',
+          newNodeId,
+          'ao Parent ID:',
+          parentId,
+          'departamento:',
+          department_name
+        );
+      }
+      chart.render();
     }
   }
 
