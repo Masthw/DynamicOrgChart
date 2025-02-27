@@ -50,10 +50,12 @@
               />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Área"
+              <label>Área</label>
+              <SelectComponent
+                :options="departmentOptions"
                 v-model="formData.job_department_name"
                 placeholder="Área"
+                customClass="larger-select"
               />
             </div>
             <div class="form-group">
@@ -135,6 +137,7 @@
 
 <script>
 import ButtonComponent from '../ButtonComponent.vue';
+import SelectComponent from '../SelectComponent.vue';
 import TextFieldComponent from '../TextFieldComponent.vue';
 
 export default {
@@ -142,6 +145,7 @@ export default {
   components: {
     ButtonComponent,
     TextFieldComponent,
+    SelectComponent,
   },
   props: {
     show: {
