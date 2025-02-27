@@ -3,7 +3,7 @@
     <div class="modal-overlay"></div>
     <div class="side-modal">
       <div class="side-modal-header">
-        <h2>Adicionar Vaga</h2>
+        <h2>Adicionar Novas Vagas</h2>
         <q-btn
           flat
           dense
@@ -13,197 +13,121 @@
           @click="close"
         />
       </div>
-
-      <div class="side-modal-tabs">
-        <div
-          v-for="tab in tabs"
-          :key="tab.name"
-          :class="['tab-item', { active: activeTab === tab.name }]"
-          @click="activeTab = tab.name"
-        >
-          <img :src="tab.icon" alt="" class="tab-icon" />
-          <span class="tab-text">{{ tab.label }}</span>
-        </div>
-      </div>
-
       <div class="side-modal-body">
-        <!-- Aba "Sobre" -->
-        <div v-if="activeTab === 'sobre'" class="tab-content">
-          <div class="form-group">
-            <label>Título da Vaga</label>
-            <TextFieldComponent
-              v-model="formData.jobTitle"
-              placeholder="Título da Vaga"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label>Departamento/Setor</label>
-            <SelectComponent
-              v-model="formData.jobDepartment"
-              :options="departmentOptions"
-              placeholder="Departamento/Setor"
-              customClass="larger-select"
-            />
-          </div>
-          <div class="form-group">
-            <label>Unidade/Filial</label>
-            <TextFieldComponent
-              v-model="formData.jobBranch"
-              placeholder="Unidade/Filial"
-            />
-          </div>
-          <div class="form-group">
-            <label>Gestor Responsável</label>
-            <TextFieldComponent
-              v-model="formData.jobManager"
-              placeholder="Nome do Gestor"
-            />
-          </div>
-          <div class="form-group">
-            <label>Superior Imediato</label>
-            <TextFieldComponent
-              v-model="formData.jobImmediateSuperior"
-              placeholder="Nome do Imediato"
-            />
+        <div class="vacancies-control">
+          <span class="vacancies-label">Quantidade de Vagas:</span>
+          <div class="counter">
+            <q-btn
+              round
+              dense
+              class="counter-btn"
+              @click="decrement"
+              :disabled="vacanciesCount <= 1"
+            >
+              -
+            </q-btn>
+            <span class="counter-value">{{ vacanciesCount }}</span>
+            <q-btn round dense class="counter-btn" @click="increment">
+              +
+            </q-btn>
           </div>
         </div>
 
-        <!-- Aba "Detalhes" -->
-        <div v-else-if="activeTab === 'detalhes'" class="tab-content">
-          <div class="form-group">
-            <label>Maturidade</label>
-            <TextFieldComponent
-              v-model="formData.maturity"
-              placeholder="Maturidade"
+        <form @submit.prevent="confirm">
+          <div class="tab-content">
+            <div class="form-group">
+              <TextFieldComponent
+                label="Cargo"
+                v-model="formData.job_title"
+                placeholder="Cargo"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Site"
+                v-model="formData.job_site"
+                placeholder="Site"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Área"
+                v-model="formData.job_department_name"
+                placeholder="Área"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Sigla"
+                v-model="formData.job_id"
+                placeholder="Sigla"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Centro de Custo"
+                v-model="formData.job_cost_center"
+                placeholder="Centro de Custo"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Salário Contratação (Inicial/Salário Objetivo/Final)"
+                v-model="formData.job_remuneration"
+                placeholder="Inicial:  | Salário Objetivo: | Final:"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Salário Contratação (R$)"
+                v-model="formData.job_salary"
+                placeholder="Salário Contratação"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Jornada de Trabalho"
+                v-model="formData.job_work_journey"
+                placeholder="Jornada de Trabalho"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Subgrupo"
+                v-model="formData.job_sub_group"
+                placeholder="Subgrupo"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Justificativa"
+                v-model="formData.job_opening_reason"
+                placeholder="Justificativa"
+              />
+            </div>
+            <div class="form-group">
+              <TextFieldComponent
+                label="Data de Abertura"
+                v-model="formData.job_opening_date"
+                placeholder="Data de Abertura"
+              />
+            </div>
+          </div>
+          <div class="side-modal-footer">
+            <ButtonComponent
+              type="button"
+              variant="primary"
+              label="Cancelar"
+              @click="close"
+            />
+            <ButtonComponent
+              type="submit"
+              variant="secondary"
+              label="Salvar"
+              @click="confirm"
             />
           </div>
-          <div class="form-group">
-            <label>Tipo de Contratação</label>
-            <TextFieldComponent
-              v-model="formData.contractType"
-              placeholder="Tipo de Contratação"
-            />
-          </div>
-          <div class="form-group">
-            <label>Modelo de Trabalho</label>
-            <TextFieldComponent
-              v-model="formData.jobModality"
-              placeholder="Modelo de Trabalho"
-            />
-          </div>
-          <div class="form-group">
-            <label>Jornada de Trabalho</label>
-            <TextFieldComponent
-              v-model="formData.workingDay"
-              placeholder="Jornada de Trabalho"
-            />
-          </div>
-          <div class="form-group">
-            <label>Faixa Salarial</label>
-            <TextFieldComponent
-              v-model="formData.salaryRange"
-              placeholder="Faixa Salarial"
-            />
-          </div>
-          <div class="form-group">
-            <label>Benefícios Oferecidos</label>
-            <TextFieldComponent
-              v-model="formData.jobBenefits"
-              placeholder="Benefícios"
-            />
-          </div>
-        </div>
-
-        <!-- Aba "Requisitos" -->
-        <div v-else-if="activeTab === 'requisitos'" class="tab-content">
-          <div class="form-group">
-            <label>Formação Acadêmica</label>
-            <TextFieldComponent
-              v-model="formData.educationRequirement"
-              placeholder="Formação Acadêmica"
-            />
-          </div>
-          <div class="form-group">
-            <label>Certificações Necessárias</label>
-            <TextFieldComponent
-              v-model="formData.requiredCertifications"
-              placeholder="Certificações Necessárias"
-            />
-          </div>
-          <div class="form-group">
-            <label>Experiência Mínima Requerida</label>
-            <TextFieldComponent
-              v-model="formData.minimumExperience"
-              placeholder="Experiência Mínima Requerida"
-            />
-          </div>
-          <div class="form-group">
-            <label>Habilidades Técnicas</label>
-            <TextFieldComponent
-              v-model="formData.technicalSkills"
-              placeholder="Habilidades Técnicas"
-            />
-          </div>
-          <div class="form-group">
-            <label>Idiomas Necessários</label>
-            <TextFieldComponent
-              v-model="formData.requiredLanguages"
-              placeholder="Idiomas Necessários"
-            />
-          </div>
-        </div>
-
-        <!-- Aba "Informações" -->
-        <div v-else-if="activeTab === 'informacoes'" class="tab-content">
-          <div class="form-group">
-            <label>Data de Abertura da Vaga</label>
-            <TextFieldComponent
-              v-model="formData.jobOpeningDate"
-              placeholder="Data de Abertura da Vaga"
-            />
-          </div>
-          <div class="form-group">
-            <label>Prazo para Candidaturas</label>
-            <TextFieldComponent
-              v-model="formData.jobFinalDate"
-              placeholder="Prazo para Candidaturas"
-            />
-          </div>
-          <div class="form-group">
-            <label>Status da Vaga</label>
-            <TextFieldComponent
-              v-model="formData.jobStatus"
-              placeholder="Status da Vaga"
-            />
-          </div>
-          <div class="form-group">
-            <label>Motivo da Criação da Vaga</label>
-            <TextFieldComponent
-              v-model="formData.jobCreateReason"
-              placeholder="Motivo da Criação da Vaga"
-            />
-          </div>
-          <div class="form-group">
-            <label>KPIs</label>
-            <TextFieldComponent v-model="formData.kpis" placeholder="KPIs" />
-          </div>
-        </div>
-
-        <div class="side-modal-footer">
-          <ButtonComponent
-            type="button"
-            variant="primary"
-            label="Cancelar"
-            @click="close"
-          />
-          <ButtonComponent
-            type="submit"
-            variant="secondary"
-            label="Salvar"
-            @click="confirm"
-          />
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -211,7 +135,6 @@
 
 <script>
 import ButtonComponent from '../ButtonComponent.vue';
-import SelectComponent from '../SelectComponent.vue';
 import TextFieldComponent from '../TextFieldComponent.vue';
 
 export default {
@@ -219,7 +142,6 @@ export default {
   components: {
     ButtonComponent,
     TextFieldComponent,
-    SelectComponent,
   },
   props: {
     show: {
@@ -239,53 +161,21 @@ export default {
   data() {
     return {
       confirming: false,
+      vacanciesCount: 1,
       formData: {
         nodeId: '',
-        jobTitle: '',
-        jobDepartment: '',
-        jobBranch: '',
-        jobManager: '',
-        jobImmediateSuperior: '',
-        maturity: '',
-        contractType: '',
-        jobModality: '',
-        workingDay: '',
-        salaryRange: '',
-        jobBenefits: '',
-        educationRequirement: '',
-        requiredCertifications: '',
-        minimumExperience: '',
-        technicalSkills: '',
-        requiredLanguages: '',
-        jobOpeningDate: '',
-        jobFinalDate: '',
-        jobStatus: '',
-        jobCreateReason: '',
-        kpis: '',
+        job_title: '',
+        job_site: '',
+        job_department_name: '',
+        job_id: '',
+        job_cost_center: '',
+        job_remuneration: '',
+        job_salary: '',
+        job_work_journey: '',
+        job_sub_group: '',
+        job_opening_reason: '',
+        job_opening_date: '',
       },
-      tabs: [
-        {
-          name: 'sobre',
-          label: 'Sobre',
-          icon: 'src/assets/icons/contact_mail.png',
-        },
-        {
-          name: 'detalhes',
-          label: 'Detalhes',
-          icon: 'src/assets/icons/connect_without_contact.png',
-        },
-        {
-          name: 'requisitos',
-          label: 'Requisitos',
-          icon: 'src/assets/icons/import_contacts.png',
-        },
-        {
-          name: 'informacoes',
-          label: 'Informações',
-          icon: 'src/assets/icons/info.png',
-        },
-      ],
-      activeTab: 'sobre',
     };
   },
   mounted() {
@@ -305,6 +195,14 @@ export default {
     },
   },
   methods: {
+    increment() {
+      this.vacanciesCount++;
+    },
+    decrement() {
+      if (this.vacanciesCount > 1) {
+        this.vacanciesCount--;
+      }
+    },
     close() {
       this.$emit('close');
     },
@@ -316,7 +214,12 @@ export default {
         event.preventDefault();
       }
 
-      const dataToSend = JSON.parse(JSON.stringify(this.formData));
+      const dataToSend = JSON.parse(
+        JSON.stringify({
+          ...this.formData,
+          vacanciesCount: this.vacanciesCount,
+        })
+      );
       const orgchartIframe = window.parent.document.querySelector('iframe');
       if (orgchartIframe && orgchartIframe.contentWindow) {
         orgchartIframe.contentWindow.postMessage(
@@ -326,8 +229,11 @@ export default {
       } else {
         console.warn('Orgchart iframe não foi encontrado.');
       }
-      this.$emit('confirm', this.formData);
-      this.close();
+      this.$emit('confirm', dataToSend);
+      setTimeout(() => {
+        this.close();
+        this.confirming = false;
+      }, 100);
     },
   },
 };
@@ -335,20 +241,62 @@ export default {
 
 <style scoped lang="scss">
 .modal-overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 9999;
+}
+
+.vacancies-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.vacancies-label {
+  font-weight: bold;
+  color: $gray;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.counter-btn {
+  width: 30px;
+  height: 30px;
+  background-color: $white;
+  color: $orange;
+  border-radius: 10px;
+  border: 1px solid $orange;
+  box-shadow: none;
+
+  &:disabled {
+    background-color: $background-gray;
+    cursor: not-allowed;
+    color: $white;
+    border-color: transparent;
+  }
+}
+
+.counter-value {
+  min-width: 30px;
+  text-align: center;
+  font-weight: bold;
 }
 
 .side-modal {
   position: absolute;
   top: 50%;
   right: 20px;
-  transform: translateY(-40%);
+  transform: translateY(-45%);
   width: 450px;
   height: auto;
   max-height: 90vh;
@@ -357,24 +305,22 @@ export default {
   z-index: 10000;
   display: flex;
   border-radius: 16px;
-  border: 1px solid $background-gray;
   flex-direction: column;
   overflow: hidden;
 }
 
 .side-modal-header {
   color: $background-gray;
-  padding: 16px;
-  border-radius: 16px;
+  padding: 16px 16px 0px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: $white;
 }
 
 .side-modal-header h2 {
   margin: 0;
   font-size: 18px;
+  font-weight: bold;
 }
 
 .close-button {
@@ -440,9 +386,22 @@ export default {
 }
 
 .side-modal-body {
-  padding: 16px;
+  padding: 0px 16px 16px 16px;
   flex: 1;
   overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $background-white;
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $orange;
+    border-radius: 2px;
+  }
 }
 
 .form-group {
@@ -480,5 +439,10 @@ export default {
   border-radius: 14px;
   padding-left: 0px;
   font-size: 14px;
+}
+
+:deep(.field-label) {
+  font-size: 14px !important;
+  color: $background-gray;
 }
 </style>
