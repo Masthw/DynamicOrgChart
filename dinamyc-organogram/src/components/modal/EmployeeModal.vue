@@ -514,7 +514,6 @@ export default {
   z-index: 10000;
   display: flex;
   border-radius: 16px;
-
   flex-direction: column;
   overflow: hidden;
 }
