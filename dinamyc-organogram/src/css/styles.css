@@ -120,7 +120,7 @@ svg:not(:root) {
   align-items: center;
   margin-bottom: 10px;
   padding: 0 15px;
-  z-index: 1;
+  z-index: 9999;
 }
 
 .left-buttons {
@@ -144,6 +144,7 @@ svg:not(:root) {
 }
 
 #enableDragButton {
+  width: fit-content;
   padding: 0 12px;
   border-radius: 12px;
   text-align: center;
@@ -229,6 +230,7 @@ svg:not(:root) {
   border-radius: 12px;
   gap: 4px;
   text-align: center;
+  width: fit-content;
 }
 
 #dragActions button:hover {
@@ -596,6 +598,9 @@ input[type='text'] {
 #dragActions {
   z-index: 9999;
   padding: 0 15px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 /* Responsividade */

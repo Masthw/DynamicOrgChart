@@ -862,9 +862,9 @@
 <div class="controls">
   <div class="left-buttons">
     <!-- Organizar (com ícone antes) -->
-    <button id="enableDragButton" onclick="enableDrag()">
+    <button id="enableDragButton" class="icon-button" onclick="enableDrag()">
       <img src="src/assets/icons/map_search.png" alt="Organizar" />
-      Organizar
+      <span>Organizar</span>
     </button>
     <!-- Filtro (botão circular) -->
     <button id="filterButton" class="icon-button" onclick="openFilterDialog()">
@@ -888,10 +888,18 @@
 </div>
 
 <div id="dragActions" class="hide">
-  <button id="finishDrag" onclick="disableDrag()">Salvar</button>
-  <button id="undoButton" disabled onclick="undo()">Desfazer</button>
-  <button id="redoButton" disabled onclick="redo()">Refazer</button>
-  <button id="cancelDrag" onclick="cancelDrag()">Cancelar</button>
+  <button id="finishDrag" class="icon-button" onclick="disableDrag()">
+    Salvar
+  </button>
+  <button id="undoButton" class="icon-button" disabled onclick="undo()">
+    Desfazer
+  </button>
+  <button id="redoButton" class="icon-button" disabled onclick="redo()">
+    Refazer
+  </button>
+  <button id="cancelDrag" class="icon-button" onclick="cancelDrag()">
+    Cancelar
+  </button>
 </div>
 
 <div id="appliedFilters" class="applied-filters"></div>
