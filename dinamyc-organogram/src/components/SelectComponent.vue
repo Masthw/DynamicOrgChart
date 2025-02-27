@@ -94,6 +94,7 @@ export default {
   background-color: $white;
   padding: 5px;
   font-size: 16px;
+  border-color: $background-gray;
   color: $background-gray;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   outline: none;
@@ -128,7 +129,7 @@ export default {
   scrollbar-color: $orange transparent;
 
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 3px;
   }
 
   &::-webkit-scrollbar-track {
@@ -137,7 +138,7 @@ export default {
 
   &::-webkit-scrollbar-thumb {
     background: $orange;
-    border-radius: 3px;
+    border-radius: 2px;
   }
 }
 
