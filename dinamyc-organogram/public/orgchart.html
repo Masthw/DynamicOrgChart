@@ -822,14 +822,12 @@
                   <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
                     d.data.position
                   } </div>
-                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;">
-            ${
-              d.data.type === 'vacancy' && d.data.salaryRange
-                ? 'R$ ' + d.data.salaryRange
-                : 'R$ ' + d.data.salary
-            }
-          </div>
-
+                  <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
+                    d.data.job_id
+                  } </div>
+                  <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
+                    d.data.department_name
+                  } </div>
               </div>
       <div class="node-controls">
         <button class="control-btn" onclick="addJob(${d.data.id}, '${
