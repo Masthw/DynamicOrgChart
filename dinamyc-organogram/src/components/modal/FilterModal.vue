@@ -86,7 +86,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  departmentsIds: {
+  job_ids: {
     type: Array,
     default: () => [],
   },
@@ -103,10 +103,16 @@ const positionsOptions = computed(() =>
   props.positions.map((p) => ({ label: p, value: p }))
 );
 const departmentsOptions = computed(() =>
-  props.departments.map((d) => ({ label: d, value: d }))
+  props.departments.map((department) => ({
+    label: department,
+    value: department,
+  }))
 );
 const departmentsIdsOptions = computed(() =>
-  props.departmentsIds.map((dids) => ({ label: dids, value: dids }))
+  props.job_ids.map((jobId) => ({
+    label: jobId,
+    value: jobId,
+  }))
 );
 
 const isFormValid = computed(() => {
@@ -114,16 +120,11 @@ const isFormValid = computed(() => {
   return true;
 });
 
-// Atualiza o estado do diálogo conforme a prop modelValue
 watch(
   () => props.modelValue,
   (newVal) => {
     isOpen.value = newVal;
     if (newVal) {
-      // Ao abrir, você pode redefinir os filtros se necessário
-      selectedPositions.value = [];
-      selectedDepartments.value = [];
-      selectedDepartmentIds.value = [];
     }
   },
   { immediate: true }
