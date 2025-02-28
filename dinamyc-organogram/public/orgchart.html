@@ -400,158 +400,45 @@
     }
   }
 
-  function getDepartments() {
+  function getFilterData() {
     const data = getOrgChartData();
-    if (!data) {
-      return [];
+    if (!data || !Array.isArray(data)) {
+      return { positions: [], departments: [], job_ids: [] };
     }
-
-    const deptSet = new Set();
+    const positionsSet = new Set();
+    const departmentsSet = new Set();
+    const jobIdsSet = new Set();
 
     data.forEach((item) => {
+      if (item.position) {
+        positionsSet.add(item.position);
+      }
       if (item.department_name) {
-        deptSet.add(item.department_name);
+        departmentsSet.add(item.department_name);
+      }
+      if (item.job_id) {
+        jobIdsSet.add(item.job_id);
       }
     });
 
-    const departmentsArray = Array.from(deptSet);
-    console.log('Departamentos coletados:', departmentsArray);
-    return departmentsArray;
-  }
+    const positions = Array.from(positionsSet);
+    const departments = Array.from(departmentsSet);
+    const job_ids = Array.from(jobIdsSet);
 
-  let activeMenu = null;
-
-  //Filtro
-  function getAncestors(
-    data,
-    nodeId,
-    parentIdField = 'parentId',
-    idField = 'id'
-  ) {
-    const ancestors = [];
-    let currentId = nodeId;
-
-    while (currentId) {
-      const parent = data.find((item) => item[idField] === currentId);
-      if (parent) {
-        ancestors.push(parent);
-        currentId = parent[parentIdField];
-      } else {
-        break;
-      }
-    }
-    return ancestors;
+    console.log('Filter Data:', { positions, departments, job_ids });
+    return { positions, departments, job_ids };
   }
 
   function openFilterDialog() {
-    document.getElementById('filterDialog').style.display = 'block';
-    document.getElementById('modalOverlay').style.display = 'block';
-  }
-
-  function closeFilterDialog() {
-    document.getElementById('filterDialog').style.display = 'none';
-    document.getElementById('modalOverlay').style.display = 'none';
-  }
-
-  function applyFilters() {
-    const positionFilter = document.getElementById('positionFilter').value;
-    const departmentFilter = document.getElementById('departmentFilter').value;
-    const locationFilter = document.getElementById('locationFilter').value;
-
-    const filteredNodes = originalData.filter((item) => {
-      return (
-        (positionFilter === '' || item.position === positionFilter) &&
-        (departmentFilter === '' ||
-          item.department_name === departmentFilter) &&
-        (locationFilter === '' || item.location_state === locationFilter)
-      );
-    });
-
-    // Adiciona ancestrais de cada nó filtrado
-    const ancestors = new Set();
-    filteredNodes.forEach((node) => {
-      const nodeAncestors = getAncestors(originalData, node.id);
-      nodeAncestors.forEach((ancestor) => ancestors.add(ancestor));
-    });
-
-    // Converte o Set para array e renderiza
-    const filteredDataWithAncestors = [...ancestors];
-    chart.data(filteredDataWithAncestors).render();
-
-    const appliedFilters = [];
-    if (positionFilter) appliedFilters.push(`Cargo: ${positionFilter}`);
-    if (departmentFilter)
-      appliedFilters.push(`Departamento: ${departmentFilter}`);
-    if (locationFilter) appliedFilters.push(`Local: ${locationFilter}`);
-
-    const appliedFiltersDiv = document.getElementById('appliedFilters');
-    if (appliedFilters.length > 0) {
-      appliedFiltersDiv.style.display = 'flex';
-      appliedFiltersDiv.innerHTML = appliedFilters
-        .map(
-          (filter) =>
-            `<span>${filter} <i onclick="clearSpecificFilter('${filter}')">&times;</i></span>`
-        )
-        .join('');
-    } else {
-      appliedFiltersDiv.style.display = 'none';
-    }
-    closeFilterDialog();
-  }
-
-  function clearSpecificFilter(filter) {
-    if (filter.startsWith('Cargo:')) {
-      document.getElementById('positionFilter').value = '';
-    } else if (filter.startsWith('Departamento:')) {
-      document.getElementById('departmentFilter').value = '';
-    } else if (filter.startsWith('Local:')) {
-      document.getElementById('locationFilter').value = '';
-    }
-    applyFilters();
-  }
-
-  function getUniqueValues(data, field) {
-    return [
-      ...new Set(data.map((item) => item[field]).filter((value) => value)),
-    ];
-  }
-
-  function populateSelect(selectElement, options) {
-    selectElement.innerHTML = '<option value="">Todos</option>';
-    options.forEach((option) => {
-      const opt = document.createElement('option');
-      opt.value = option;
-      opt.textContent = option;
-      selectElement.appendChild(opt);
-    });
-  }
-
-  //Adicionar informações relevantes conforme os dados que vierem. Salário, Sigla, Tempo no Cargo, etc.
-  function initializeFilters(data) {
-    const positionFilter = document.getElementById('positionFilter');
-    const departmentFilter = document.getElementById('departmentFilter');
-    const locationFilter = document.getElementById('locationFilter');
-
-    const uniquePositions = getUniqueValues(data, 'position');
-    const uniqueDepartments = getUniqueValues(data, 'department_name');
-    const uniqueLocations = getUniqueValues(data, 'location_state');
-
-    populateSelect(positionFilter, uniquePositions);
-    populateSelect(departmentFilter, uniqueDepartments);
-    populateSelect(locationFilter, uniqueLocations);
-  }
-
-  function clearFilters() {
-    document.getElementById('positionFilter').value = '';
-    document.getElementById('departmentFilter').value = '';
-    document.getElementById('locationFilter').value = '';
-
-    const appliedFiltersDiv = document.getElementById('appliedFilters');
-    appliedFiltersDiv.style.display = 'none';
-    appliedFiltersDiv.innerHTML = '';
-
-    appliedFilters = [];
-    applyFilters();
+    const filterData = getFilterData();
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'filter',
+        ...filterData,
+      },
+      '*'
+    );
   }
 
   //Adicionar vaga

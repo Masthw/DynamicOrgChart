@@ -66,6 +66,15 @@
         v-if="showChangeLogModal"
         @close="showChangeLogModal = false"
       />
+      <FilterModal
+        v-model:modelValue="showFilterModal"
+        :positions="filterData.positions"
+        :departments="filterData.departments"
+        :job_ids="filterData.job_ids"
+        @apply="handleApplyFilters"
+        @clear="handleClearFilters"
+        @update:modelValue="showFilterModal = $event"
+      />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -103,6 +112,7 @@ import AddJobModal from 'src/components/modal/AddJobModal.vue';
 import ViewSuccessionPlanModal from 'src/components/modal/ViewSuccessionPlanModal.vue';
 import SubmitChangesModal from 'src/components/modal/SubmitChangesModal.vue';
 import ChangeLogModal from 'src/components/modal/ChangeLogModal.vue';
+import FilterModal from 'src/components/modal/FilterModal.vue';
 
 export default {
   components: {
@@ -114,6 +124,7 @@ export default {
     ViewSuccessionPlanModal,
     SubmitChangesModal,
     ChangeLogModal,
+    FilterModal,
   },
   setup() {
     const route = useRoute();
@@ -129,6 +140,13 @@ export default {
     const successionPlanData = ref([]);
     const employeeData = ref({});
     const addJobInitialData = ref({});
+
+    const showFilterModal = ref(false);
+    const filterData = ref({
+      positions: [],
+      departments: [],
+      job_ids: [],
+    });
 
     const loadOrgChart = () => {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
@@ -247,6 +265,15 @@ export default {
           console.log(successionPlanData.value);
           showViewSuccessionPlanModal.value = true;
         }
+        if (event.data.action === 'filter') {
+          filterData.value = {
+            positions: event.data.positions,
+            departments: event.data.departments,
+            job_ids: event.data.job_ids,
+          };
+          showFilterModal.value = true;
+        }
+
         if (event.data && event.data.type === 'orgchart-modified') {
           const { id, modifiedDate } = event.data;
           console.log('OrgChartPage recebeu mensagem:', event.data);
@@ -254,6 +281,31 @@ export default {
         }
       });
     });
+
+    const handleApplyFilters = (filters) => {
+      const iframe = document.querySelector('iframe.orgchart-iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(
+          {
+            type: 'applyFilters',
+            filters,
+          },
+          '*'
+        );
+      }
+    };
+
+    const handleClearFilters = () => {
+      const iframe = document.querySelector('iframe.orgchart-iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(
+          {
+            type: 'clearFilters',
+          },
+          '*'
+        );
+      }
+    };
 
     watch(
       () => route.params.id,
@@ -286,6 +338,10 @@ export default {
       openChangeLogModal,
       showChangeLogModal,
       addJobInitialData,
+      showFilterModal,
+      filterData,
+      handleApplyFilters,
+      handleClearFilters,
     };
   },
 };
