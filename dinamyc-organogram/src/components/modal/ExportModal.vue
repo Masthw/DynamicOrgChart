@@ -15,6 +15,14 @@
       <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
         <h2 class="modal-title">Exportar Simulação</h2>
+        <q-btn
+          flat
+          dense
+          round
+          icon="close"
+          class="close-button"
+          @click="closeModal"
+        />
         <p class="modal-text">
           Você está prestes a fazer o download do
           <strong>{{ orgchartName }}.</strong> <br />
@@ -142,5 +150,17 @@ const exportPDF = () => {
   flex-direction: column;
   gap: 20px;
   justify-content: center;
+}
+
+.close-button {
+  position: absolute;
+  font-size: 14px;
+  top: 10px;
+  right: 5px;
+  color: $gray;
+
+  &:hover {
+    color: $orange;
+  }
 }
 </style>
