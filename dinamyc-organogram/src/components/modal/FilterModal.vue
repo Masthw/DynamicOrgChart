@@ -45,10 +45,10 @@
           />
         </div>
         <div class="filter-row">
-          <label class="filter-label">Estado:</label>
+          <label class="filter-label">Sigla:</label>
           <MultipleSelectComponent
-            v-model="selectedLocations"
-            :options="locationsOptions"
+            v-model="selectedDepartmentIds"
+            :options="departmentsIdsOptions"
             class="filter-select"
           />
         </div>
@@ -86,7 +86,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  locations: {
+  departmentsIds: {
     type: Array,
     default: () => [],
   },
@@ -97,7 +97,7 @@ const emit = defineEmits(['update:modelValue', 'apply', 'clear']);
 const isOpen = ref(props.modelValue);
 const selectedPositions = ref([]);
 const selectedDepartments = ref([]);
-const selectedLocations = ref([]);
+const selectedDepartmentIds = ref([]);
 
 const positionsOptions = computed(() =>
   props.positions.map((p) => ({ label: p, value: p }))
@@ -105,8 +105,8 @@ const positionsOptions = computed(() =>
 const departmentsOptions = computed(() =>
   props.departments.map((d) => ({ label: d, value: d }))
 );
-const locationsOptions = computed(() =>
-  props.locations.map((l) => ({ label: l, value: l }))
+const departmentsIdsOptions = computed(() =>
+  props.departmentsIds.map((dids) => ({ label: dids, value: dids }))
 );
 
 const isFormValid = computed(() => {
@@ -123,7 +123,7 @@ watch(
       // Ao abrir, você pode redefinir os filtros se necessário
       selectedPositions.value = [];
       selectedDepartments.value = [];
-      selectedLocations.value = [];
+      selectedDepartmentIds.value = [];
     }
   },
   { immediate: true }
@@ -134,7 +134,7 @@ function applyFilters() {
   const filters = {
     positions: selectedPositions.value,
     departments: selectedDepartments.value,
-    locations: selectedLocations.value,
+    departmentsIds: selectedDepartmentIds.value,
   };
   emit('apply', filters);
   closeModal();
@@ -144,7 +144,7 @@ function applyFilters() {
 function clearFilters() {
   selectedPositions.value = [];
   selectedDepartments.value = [];
-  selectedLocations.value = [];
+  selectedDepartmentIds.value = [];
   emit('clear');
 }
 
