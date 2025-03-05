@@ -18,7 +18,7 @@
     <div class="content-area">
       <!-- Lista de Organogramas -->
       <div class="orgchart-list">
-        <div v-if="orgcharts.length === 0" class="orgchart-empty-card">
+        <div v-if="displayedOrgCharts.length === 0" class="orgchart-empty-card">
           <p class="empty-text">
             Não existem <br />
             simulações <br />
@@ -36,12 +36,12 @@
         <!-- Lista de organogramas existentes -->
         <div
           v-else
-          v-for="orgchart in orgcharts"
+          v-for="orgchart in displayedOrgCharts"
           :key="orgchart.id"
           class="orgchart-card"
         >
           <!-- Status no canto superior direito -->
-          <div class="status">
+          <div class="status" v-if="!orgchart.default">
             <img
               src="../assets/icons/info.png"
               alt="Status"
@@ -58,7 +58,11 @@
           >
             <img
               v-show="!hoverIcons[orgchart.id]"
-              src="../assets/icons/lan.png"
+              :src="
+                orgchart.default
+                  ? 'src/assets/icons/see.png'
+                  : 'src/assets/icons/lan.png'
+              "
               alt="Ícone da Simulação"
               class="icon"
             />
@@ -75,7 +79,7 @@
 
           <!-- Descrição do Organograma -->
           <p class="orgchart-description">
-            {{ orgchart.description || 'Descrição da simulação.' }}
+            {{ orgchart.description }}
           </p>
 
           <!-- Data de Atualização -->
@@ -85,65 +89,93 @@
 
           <!-- Ícones de Ação -->
           <div class="actions">
-            <div
-              class="action-icon-wrapper"
-              @click.stop="editOrgChart(orgchart.id)"
-            >
-              <img
-                src="../assets/icons/edit.png"
-                alt="Editar"
-                class="action-icon"
-              />
-              <span class="tooltip">Editar</span>
-            </div>
-            <div
-              class="action-icon-wrapper"
-              @click.stop="duplicateOrgChart(orgchart.id)"
-            >
-              <img
-                src="../assets/icons/copy.png"
-                alt="Copiar"
-                class="action-icon"
-              />
-              <span class="tooltip">Duplicar</span>
-            </div>
-            <div
-              class="action-icon-wrapper"
-              @click.stop="shareOrgChart(orgchart.id)"
-            >
-              <img
-                src="../assets/icons/share.png"
-                alt="Compartilhar"
-                class="action-icon"
-              />
-              <span class="tooltip">Compartilhar</span>
-            </div>
-            <div
-              class="action-icon-wrapper"
-              @click.stop="exportOrgChart(orgchart.id)"
-            >
-              <img
-                src="../assets/icons/download.png"
-                alt="Baixar"
-                class="action-icon"
-              />
-              <span class="tooltip">Download</span>
-            </div>
-            <div
-              class="action-icon-wrapper"
-              @click.stop="deleteOrgChart(orgchart.id)"
-            >
-              <img
-                src="../assets/icons/delete.png"
-                alt="Excluir"
-                class="action-icon"
-              />
-              <span class="tooltip">Remover</span>
-            </div>
+            <template v-if="orgchart.default">
+              <div
+                class="action-icon-wrapper"
+                @click.stop="shareOrgChart(orgchart.id)"
+              >
+                <img
+                  src="../assets/icons/share.png"
+                  alt="Compartilhar"
+                  class="action-icon"
+                />
+                <span class="tooltip">Compartilhar</span>
+              </div>
+              <div
+                class="action-icon-wrapper"
+                @click.stop="exportOrgChart(orgchart.id)"
+              >
+                <img
+                  src="../assets/icons/download.png"
+                  alt="Baixar"
+                  class="action-icon"
+                />
+                <span class="tooltip">Download</span>
+              </div>
+            </template>
+            <template v-else>
+              <div
+                class="action-icon-wrapper"
+                @click.stop="editOrgChart(orgchart.id)"
+              >
+                <img
+                  src="../assets/icons/edit.png"
+                  alt="Editar"
+                  class="action-icon"
+                />
+                <span class="tooltip">Editar</span>
+              </div>
+              <div
+                class="action-icon-wrapper"
+                @click.stop="duplicateOrgChart(orgchart.id)"
+              >
+                <img
+                  src="../assets/icons/copy.png"
+                  alt="Copiar"
+                  class="action-icon"
+                />
+                <span class="tooltip">Duplicar</span>
+              </div>
+              <div
+                class="action-icon-wrapper"
+                @click.stop="shareOrgChart(orgchart.id)"
+              >
+                <img
+                  src="../assets/icons/share.png"
+                  alt="Compartilhar"
+                  class="action-icon"
+                />
+                <span class="tooltip">Compartilhar</span>
+              </div>
+              <div
+                class="action-icon-wrapper"
+                @click.stop="exportOrgChart(orgchart.id)"
+              >
+                <img
+                  src="../assets/icons/download.png"
+                  alt="Baixar"
+                  class="action-icon"
+                />
+                <span class="tooltip">Download</span>
+              </div>
+              <div
+                class="action-icon-wrapper"
+                @click.stop="deleteOrgChart(orgchart.id)"
+              >
+                <img
+                  src="../assets/icons/delete.png"
+                  alt="Excluir"
+                  class="action-icon"
+                />
+                <span class="tooltip">Remover</span>
+              </div>
+            </template>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Modais -->
     <EditModal
       v-model="isEditModalOpen"
       :orgchart="selectedOrgChart"
@@ -173,7 +205,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { emitter } from 'src/eventBus';
 import ButtonComponent from 'src/components/ButtonComponent.vue';
@@ -195,6 +227,19 @@ const selectedOrgChart = ref(null);
 
 onMounted(() => {
   const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
+  const hasDefaultOrgChart = storedOrgCharts.some((org) => org.id === 1);
+  if (!hasDefaultOrgChart) {
+    storedOrgCharts.unshift({
+      id: 1,
+      name: 'Estrutura Atual',
+      description: '',
+      modifiedDate: new Date().toLocaleDateString(),
+      default: true,
+    });
+
+    localStorage.setItem('orgcharts', JSON.stringify(storedOrgCharts));
+  }
+
   orgcharts.value = storedOrgCharts.map((orgchart) => ({
     ...orgchart,
     modifiedDate: orgchart.modifiedDate || new Date().toLocaleDateString(),
@@ -219,6 +264,10 @@ onMounted(() => {
   };
 
   emitter.on('orgchart-modified', handleOrgchartModified);
+});
+
+const displayedOrgCharts = computed(() => {
+  return [...orgcharts.value];
 });
 
 const updateOrgCharts = (newList) => {

@@ -116,22 +116,18 @@
       console.error('ID do organograma não encontrado na URL');
       return;
     }
+    if (orgChartId === '1') {
+      document.querySelectorAll('.controls .icon-button').forEach((button) => {
+        button.style.display = 'none';
+      });
+    }
 
-    const savedData = localStorage.getItem(`orgChartData_${orgChartId}`);
-    if (savedData) {
-      const data = JSON.parse(savedData);
-      initializeChart(data);
-    } else {
       d3.csv(
         'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
       ).then((data) => {
-        localStorage.setItem(
-          `orgChartData_${orgChartId}`,
-          JSON.stringify(data)
-        );
+      localStorage.setItem(`orgChartData_${orgChartId}`, JSON.stringify(data));
         initializeChart(data);
       });
-    }
   });
 
   function addNodeEventListeners() {
@@ -237,11 +233,6 @@
     document
       .querySelector('.chart-container')
       .classList.remove('dragging-active');
-
-    if (!dragNode) {
-      return;
-    }
-
     d3.select(element).classed('dragging', false);
 
     if (!dropNode) {
@@ -427,6 +418,11 @@
 
     console.log('Filter Data:', { positions, departments, job_ids });
     return { positions, departments, job_ids };
+  }
+
+  function getDepartments() {
+    const filterData = getFilterData();
+    return filterData.departments || [];
   }
 
   function openFilterDialog() {
@@ -672,6 +668,8 @@
   }
 
   function generateContent(d) {
+    const orgChartId = getOrgChartIdFromURL();
+    const shouldShowButtons = orgChartId !== '1';
     const color = '#FFFFFF';
     const imageDiffVert = 27;
     return `
@@ -689,21 +687,25 @@
       d.data._highlighted || d.data._upToTheRootHighlighted
         ? '5px solid #ff3700"'
         : '1px solid #E4E2E9"'
-    } >
+    }>
                   <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(
                     d
-                  )};"></div></div>
+                )};">
+                  </div>
+                </div>
                   <div  style="margin-top:${
                     -imageDiffVert - 20
-                  }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
-                  <div style="margin-top:${
-                    -imageDiffVert - 20
-                  }px;">   <img src=" ${
+                  }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" >
+                  </div>
+                  <div style="margin-top:${-imageDiffVert - 20}px;">
+                    <img src=" ${
       d.data.image
-    }" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" /></div>
+                    }" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
+                  </div>
                   <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${
                     d.data.name
-                  } </div>
+                  }
+                  </div>
                   <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
                     d.data.position
                   } </div>
@@ -714,54 +716,56 @@
                     d.data.department_name
                   } </div>
               </div>
+               ${
+                 shouldShowButtons
+                   ? `
       <div class="node-controls">
-        <button class="control-btn" onclick="addJob(${d.data.id}, '${
-      d.data.name
-    }'); event.stopPropagation();">
+                 <button class="control-btn" onclick="addJob(${d.data.id}, '${d.data.name}'); event.stopPropagation();">
           <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
           <span class="tooltip">Adicionar Vaga</span>
         </button>
-        <button class="control-btn" onclick="Employee(${
-          d.data.id
-        }, false); event.stopPropagation();">
+                 <button class="control-btn" onclick="Employee(${d.data.id}, false); event.stopPropagation();">
           <img src="src/assets/icons/person_add.png" alt="Adicionar Empregado" />
           <span class="tooltip">Adicionar Empregado</span>
         </button>
-        <button class="control-btn" onclick="addDepartment(${
-          d.data.id
-        }); event.stopPropagation();">
+                 <button class="control-btn" onclick="addDepartment(${d.data.id}); event.stopPropagation();">
           <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
           <span class="tooltip">Adicionar Departamento</span>
         </button>
-        <button class="control-btn" onclick="viewSuccessionPlan(${
-          d.data.id
-        }); event.stopPropagation();">
+                 <button class="control-btn" onclick="viewSuccessionPlan(${d.data.id}); event.stopPropagation();">
           <img src="src/assets/icons/lan.png" alt="Ver Plano de Sucessão" />
           <span class="tooltip">Ver Plano de Sucessão</span>
         </button>
+                  <button class="control-btn" onclick="deleteNode(${d.data.id}); event.stopPropagation();">
+                   <img src="src/assets/icons/delete.png" alt="Adicionar Departamento" />
+                   <span class="tooltip">Remover</span>
+                 </button>
       </div>
+               `
+                   : ''
+               }
     </div>
   `;
   }
 </script>
 <div class="controls">
   <div class="left-buttons">
-    <!-- Organizar (com ícone antes) -->
     <button id="enableDragButton" class="icon-button" onclick="enableDrag()">
       <img src="src/assets/icons/map_search.png" alt="Organizar" />
       <span>Organizar</span>
     </button>
-    <!-- Filtro (botão circular) -->
-    <button id="filterButton" class="icon-button" onclick="openFilterDialog()">
+    <button
+      id="filterButton"
+      class="icon-button"
+      onclick="openFilterDialog(); event.stopPropagation();"
+    >
       <img src="src/assets/icons/lan.png" alt="Filtros" />
       <span class="tooltip">Filtros</span>
     </button>
-    <!-- Zoom In -->
     <button class="icon-button" onclick="chart.zoomIn()">
       <img src="src/assets/icons/zoom_in.png" alt="Zoom In" />
       <span class="tooltip">Aumentar Zoom</span>
     </button>
-    <!-- Zoom Out -->
     <button class="icon-button" onclick="chart.zoomOut()">
       <img src="src/assets/icons/zoom_out.png" alt="Zoom Out" />
       <span class="tooltip">Diminuir Zoom</span>

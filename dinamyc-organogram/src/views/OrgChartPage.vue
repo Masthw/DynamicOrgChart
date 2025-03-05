@@ -6,7 +6,7 @@
         Gestão do<br />
         <strong>{{ orgchart.name }}</strong>
       </h1>
-      <div class="button-group">
+      <div class="button-group" v-if="orgchart.id !== 1">
         <ButtonComponent
           label="Visualizar Alterações"
           icon="src/assets/icons/view.png"
