@@ -352,7 +352,8 @@ const handleDeleteConfirm = (id) => {
 }
 
 .orgchart-card {
-  max-width: 300px;
+  width: 280px;
+  height: 316px;
   border: 1px solid $background-gray;
   border-radius: 20px;
   padding: 1rem;
@@ -405,6 +406,7 @@ const handleDeleteConfirm = (id) => {
   margin: 0.5rem 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .orgchart-description {
@@ -413,18 +415,27 @@ const handleDeleteConfirm = (id) => {
   margin: 0.5rem 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .modification-date {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 0.75rem;
   color: $gray;
+  white-space: nowrap;
 }
 
 .actions {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: 1rem;
 }
 
 .action-icon-wrapper {
