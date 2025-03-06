@@ -53,7 +53,7 @@
               <label>Área</label>
               <SelectComponent
                 :options="departmentOptions"
-                v-model="formData.job_department_name"
+                v-model="formData.job_department"
                 placeholder="Área"
                 customClass="larger-select"
               />
@@ -170,7 +170,7 @@ export default {
         nodeId: '',
         job_title: '',
         job_site: '',
-        job_department_name: '',
+        job_department: '',
         job_id: '',
         job_cost_center: '',
         job_remuneration: '',
@@ -194,7 +194,7 @@ export default {
     departmentOptions() {
       return this.departments.map((department) => ({
         value: department,
-        label: department,
+        label: department.name,
       }));
     },
   },

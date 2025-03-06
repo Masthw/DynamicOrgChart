@@ -39,7 +39,7 @@ export default {
       default: 'Selecione uma opção',
     },
     modelValue: {
-      type: [String, Number, Array],
+      type: [String, Number, Array, Object],
       default: '',
     },
     customClass: {

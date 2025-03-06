@@ -409,7 +409,7 @@
       return { positions: [], departments: [], job_ids: [] };
     }
     const positionsSet = new Set();
-    const departmentsSet = new Set();
+    const departmentsMap = new Map();
     const jobIdsSet = new Set();
 
     data.forEach((item) => {
@@ -417,7 +417,15 @@
         positionsSet.add(item.position);
       }
       if (item.department_name) {
-        departmentsSet.add(item.department_name);
+        const deptId = item.department_id
+          ? item.department_id
+          : item.department_name;
+        if (!departmentsMap.has(deptId)) {
+          departmentsMap.set(deptId, {
+            id: deptId,
+            name: item.department_name,
+          });
+        }
       }
       if (item.job_id) {
         jobIdsSet.add(item.job_id);
@@ -425,7 +433,7 @@
     });
 
     const positions = Array.from(positionsSet);
-    const departments = Array.from(departmentsSet);
+    const departments = Array.from(departmentsMap.values());
     const job_ids = Array.from(jobIdsSet);
 
     console.log('Filter Data:', { positions, departments, job_ids });
@@ -471,7 +479,8 @@
           name: '?',
           position: formData.job_title || '',
           image: 'src/assets/images/add_node.png',
-          department_name: formData.job_department_name,
+          department_name: formData.job_department.name,
+          department_id: formData.job_department.id,
           _centered: true,
           type: 'vacancy',
           job_id: formData.job_id,
@@ -488,6 +497,7 @@
           department_name
         );
       }
+      chart.data(modifiedData);
       chart.render();
       saveChartState(chartID);
     }
