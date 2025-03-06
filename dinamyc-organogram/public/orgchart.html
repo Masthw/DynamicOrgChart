@@ -552,7 +552,9 @@
     data.forEach((d) => {
       const name = d.name ? d.name.toLowerCase() : '';
       const position = d.position ? d.position.toLowerCase() : '';
-      const department = d.department ? d.department.toLowerCase() : '';
+      const department = d.department_name
+        ? d.department_name.toLowerCase()
+        : '';
 
       if (
         value !== '' &&
