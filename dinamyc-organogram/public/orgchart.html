@@ -472,7 +472,7 @@
       const parentId = formData.nodeId;
       const department_name = formData.job_department_name;
       for (let i = 0; i < formData.vacanciesCount; i++) {
-        const newNodeId = Date.now() + i;
+        const newNodeId = String(Date.now() + i);
         const newNode = {
           id: newNodeId,
           parentId: parentId,
