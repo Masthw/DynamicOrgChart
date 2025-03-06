@@ -4,35 +4,21 @@
     <div class="side-modal">
       <div class="side-modal-header">
         <h2>Registro de Alterações</h2>
-        <q-btn
-          flat
-          dense
-          round
-          icon="close"
-          class="close-button"
-          @click="close"
-        />
+        <q-btn flat dense round icon="close" class="close-button" @click="close" />
       </div>
       <div class="side-modal-body">
         <div class="timeline">
-          <div
-            v-for="(event, index) in events"
-            :key="index"
-            class="timeline-event"
-          >
+          <div v-for="(event, index) in events" :key="index" class="timeline-event">
             <div class="timeline-icon">
               <img src="src/assets/icons/box.png" alt="Ícone do evento" />
             </div>
             <div class="timeline-content">
               <template v-if="event.type === 'position_change'">
                 <p class="event-description">
-                  <strong>{{ event.name }}</strong> passou a ocupar a vaga de
-                  <strong>{{ event.position }}</strong
+                  <strong>{{ event.name }}</strong> passou a ocupar a vaga de <strong>{{ event.position }}</strong
                   >.
                 </p>
-                <p v-if="event.justification">
-                  <strong>Justificativa:</strong> {{ event.justification }}
-                </p>
+                <p v-if="event.justification"><strong>Justificativa:</strong> {{ event.justification }}</p>
               </template>
               <template v-else-if="event.type === 'awaiting_position'">
                 <p class="event-description">

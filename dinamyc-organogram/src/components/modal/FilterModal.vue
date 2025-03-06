@@ -3,23 +3,12 @@
     <q-card class="filter-modal">
       <div class="icon-wrapper">
         <div class="icon-container">
-          <img
-            src="/src/assets/icons/search.png"
-            alt="Filtros"
-            class="modal-icon"
-          />
+          <img src="/src/assets/icons/search.png" alt="Filtros" class="modal-icon" />
         </div>
       </div>
       <q-card-section class="modal-header">
         <h2 class="modal-title">Aplicar Filtros</h2>
-        <q-btn
-          flat
-          dense
-          round
-          icon="close"
-          class="close-button"
-          @click="closeModal"
-        />
+        <q-btn flat dense round icon="close" class="close-button" @click="closeModal" />
         <p class="modal-text">
           Para continuar, selecione abaixo as opções de <br />
           filtros de pesquisa.
@@ -29,43 +18,22 @@
       <q-card-section class="filter-content">
         <div class="filter-row">
           <label class="filter-label">Cargo:</label>
-          <MultipleSelectComponent
-            v-model="selectedPositions"
-            :options="positionsOptions"
-            class="filter-select"
-          />
+          <MultipleSelectComponent v-model="selectedPositions" :options="positionsOptions" class="filter-select" />
         </div>
 
         <div class="filter-row">
           <label class="filter-label">Departamento:</label>
-          <MultipleSelectComponent
-            v-model="selectedDepartments"
-            :options="departmentsOptions"
-            class="filter-select"
-          />
+          <MultipleSelectComponent v-model="selectedDepartments" :options="departmentsOptions" class="filter-select" />
         </div>
         <div class="filter-row">
           <label class="filter-label">Sigla:</label>
-          <MultipleSelectComponent
-            v-model="selectedDepartmentIds"
-            :options="departmentsIdsOptions"
-            class="filter-select"
-          />
+          <MultipleSelectComponent v-model="selectedDepartmentIds" :options="departmentsIdsOptions" class="filter-select" />
         </div>
       </q-card-section>
 
       <q-card-actions class="button-container">
-        <ButtonComponent
-          label="Limpar"
-          variant="primary"
-          @click="clearFilters"
-        />
-        <ButtonComponent
-          label="Aplicar"
-          variant="secondary"
-          :disabled="!isFormValid"
-          @click="applyFilters"
-        />
+        <ButtonComponent label="Limpar" variant="primary" @click="clearFilters" />
+        <ButtonComponent label="Aplicar" variant="secondary" :disabled="!isFormValid" @click="applyFilters" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -99,9 +67,7 @@ const selectedPositions = ref([]);
 const selectedDepartments = ref([]);
 const selectedDepartmentIds = ref([]);
 
-const positionsOptions = computed(() =>
-  props.positions.map((p) => ({ label: p, value: p }))
-);
+const positionsOptions = computed(() => props.positions.map((p) => ({ label: p, value: p })));
 const departmentsOptions = computed(() =>
   props.departments.map((department) => ({
     label: department,

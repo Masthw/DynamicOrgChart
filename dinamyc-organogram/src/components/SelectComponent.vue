@@ -2,22 +2,11 @@
   <div :class="['custom-select', customClass]">
     <div class="selected-option" @click="toggleDropdown">
       <span>{{ selectedLabel || placeholder }}</span>
-      <img
-        :src="isOpen ? arrowUpIcon : arrowDownIcon"
-        alt="Arrow"
-        class="arrow-icon"
-      />
+      <img :src="isOpen ? arrowUpIcon : arrowDownIcon" alt="Arrow" class="arrow-icon" />
     </div>
     <div v-if="isOpen" class="options-list">
-      <div v-if="options.length === 0" class="empty-option">
-        Nenhuma simulação cadastrada
-      </div>
-      <div
-        v-for="option in options"
-        :key="option.value"
-        class="option-item"
-        @click="selectOption(option)"
-      >
+      <div v-if="options.length === 0" class="empty-option">Nenhuma simulação cadastrada</div>
+      <div v-for="option in options" :key="option.value" class="option-item" @click="selectOption(option)">
         {{ option.label }}
       </div>
     </div>
@@ -58,9 +47,7 @@ export default {
   },
   watch: {
     modelValue(newValue) {
-      const selectedOption = this.options.find(
-        (option) => option.value === newValue
-      );
+      const selectedOption = this.options.find((option) => option.value === newValue);
       this.selectedLabel = selectedOption ? selectedOption.label : '';
     },
   },
@@ -76,9 +63,7 @@ export default {
     },
   },
   created() {
-    const selectedOption = this.options.find(
-      (option) => option.value === this.modelValue
-    );
+    const selectedOption = this.options.find((option) => option.value === this.modelValue);
     this.selectedLabel = selectedOption ? selectedOption.label : '';
   },
 };

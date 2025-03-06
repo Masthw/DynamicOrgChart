@@ -1,13 +1,7 @@
 <template>
   <div class="orgchart-container">
     <!-- Iframe que carrega o arquivo orgchart.html -->
-    <iframe
-      :key="orgChartId"
-      :src="orgChartUrl"
-      frameborder="0"
-      title="Org Chart"
-      @load="onIframeLoad"
-    ></iframe>
+    <iframe :key="orgChartId" :src="orgChartUrl" frameborder="0" title="Org Chart" @load="onIframeLoad"></iframe>
   </div>
 </template>
 

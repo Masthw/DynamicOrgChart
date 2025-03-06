@@ -4,44 +4,25 @@
       <!-- Ícone centralizado no topo -->
       <div class="icon-wrapper">
         <div class="icon-container">
-          <img
-            src="/src/assets/icons/share.png"
-            alt="Compartilhar"
-            class="modal-icon"
-          />
+          <img src="/src/assets/icons/share.png" alt="Compartilhar" class="modal-icon" />
         </div>
       </div>
 
       <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
         <h2 class="modal-title">Compartilhar Simulação</h2>
-        <p class="modal-text">
-          Informe o email para o qual deseja enviar uma cópia da simulação.
-        </p>
+        <p class="modal-text">Informe o email para o qual deseja enviar uma cópia da simulação.</p>
       </q-card-section>
 
       <!-- Corpo do Modal: Campo para inserir o email -->
       <q-card-section class="input-container">
-        <TextFieldComponent
-          v-model="email"
-          placeholder="Digite o email"
-          required
-        />
+        <TextFieldComponent v-model="email" placeholder="Digite o email" required />
       </q-card-section>
 
       <!-- Rodapé do Modal: Botões de ação -->
       <q-card-actions class="button-container">
-        <ButtonComponent
-          label="Cancelar"
-          variant="primary"
-          @click="closeModal"
-        />
-        <ButtonComponent
-          label="OK"
-          variant="secondary"
-          :disabled="!isFormValid"
-          @click="saveChanges"
-        />
+        <ButtonComponent label="Cancelar" variant="primary" @click="closeModal" />
+        <ButtonComponent label="OK" variant="secondary" :disabled="!isFormValid" @click="saveChanges" />
       </q-card-actions>
     </q-card>
   </q-dialog>

@@ -4,25 +4,14 @@
       <!-- Ícone centralizado no topo -->
       <div class="icon-wrapper">
         <div class="icon-container">
-          <img
-            src="/src/assets/icons/download.png"
-            alt="Exportar"
-            class="modal-icon"
-          />
+          <img src="/src/assets/icons/download.png" alt="Exportar" class="modal-icon" />
         </div>
       </div>
 
       <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
         <h2 class="modal-title">Exportar Simulação</h2>
-        <q-btn
-          flat
-          dense
-          round
-          icon="close"
-          class="close-button"
-          @click="closeModal"
-        />
+        <q-btn flat dense round icon="close" class="close-button" @click="closeModal" />
         <p class="modal-text">
           Você está prestes a fazer o download do
           <strong>{{ orgchartName }}.</strong> <br />
@@ -33,18 +22,8 @@
 
       <!-- Rodapé do Modal: Botões de Exportação empilhados -->
       <q-card-actions class="button-container">
-        <ButtonComponent
-          label="Exportar PNG"
-          variant="primary"
-          @click="exportPNG"
-          :icon="'/src/assets/icons/photo.png'"
-        />
-        <ButtonComponent
-          label="Exportar PDF"
-          variant="primary"
-          @click="exportPDF"
-          :icon="'/src/assets/icons/pdf.png'"
-        />
+        <ButtonComponent label="Exportar PNG" variant="primary" @click="exportPNG" :icon="'/src/assets/icons/photo.png'" />
+        <ButtonComponent label="Exportar PDF" variant="primary" @click="exportPDF" :icon="'/src/assets/icons/pdf.png'" />
       </q-card-actions>
     </q-card>
   </q-dialog>

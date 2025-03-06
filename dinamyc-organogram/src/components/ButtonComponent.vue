@@ -41,8 +41,7 @@ const props = defineProps({
     color: $orange;
     border: 1px solid $orange;
     .button-icon {
-      filter: brightness(0) saturate(100%) invert(28%) sepia(81%)
-        saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
+      filter: brightness(0) saturate(100%) invert(28%) sepia(81%) saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
     }
 
     &:hover {
@@ -67,8 +66,7 @@ const props = defineProps({
       color: $orange;
 
       .button-icon {
-        filter: brightness(0) saturate(100%) invert(28%) sepia(81%)
-          saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
+        filter: brightness(0) saturate(100%) invert(28%) sepia(81%) saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
       }
     }
   }

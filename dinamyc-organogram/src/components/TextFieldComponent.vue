@@ -1,20 +1,9 @@
 <template>
   <div class="text-field-component">
     <!-- Label do campo -->
-    <label v-if="label" class="field-label">
-      {{ label }}<span v-if="required" class="required">*</span>
-    </label>
+    <label v-if="label" class="field-label"> {{ label }}<span v-if="required" class="required">*</span> </label>
     <!-- Campo de texto do Quasar -->
-    <q-input
-      v-model="localValue"
-      outlined
-      dense
-      spellcheck="false"
-      color="orange"
-      :placeholder="placeholder"
-      :rules="rules"
-      class="text-input"
-    />
+    <q-input v-model="localValue" outlined dense spellcheck="false" color="orange" :placeholder="placeholder" :rules="rules" class="text-input" />
   </div>
 </template>
 

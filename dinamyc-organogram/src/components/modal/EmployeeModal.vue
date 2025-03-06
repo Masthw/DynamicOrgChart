@@ -3,27 +3,12 @@
     <div class="modal-overlay"></div>
     <div class="side-modal">
       <div class="side-modal-header">
-        <SearchComponent
-          placeholder="Buscar Empregado"
-          class="search-component"
-        />
-        <q-btn
-          flat
-          dense
-          round
-          icon="close"
-          class="close-button"
-          @click="close"
-        />
+        <SearchComponent placeholder="Buscar Empregado" class="search-component" />
+        <q-btn flat dense round icon="close" class="close-button" @click="close" />
       </div>
 
       <div class="side-modal-tabs">
-        <div
-          v-for="tab in tabs"
-          :key="tab.name"
-          :class="['tab-item', { active: activeTab === tab.name }]"
-          @click="activeTab = tab.name"
-        >
+        <div v-for="tab in tabs" :key="tab.name" :class="['tab-item', { active: activeTab === tab.name }]" @click="activeTab = tab.name">
           <img :src="tab.icon" alt="" class="tab-icon" />
           <span class="tab-text">{{ tab.label }}</span>
         </div>
@@ -34,233 +19,101 @@
           <div v-if="activeTab === 'personalData'" class="tab-content">
             <!-- Área para a foto-->
             <div class="photo-container">
-              <img
-                :src="photoUrl"
-                alt="Foto do Empregado"
-                class="employee-photo"
-              />
-              <input
-                ref="photoInput"
-                type="file"
-                accept="image/*"
-                @change="handlePhotoChange"
-                @click="triggerPhotoUpload"
-                hidden
-              />
+              <img :src="photoUrl" alt="Foto do Empregado" class="employee-photo" />
+              <input ref="photoInput" type="file" accept="image/*" @change="handlePhotoChange" @click="triggerPhotoUpload" hidden />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Matrícula"
-                v-model="formData.id"
-                placeholder="Matrícula"
-                :required="true"
-              />
+              <TextFieldComponent label="Matrícula" v-model="formData.id" placeholder="Matrícula" :required="true" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Nome"
-                v-model="fullName"
-                placeholder="Primeiro Nome"
-                :required="true"
-              />
+              <TextFieldComponent label="Nome" v-model="fullName" placeholder="Primeiro Nome" :required="true" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Data de Nascimento"
-                v-model="formData.birthDate"
-                placeholder="Data de nascimento"
-              />
+              <TextFieldComponent label="Data de Nascimento" v-model="formData.birthDate" placeholder="Data de nascimento" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Idade"
-                v-model="formData.age"
-                placeholder="Idade"
-              />
+              <TextFieldComponent label="Idade" v-model="formData.age" placeholder="Idade" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Gênero"
-                v-model="formData.gender"
-                placeholder="Gênero"
-              />
+              <TextFieldComponent label="Gênero" v-model="formData.gender" placeholder="Gênero" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Raça/Cor"
-                v-model="formData.ethnicity"
-                placeholder="Raça/Cor"
-              />
+              <TextFieldComponent label="Raça/Cor" v-model="formData.ethnicity" placeholder="Raça/Cor" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Deficiência"
-                v-model="formData.deficiency"
-                placeholder="Deficiência"
-              />
+              <TextFieldComponent label="Deficiência" v-model="formData.deficiency" placeholder="Deficiência" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Plano de Previdência"
-                v-model="formData.pensionPlan"
-                placeholder="Plano de Previdência"
-              />
+              <TextFieldComponent label="Plano de Previdência" v-model="formData.pensionPlan" placeholder="Plano de Previdência" />
             </div>
           </div>
-          <div
-            v-else-if="activeTab === 'organizationalData'"
-            class="tab-content"
-          >
+          <div v-else-if="activeTab === 'organizationalData'" class="tab-content">
             <div class="form-group">
-              <TextFieldComponent
-                label="Site"
-                v-model="formData.site"
-                placeholder="Site"
-              />
+              <TextFieldComponent label="Site" v-model="formData.site" placeholder="Site" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Sigla"
-                v-model="formData.job_id"
-                placeholder="Sigla"
-              />
+              <TextFieldComponent label="Sigla" v-model="formData.job_id" placeholder="Sigla" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Área"
-                v-model="formData.department_name"
-                placeholder="Área"
-              />
+              <TextFieldComponent label="Área" v-model="formData.department_name" placeholder="Área" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Data de Admissão"
-                v-model="formData.hire_date"
-                placeholder="Data de Admissão"
-              />
+              <TextFieldComponent label="Data de Admissão" v-model="formData.hire_date" placeholder="Data de Admissão" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Tempo de Empresa"
-                v-model="formData.company_time"
-                placeholder="Tempo de empresa"
-              />
+              <TextFieldComponent label="Tempo de Empresa" v-model="formData.company_time" placeholder="Tempo de empresa" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Status Empregado"
-                v-model="formData.employee_status"
-                placeholder="Status Empregado"
-              />
+              <TextFieldComponent label="Status Empregado" v-model="formData.employee_status" placeholder="Status Empregado" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Cargo"
-                v-model="formData.position"
-                placeholder="Cargo"
-              />
+              <TextFieldComponent label="Cargo" v-model="formData.position" placeholder="Cargo" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Subgrupo"
-                v-model="formData.sub_group"
-                placeholder="Subgrupo"
-              />
+              <TextFieldComponent label="Subgrupo" v-model="formData.sub_group" placeholder="Subgrupo" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Tempo no Cargo"
-                v-model="formData.time_in_position"
-                placeholder="Tempo no Cargo"
-              />
+              <TextFieldComponent label="Tempo no Cargo" v-model="formData.time_in_position" placeholder="Tempo no Cargo" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Jornada de Trabalho"
-                v-model="formData.work_journey"
-                placeholder="Jornada de Trabalho"
-              />
+              <TextFieldComponent label="Jornada de Trabalho" v-model="formData.work_journey" placeholder="Jornada de Trabalho" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Centro de Custo"
-                v-model="formData.cost_center"
-                placeholder="Centro de Custo"
-              />
+              <TextFieldComponent label="Centro de Custo" v-model="formData.cost_center" placeholder="Centro de Custo" />
             </div>
           </div>
           <div v-else-if="activeTab === 'remuneration'" class="tab-content">
             <div class="form-group">
-              <TextFieldComponent
-                label="Salário Atual"
-                v-model="formData.salary"
-                placeholder="Salário Atual"
-              />
+              <TextFieldComponent label="Salário Atual" v-model="formData.salary" placeholder="Salário Atual" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Remuneração Atual"
-                v-model="formData.total_remuneration"
-                placeholder="Remuneração Atual"
-              />
+              <TextFieldComponent label="Remuneração Atual" v-model="formData.total_remuneration" placeholder="Remuneração Atual" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Faixa Salarial Atual"
-                v-model="formData.salaryRange"
-                placeholder="Faixa Salarial Atual"
-              />
+              <TextFieldComponent label="Faixa Salarial Atual" v-model="formData.salaryRange" placeholder="Faixa Salarial Atual" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Posicionamento na Faixa"
-                v-model="formData.lane_position"
-                placeholder="Posicionamento na Faixa"
-              />
+              <TextFieldComponent label="Posicionamento na Faixa" v-model="formData.lane_position" placeholder="Posicionamento na Faixa" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Salário Proposto"
-                v-model="formData.proposed_salary"
-                placeholder="Salário Proposto"
-              />
+              <TextFieldComponent label="Salário Proposto" v-model="formData.proposed_salary" placeholder="Salário Proposto" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Remuneração Proposta"
-                v-model="formData.proposed_remuneration"
-                placeholder="Remuneração Proposta"
-              />
+              <TextFieldComponent label="Remuneração Proposta" v-model="formData.proposed_remuneration" placeholder="Remuneração Proposta" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Faixa Salarial Proposta"
-                v-model="formData.proposed_salaryRange"
-                placeholder="Faixa Salarial Proposta"
-              />
+              <TextFieldComponent label="Faixa Salarial Proposta" v-model="formData.proposed_salaryRange" placeholder="Faixa Salarial Proposta" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Posicionamento na Faixa"
-                v-model="formData.proposed_lane_position"
-                placeholder="Posicionamento na Faixa"
-              />
+              <TextFieldComponent label="Posicionamento na Faixa" v-model="formData.proposed_lane_position" placeholder="Posicionamento na Faixa" />
             </div>
           </div>
           <div v-else-if="activeTab === 'degree'" class="tab-content">
             <div class="form-group">
-              <TextFieldComponent
-                label="Grau de Escolaridade"
-                v-model="formData.level_education"
-                placeholder="Grau de Escolaridade"
-              />
+              <TextFieldComponent label="Grau de Escolaridade" v-model="formData.level_education" placeholder="Grau de Escolaridade" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Curso"
-                v-model="formData.course"
-                placeholder="Curso"
-              />
+              <TextFieldComponent label="Curso" v-model="formData.course" placeholder="Curso" />
             </div>
             <div class="form-group">
               <TextFieldComponent
@@ -279,71 +132,34 @@
           </div>
           <div v-else-if="activeTab === 'career'" class="tab-content">
             <div class="form-group">
-              <TextFieldComponent
-                label="Performance Atual"
-                v-model="formData.employee_performance"
-                placeholder="Performance Atual"
-              />
+              <TextFieldComponent label="Performance Atual" v-model="formData.employee_performance" placeholder="Performance Atual" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Potencial Atual"
-                v-model="formData.employee_potential"
-                placeholder="Potencial Atual"
-              />
+              <TextFieldComponent label="Potencial Atual" v-model="formData.employee_potential" placeholder="Potencial Atual" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Performance Anterior"
-                v-model="formData.employee_last_performance"
-                placeholder="Performance Anterior"
-              />
+              <TextFieldComponent label="Performance Anterior" v-model="formData.employee_last_performance" placeholder="Performance Anterior" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Potencial Anterior"
-                v-model="formData.employee_last_potential"
-                placeholder="Potencial Anterior"
-              />
+              <TextFieldComponent label="Potencial Anterior" v-model="formData.employee_last_potential" placeholder="Potencial Anterior" />
             </div>
 
             <h2 class="succession-text">PLANO DE SUCESSÃO</h2>
             <div class="form-group">
-              <TextFieldComponent
-                label="Sigla"
-                v-model="formData.job_id"
-                placeholder="Sigla"
-              />
+              <TextFieldComponent label="Sigla" v-model="formData.job_id" placeholder="Sigla" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Área"
-                v-model="formData.department_name"
-                placeholder="Área"
-              />
+              <TextFieldComponent label="Área" v-model="formData.department_name" placeholder="Área" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Posição"
-                v-model="formData.position"
-                placeholder="Posição"
-              />
+              <TextFieldComponent label="Posição" v-model="formData.position" placeholder="Posição" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Prontidão"
-                v-model="formData.readiness"
-                placeholder="Prontidão"
-              />
+              <TextFieldComponent label="Prontidão" v-model="formData.readiness" placeholder="Prontidão" />
             </div>
           </div>
           <div class="side-modal-footer">
-            <ButtonComponent
-              type="button"
-              variant="primary"
-              label="Cancelar"
-              @click="close"
-            />
+            <ButtonComponent type="button" variant="primary" label="Cancelar" @click="close" />
             <ButtonComponent type="submit" variant="secondary" label="Salvar" />
           </div>
         </form>
@@ -446,9 +262,7 @@ export default {
     },
     formattedHireDate: {
       get() {
-        return this.formData.hire_date
-          ? this.formData.hire_date.split('T')[0]
-          : '';
+        return this.formData.hire_date ? this.formData.hire_date.split('T')[0] : '';
       },
       set(value) {
         this.formData.hire_date = value;
@@ -456,9 +270,7 @@ export default {
     },
     vacancyOptions() {
       return this.vacancies
-        .filter(
-          (vacancy) => vacancy.type === 'vacancy' || vacancy.jobTitle === '?'
-        )
+        .filter((vacancy) => vacancy.type === 'vacancy' || vacancy.jobTitle === '?')
         .map((vacancy) => ({
           value: vacancy.id,
           label: vacancy.jobTitle !== '?' ? vacancy.jobTitle : vacancy.position,

@@ -23,17 +23,8 @@
       </q-card-section>
 
       <q-card-actions class="button-container">
-        <ButtonComponent
-          label="Cancelar"
-          variant="primary"
-          @click="closeModal"
-        />
-        <ButtonComponent
-          label="OK"
-          variant="secondary"
-          :disabled="!isFormValid"
-          @click="saveChanges"
-        />
+        <ButtonComponent label="Cancelar" variant="primary" @click="closeModal" />
+        <ButtonComponent label="OK" variant="secondary" :disabled="!isFormValid" @click="saveChanges" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -75,13 +66,7 @@ function generateUniqueName(name, orgcharts, currentId) {
   let base = name;
   let counter = 1;
   let newName = base;
-  while (
-    orgcharts.some(
-      (o) =>
-        o.id !== currentId &&
-        o.name.trim().toLowerCase() === newName.trim().toLowerCase()
-    )
-  ) {
+  while (orgcharts.some((o) => o.id !== currentId && o.name.trim().toLowerCase() === newName.trim().toLowerCase())) {
     newName = `${base}(${counter})`;
     counter++;
   }
@@ -96,11 +81,7 @@ const saveChanges = () => {
   const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
   const currentId = props.orgchart.id;
 
-  const uniqueName = generateUniqueName(
-    editedName.value.trim(),
-    storedOrgCharts,
-    currentId
-  );
+  const uniqueName = generateUniqueName(editedName.value.trim(), storedOrgCharts, currentId);
 
   emit('save', {
     name: uniqueName,

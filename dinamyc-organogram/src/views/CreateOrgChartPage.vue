@@ -3,14 +3,7 @@
     <!-- Área do formulário -->
     <div class="form-container">
       <!-- Botão de fechar -->
-      <q-btn
-        flat
-        dense
-        round
-        icon="close"
-        class="close-button"
-        @click="goBack"
-      />
+      <q-btn flat dense round icon="close" class="close-button" @click="goBack" />
 
       <!-- Logo -->
       <img src="../assets/images/organiza_logo.png" alt="Logo" class="logo" />
@@ -21,28 +14,15 @@
         :rules="[(val) => !!val || 'Campo obrigatório']"
         :required="true"
       />
-      <TextFieldComponent
-        v-model="orgchartDescription"
-        label="Descrição"
-        placeholder="exemplo: Simulação de cenários de reorganização"
-      />
+      <TextFieldComponent v-model="orgchartDescription" label="Descrição" placeholder="exemplo: Simulação de cenários de reorganização" />
 
       <!-- Botão OK -->
-      <ButtonComponent
-        label="OK"
-        class="create-button"
-        :disable="!orgchartName"
-        @click="createOrgChart"
-      />
+      <ButtonComponent label="OK" class="create-button" :disable="!orgchartName" @click="createOrgChart" />
     </div>
 
     <!-- Área da imagem -->
     <div class="image-container">
-      <img
-        src="../assets/images/createorgchart.png"
-        alt="Simulação Ilustrativa"
-        class="illustration"
-      />
+      <img src="../assets/images/createorgchart.png" alt="Simulação Ilustrativa" class="illustration" />
 
       <!-- Máscara de gradiente -->
       <div class="image-mask"></div>
@@ -66,13 +46,7 @@ function generateUniqueName(name, orgcharts, currentId) {
   let base = name;
   let counter = 1;
   let newName = base;
-  while (
-    orgcharts.some(
-      (o) =>
-        o.id !== currentId &&
-        o.name.trim().toLowerCase() === newName.trim().toLowerCase()
-    )
-  ) {
+  while (orgcharts.some((o) => o.id !== currentId && o.name.trim().toLowerCase() === newName.trim().toLowerCase())) {
     newName = `${base}(${counter})`;
     counter++;
   }
@@ -85,11 +59,7 @@ const createOrgChart = () => {
 
   const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
 
-  const uniqueName = generateUniqueName(
-    orgchartName.value.trim(),
-    storedOrgCharts,
-    -1
-  );
+  const uniqueName = generateUniqueName(orgchartName.value.trim(), storedOrgCharts, -1);
 
   isCreating.value = true;
   const newId = Date.now();

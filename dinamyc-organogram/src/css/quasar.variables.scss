@@ -31,10 +31,5 @@ $orange-gradient: #f58746;
 }
 
 @mixin gradient {
-  background: linear-gradient(
-    to bottom,
-    #460a78 13%,
-    #e63c41 50%,
-    #f58746 100%
-  );
+  background: linear-gradient(to bottom, #460a78 13%, #e63c41 50%, #f58746 100%);
 }

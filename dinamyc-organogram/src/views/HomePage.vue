@@ -6,12 +6,7 @@
         GERENCIAR <br />
         SIMULAÇÕES
       </h1>
-      <ButtonComponent
-        label="Criar Nova Simulação"
-        icon="src/assets/icons/add.png"
-        variant="primary"
-        @click="addNewOrgChart"
-      />
+      <ButtonComponent label="Criar Nova Simulação" icon="src/assets/icons/add.png" variant="primary" @click="addNewOrgChart" />
     </div>
 
     <!-- Área de interação -->
@@ -25,28 +20,14 @@
             cadastradas no <br />
             sistema.
           </p>
-          <ButtonComponent
-            label="Criar Nova Simulação"
-            icon="src/assets/icons/add.png"
-            variant="primary"
-            @click="addNewOrgChart"
-          />
+          <ButtonComponent label="Criar Nova Simulação" icon="src/assets/icons/add.png" variant="primary" @click="addNewOrgChart" />
         </div>
 
         <!-- Lista de organogramas existentes -->
-        <div
-          v-else
-          v-for="orgchart in displayedOrgCharts"
-          :key="orgchart.id"
-          class="orgchart-card"
-        >
+        <div v-else v-for="orgchart in displayedOrgCharts" :key="orgchart.id" class="orgchart-card">
           <!-- Status no canto superior direito -->
           <div class="status" v-if="!orgchart.default">
-            <img
-              src="../assets/icons/info.png"
-              alt="Status"
-              class="status-icon"
-            />
+            <img src="../assets/icons/info.png" alt="Status" class="status-icon" />
           </div>
 
           <!-- Ícone centralizado -->
@@ -58,20 +39,11 @@
           >
             <img
               v-show="!hoverIcons[orgchart.id]"
-              :src="
-                orgchart.default
-                  ? 'src/assets/icons/see.png'
-                  : 'src/assets/icons/lan.png'
-              "
+              :src="orgchart.default ? 'src/assets/icons/see.png' : 'src/assets/icons/lan.png'"
               alt="Ícone da Simulação"
               class="icon"
             />
-            <img
-              v-show="hoverIcons[orgchart.id]"
-              src="../assets/icons/arrow_forward.png"
-              alt="Abrir Simulação"
-              class="icon"
-            />
+            <img v-show="hoverIcons[orgchart.id]" src="../assets/icons/arrow_forward.png" alt="Abrir Simulação" class="icon" />
           </div>
 
           <!-- Nome do Organograma -->
@@ -83,90 +55,39 @@
           </p>
 
           <!-- Data de Atualização -->
-          <p class="modification-date">
-            Atualizado em: {{ orgchart.modifiedDate }}
-          </p>
+          <p class="modification-date">Atualizado em: {{ orgchart.modifiedDate }}</p>
 
           <!-- Ícones de Ação -->
           <div class="actions">
             <template v-if="orgchart.default">
-              <div
-                class="action-icon-wrapper"
-                @click.stop="shareOrgChart(orgchart.id)"
-              >
-                <img
-                  src="../assets/icons/share.png"
-                  alt="Compartilhar"
-                  class="action-icon"
-                />
+              <div class="action-icon-wrapper" @click.stop="shareOrgChart(orgchart.id)">
+                <img src="../assets/icons/share.png" alt="Compartilhar" class="action-icon" />
                 <span class="tooltip">Compartilhar</span>
               </div>
-              <div
-                class="action-icon-wrapper"
-                @click.stop="exportOrgChart(orgchart.id)"
-              >
-                <img
-                  src="../assets/icons/download.png"
-                  alt="Baixar"
-                  class="action-icon"
-                />
+              <div class="action-icon-wrapper" @click.stop="exportOrgChart(orgchart.id)">
+                <img src="../assets/icons/download.png" alt="Baixar" class="action-icon" />
                 <span class="tooltip">Download</span>
               </div>
             </template>
             <template v-else>
-              <div
-                class="action-icon-wrapper"
-                @click.stop="editOrgChart(orgchart.id)"
-              >
-                <img
-                  src="../assets/icons/edit.png"
-                  alt="Editar"
-                  class="action-icon"
-                />
+              <div class="action-icon-wrapper" @click.stop="editOrgChart(orgchart.id)">
+                <img src="../assets/icons/edit.png" alt="Editar" class="action-icon" />
                 <span class="tooltip">Editar</span>
               </div>
-              <div
-                class="action-icon-wrapper"
-                @click.stop="duplicateOrgChart(orgchart.id)"
-              >
-                <img
-                  src="../assets/icons/copy.png"
-                  alt="Copiar"
-                  class="action-icon"
-                />
+              <div class="action-icon-wrapper" @click.stop="duplicateOrgChart(orgchart.id)">
+                <img src="../assets/icons/copy.png" alt="Copiar" class="action-icon" />
                 <span class="tooltip">Duplicar</span>
               </div>
-              <div
-                class="action-icon-wrapper"
-                @click.stop="shareOrgChart(orgchart.id)"
-              >
-                <img
-                  src="../assets/icons/share.png"
-                  alt="Compartilhar"
-                  class="action-icon"
-                />
+              <div class="action-icon-wrapper" @click.stop="shareOrgChart(orgchart.id)">
+                <img src="../assets/icons/share.png" alt="Compartilhar" class="action-icon" />
                 <span class="tooltip">Compartilhar</span>
               </div>
-              <div
-                class="action-icon-wrapper"
-                @click.stop="exportOrgChart(orgchart.id)"
-              >
-                <img
-                  src="../assets/icons/download.png"
-                  alt="Baixar"
-                  class="action-icon"
-                />
+              <div class="action-icon-wrapper" @click.stop="exportOrgChart(orgchart.id)">
+                <img src="../assets/icons/download.png" alt="Baixar" class="action-icon" />
                 <span class="tooltip">Download</span>
               </div>
-              <div
-                class="action-icon-wrapper"
-                @click.stop="deleteOrgChart(orgchart.id)"
-              >
-                <img
-                  src="../assets/icons/delete.png"
-                  alt="Excluir"
-                  class="action-icon"
-                />
+              <div class="action-icon-wrapper" @click.stop="deleteOrgChart(orgchart.id)">
+                <img src="../assets/icons/delete.png" alt="Excluir" class="action-icon" />
                 <span class="tooltip">Remover</span>
               </div>
             </template>
@@ -176,31 +97,11 @@
     </div>
 
     <!-- Modais -->
-    <EditModal
-      v-model="isEditModalOpen"
-      :orgchart="selectedOrgChart"
-      @save="updateOrgChart"
-    />
-    <DuplicateModal
-      v-model="isDuplicateModalOpen"
-      :orgchart="selectedOrgChart"
-      @save="handleDuplicate"
-    />
-    <ShareModal
-      v-model="isShareModalOpen"
-      :orgchart="selectedOrgChart"
-      @share="handleShare"
-    />
-    <ExportModal
-      v-model="isExportModalOpen"
-      :orgchart="selectedOrgChart"
-      @export="handleExport"
-    />
-    <DeleteModal
-      v-model="isDeleteModalOpen"
-      :orgchart="selectedOrgChart"
-      @confirm="handleDeleteConfirm"
-    />
+    <EditModal v-model="isEditModalOpen" :orgchart="selectedOrgChart" @save="updateOrgChart" />
+    <DuplicateModal v-model="isDuplicateModalOpen" :orgchart="selectedOrgChart" @save="handleDuplicate" />
+    <ShareModal v-model="isShareModalOpen" :orgchart="selectedOrgChart" @share="handleShare" />
+    <ExportModal v-model="isExportModalOpen" :orgchart="selectedOrgChart" @export="handleExport" />
+    <DeleteModal v-model="isDeleteModalOpen" :orgchart="selectedOrgChart" @confirm="handleDeleteConfirm" />
   </div>
 </template>
 
@@ -253,13 +154,8 @@ onMounted(() => {
     const index = orgcharts.value.findIndex((org) => org.id === numId);
     if (index !== -1) {
       orgcharts.value[index].modifiedDate = modifiedDate;
-      localStorage.setItem(
-        'orgcharts',
-        JSON.stringify(orgcharts.value, null, 0)
-      );
-      console.log(
-        `HomePage atualizou o orgchart ${numId} com data ${modifiedDate}`
-      );
+      localStorage.setItem('orgcharts', JSON.stringify(orgcharts.value, null, 0));
+      console.log(`HomePage atualizou o orgchart ${numId} com data ${modifiedDate}`);
     }
   };
 

@@ -4,11 +4,7 @@
       <!-- Ícone centralizado no topo -->
       <div class="icon-wrapper">
         <div class="icon-container">
-          <img
-            src="/src/assets/icons/send.png"
-            alt="Submeter Alterações"
-            class="modal-icon"
-          />
+          <img src="/src/assets/icons/send.png" alt="Submeter Alterações" class="modal-icon" />
         </div>
       </div>
 
@@ -23,26 +19,13 @@
 
       <!-- Corpo do Modal: Campo para inserir o email -->
       <q-card-section class="input-container">
-        <TextFieldComponent
-          v-model="email"
-          placeholder="rh@arcelor.com.br"
-          required
-        />
+        <TextFieldComponent v-model="email" placeholder="rh@arcelor.com.br" required />
       </q-card-section>
 
       <!-- Rodapé do Modal: Botões de ação -->
       <q-card-actions class="button-container">
-        <ButtonComponent
-          label="Cancelar"
-          variant="primary"
-          @click="closeModal"
-        />
-        <ButtonComponent
-          label="Enviar"
-          variant="secondary"
-          :disabled="!isFormValid"
-          @click="submitChanges"
-        />
+        <ButtonComponent label="Cancelar" variant="primary" @click="closeModal" />
+        <ButtonComponent label="Enviar" variant="secondary" :disabled="!isFormValid" @click="submitChanges" />
       </q-card-actions>
     </q-card>
   </q-dialog>

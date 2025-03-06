@@ -11,26 +11,14 @@
       <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
         <h2 class="modal-title">PLANO DE SUCESSÃO</h2>
-        <p class="modal-text">
-          Visualize os sucessores estratégicos para este cargo.
-        </p>
+        <p class="modal-text">Visualize os sucessores estratégicos para este cargo.</p>
       </q-card-section>
 
       <!-- Cards de Candidatos -->
       <q-card-section class="candidate-cards">
-        <div v-if="successionPlan.length === 0" class="no-plan-text">
-          Não existe plano de sucessão para essa vaga.
-        </div>
-        <div
-          v-else
-          v-for="candidate in successionPlan"
-          :key="candidate.id"
-          class="candidate-card"
-        >
-          <div
-            class="circle-indicator"
-            :style="{ backgroundColor: candidate.circleColor }"
-          ></div>
+        <div v-if="successionPlan.length === 0" class="no-plan-text">Não existe plano de sucessão para essa vaga.</div>
+        <div v-else v-for="candidate in successionPlan" :key="candidate.id" class="candidate-card">
+          <div class="circle-indicator" :style="{ backgroundColor: candidate.circleColor }"></div>
           <!-- Foto do Candidato -->
           <div class="candidate-icon">
             <img :src="candidate.image" alt="Candidato" />
@@ -38,9 +26,7 @@
 
           <!-- Nome e Cargo -->
           <div class="candidate-info">
-            <p class="candidate-name">
-              {{ candidate.name }} {{ candidate.lastName }}
-            </p>
+            <p class="candidate-name">{{ candidate.name }} {{ candidate.lastName }}</p>
             <p class="candidate-position">{{ candidate.position }}</p>
             <p class="salary">R$ {{ candidate.salary }}</p>
           </div>
@@ -49,12 +35,7 @@
 
       <!-- Botão OK -->
       <q-card-actions class="button-container">
-        <ButtonComponent
-          label="OK"
-          variant="secondary"
-          @click="confirm"
-          class="ok-button"
-        />
+        <ButtonComponent label="OK" variant="secondary" @click="confirm" class="ok-button" />
       </q-card-actions>
     </q-card>
   </div>

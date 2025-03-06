@@ -78,8 +78,7 @@ svg:not(:root) {
   width: 14px;
   height: 14px;
 
-  filter: brightness(0) saturate(100%) invert(28%) sepia(81%) saturate(4237%)
-    hue-rotate(3deg) brightness(104%) contrast(106%);
+  filter: brightness(0) saturate(100%) invert(28%) sepia(81%) saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
 }
 
 .control-btn:hover {

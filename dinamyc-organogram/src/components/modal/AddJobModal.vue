@@ -4,73 +4,35 @@
     <div class="side-modal">
       <div class="side-modal-header">
         <h2>Adicionar Novas Vagas</h2>
-        <q-btn
-          flat
-          dense
-          round
-          icon="close"
-          class="close-button"
-          @click="close"
-        />
+        <q-btn flat dense round icon="close" class="close-button" @click="close" />
       </div>
       <div class="side-modal-body">
         <div class="vacancies-control">
           <span class="vacancies-label">Quantidade de Vagas:</span>
           <div class="counter">
-            <q-btn
-              round
-              dense
-              class="counter-btn"
-              @click="decrement"
-              :disabled="vacanciesCount <= 1"
-            >
-              -
-            </q-btn>
+            <q-btn round dense class="counter-btn" @click="decrement" :disabled="vacanciesCount <= 1"> - </q-btn>
             <span class="counter-value">{{ vacanciesCount }}</span>
-            <q-btn round dense class="counter-btn" @click="increment">
-              +
-            </q-btn>
+            <q-btn round dense class="counter-btn" @click="increment"> + </q-btn>
           </div>
         </div>
 
         <form @submit.prevent="confirm">
           <div class="tab-content">
             <div class="form-group">
-              <TextFieldComponent
-                label="Cargo"
-                v-model="formData.job_title"
-                placeholder="Cargo"
-              />
+              <TextFieldComponent label="Cargo" v-model="formData.job_title" placeholder="Cargo" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Site"
-                v-model="formData.job_site"
-                placeholder="Site"
-              />
+              <TextFieldComponent label="Site" v-model="formData.job_site" placeholder="Site" />
             </div>
             <div class="form-group">
               <label>Área</label>
-              <SelectComponent
-                :options="departmentOptions"
-                v-model="formData.job_department"
-                placeholder="Área"
-                customClass="larger-select"
-              />
+              <SelectComponent :options="departmentOptions" v-model="formData.job_department" placeholder="Área" customClass="larger-select" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Sigla"
-                v-model="formData.job_id"
-                placeholder="Sigla"
-              />
+              <TextFieldComponent label="Sigla" v-model="formData.job_id" placeholder="Sigla" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Centro de Custo"
-                v-model="formData.job_cost_center"
-                placeholder="Centro de Custo"
-              />
+              <TextFieldComponent label="Centro de Custo" v-model="formData.job_cost_center" placeholder="Centro de Custo" />
             </div>
             <div class="form-group">
               <TextFieldComponent
@@ -80,54 +42,24 @@
               />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Salário Contratação (R$)"
-                v-model="formData.job_salary"
-                placeholder="Salário Contratação"
-              />
+              <TextFieldComponent label="Salário Contratação (R$)" v-model="formData.job_salary" placeholder="Salário Contratação" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Jornada de Trabalho"
-                v-model="formData.job_work_journey"
-                placeholder="Jornada de Trabalho"
-              />
+              <TextFieldComponent label="Jornada de Trabalho" v-model="formData.job_work_journey" placeholder="Jornada de Trabalho" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Subgrupo"
-                v-model="formData.job_sub_group"
-                placeholder="Subgrupo"
-              />
+              <TextFieldComponent label="Subgrupo" v-model="formData.job_sub_group" placeholder="Subgrupo" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Justificativa"
-                v-model="formData.job_opening_reason"
-                placeholder="Justificativa"
-              />
+              <TextFieldComponent label="Justificativa" v-model="formData.job_opening_reason" placeholder="Justificativa" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Data de Abertura"
-                v-model="formData.job_opening_date"
-                placeholder="Data de Abertura"
-              />
+              <TextFieldComponent label="Data de Abertura" v-model="formData.job_opening_date" placeholder="Data de Abertura" />
             </div>
           </div>
           <div class="side-modal-footer">
-            <ButtonComponent
-              type="button"
-              variant="primary"
-              label="Cancelar"
-              @click="close"
-            />
-            <ButtonComponent
-              type="submit"
-              variant="secondary"
-              label="Salvar"
-              @click="confirm"
-            />
+            <ButtonComponent type="button" variant="primary" label="Cancelar" @click="close" />
+            <ButtonComponent type="submit" variant="secondary" label="Salvar" @click="confirm" />
           </div>
         </form>
       </div>
@@ -184,10 +116,8 @@ export default {
   },
   mounted() {
     if (this.initialData) {
-      this.formData.jobImmediateSuperior =
-        this.initialData.jobImmediateSuperior;
+      this.formData.jobImmediateSuperior = this.initialData.jobImmediateSuperior;
       this.formData.nodeId = this.initialData.nodeId;
-      this.formData.jobDepartment = this.initialData.departments;
     }
   },
   computed: {
@@ -226,10 +156,7 @@ export default {
       );
       const orgchartIframe = window.parent.document.querySelector('iframe');
       if (orgchartIframe && orgchartIframe.contentWindow) {
-        orgchartIframe.contentWindow.postMessage(
-          { type: 'confirmAddJob', data: dataToSend },
-          '*'
-        );
+        orgchartIframe.contentWindow.postMessage({ type: 'confirmAddJob', data: dataToSend }, '*');
       } else {
         console.warn('Orgchart iframe não foi encontrado.');
       }

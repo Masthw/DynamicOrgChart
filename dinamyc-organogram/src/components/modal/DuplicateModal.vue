@@ -4,11 +4,7 @@
       <!-- Ícone de duplicação centralizado -->
       <div class="icon-wrapper">
         <div class="icon-container">
-          <img
-            src="/src/assets/icons/copy.png"
-            alt="Duplicar"
-            class="modal-icon"
-          />
+          <img src="/src/assets/icons/copy.png" alt="Duplicar" class="modal-icon" />
         </div>
       </div>
 
@@ -26,17 +22,8 @@
       </q-card-section>
 
       <q-card-actions class="button-container">
-        <ButtonComponent
-          label="Cancelar"
-          variant="primary"
-          @click="closeModal"
-        />
-        <ButtonComponent
-          label="OK"
-          variant="secondary"
-          :disabled="!isFormValid || isSaving"
-          @click="saveChanges"
-        />
+        <ButtonComponent label="Cancelar" variant="primary" @click="closeModal" />
+        <ButtonComponent label="OK" variant="secondary" :disabled="!isFormValid || isSaving" @click="saveChanges" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -79,13 +66,7 @@ function generateUniqueName(name, orgcharts, currentId) {
   let base = name;
   let counter = 1;
   let newNameCandidate = base;
-  while (
-    orgcharts.some(
-      (o) =>
-        o.id !== currentId &&
-        o.name.trim().toLowerCase() === newNameCandidate.trim().toLowerCase()
-    )
-  ) {
+  while (orgcharts.some((o) => o.id !== currentId && o.name.trim().toLowerCase() === newNameCandidate.trim().toLowerCase())) {
     newNameCandidate = `${base}(${counter})`;
     counter++;
   }
@@ -101,15 +82,9 @@ const saveChanges = () => {
 
   const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
   const newId = Date.now();
-  const uniqueName = generateUniqueName(
-    newName.value.trim(),
-    storedOrgCharts,
-    -1
-  );
+  const uniqueName = generateUniqueName(newName.value.trim(), storedOrgCharts, -1);
 
-  const originalData = JSON.parse(
-    localStorage.getItem(`orgChartData_${props.orgchart.id}`)
-  );
+  const originalData = JSON.parse(localStorage.getItem(`orgChartData_${props.orgchart.id}`));
   if (!originalData) {
     isSaving.value = false;
     return;

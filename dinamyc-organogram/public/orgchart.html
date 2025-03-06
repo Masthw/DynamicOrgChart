@@ -21,15 +21,12 @@
   function initializeChart(data) {
     const chartContainer = document.querySelector('.chart-container');
     if (!chartContainer) {
-      console.error(
-        'Erro: Contêiner ".chart-container" não encontrado no DOM.'
-      );
+      console.error('Erro: Contêiner ".chart-container" não encontrado no DOM.');
       return;
     }
 
     originalData = data;
     modifiedData = [...data];
-    initializeFilters(data);
     console.log(data);
 
     chart = new d3.OrgChart()
@@ -45,16 +42,16 @@
         const totalPeople = node.data._totalSubordinates;
         const totalDepartments = countDepartments(node);
         return `
-      <div class="button-content">
-        <span class="people">
-         <img src="src/assets/icons/person.png"/> ${totalPeople}
-        </span>
-        <span class="separator">|</span>
-        <span class="departments">
-         <img src="src/assets/icons/corporate_fare.png"/> ${totalDepartments}
-        </span>
-      </div>
-    `;
+        <div class="button-content">
+          <span class="people">
+           <img src="src/assets/icons/person.png"/> ${totalPeople}
+          </span>
+          <span class="separator">|</span>
+          <span class="departments">
+           <img src="src/assets/icons/corporate_fare.png"/> ${totalDepartments}
+          </span>
+        </div>
+      `;
       })
       .nodeEnter(function (node) {
         d3.select(this).call(
@@ -79,14 +76,12 @@
   window.addEventListener('hashchange', () => {
     const orgChartId = getOrgChartIdFromURL();
     if (orgChartId) {
-    const savedData = localStorage.getItem(`orgChartData_${orgChartId}`);
+      const savedData = localStorage.getItem(`orgChartData_${orgChartId}`);
       originalData = data;
       modifiedData = [...data];
       initializeChart(data); // Inicializa o gráfico com os dados carregados
     } else {
-      console.error(
-        `Dados do organograma com ID ${orgChartId} não encontrados.`
-      );
+      console.error(`Dados do organograma com ID ${orgChartId} não encontrados.`);
     }
   });
 
@@ -131,13 +126,8 @@
     if (orgChartData) {
       initializeChart(orgChartData);
     } else {
-      d3.csv(
-        'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
-      ).then((data) => {
-        localStorage.setItem(
-          `orgChartData_${orgChartId}`,
-          JSON.stringify(data)
-        );
+      d3.csv('https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv').then((data) => {
+        localStorage.setItem(`orgChartData_${orgChartId}`, JSON.stringify(data));
         initializeChart(data);
       });
     }
@@ -175,16 +165,12 @@
 
     if (isDragStarting) {
       isDragStarting = false;
-      document
-        .querySelector('.chart-container')
-        .classList.add('dragging-active');
+      document.querySelector('.chart-container').classList.add('dragging-active');
       g.raise();
 
       const descendants = dragEvent.subject.descendants();
       const linksToRemove = [...(descendants || []), dragEvent.subject];
-      const nodesToRemove = descendants.filter(
-        (x) => x.data.id !== dragEvent.subject.id
-      );
+      const nodesToRemove = descendants.filter((x) => x.data.id !== dragEvent.subject.id);
 
       state['linksWrapper']
         .selectAll('path.link')
@@ -223,13 +209,7 @@
           bottom: d2.y + d2.height,
         };
 
-        if (
-          cP.midX > cPInner.left &&
-          cP.midX < cPInner.right &&
-          cP.midY > cPInner.top &&
-          cP.midY < cPInner.bottom &&
-          this.classList.contains('droppable')
-        ) {
+        if (cP.midX > cPInner.left && cP.midX < cPInner.right && cP.midY > cPInner.top && cP.midY < cPInner.bottom && this.classList.contains('droppable')) {
           dropNode = d2;
           return d2;
         }
@@ -243,9 +223,7 @@
   }
 
   function onDragEnd(element, dragEvent) {
-    document
-      .querySelector('.chart-container')
-      .classList.remove('dragging-active');
+    document.querySelector('.chart-container').classList.remove('dragging-active');
     d3.select(element).classed('dragging', false);
 
     if (!dropNode) {
@@ -418,9 +396,7 @@
         positionsSet.add(item.position);
       }
       if (item.department_name) {
-        const deptId = item.department_id
-          ? item.department_id
-          : item.department_name;
+        const deptId = item.department_id ? item.department_id : item.department_name;
         if (!departmentsMap.has(deptId)) {
           departmentsMap.set(deptId, {
             id: deptId,
@@ -489,14 +465,7 @@
         chart.addNode(newNode);
         modifiedData.push(newNode);
 
-        console.log(
-          'Novo Node adicionado com ID:',
-          newNodeId,
-          'ao Parent ID:',
-          parentId,
-          'departamento:',
-          department_name
-        );
+        console.log('Novo Node adicionado com ID:', newNodeId, 'ao Parent ID:', parentId, 'departamento:', department_name);
       }
       chart.data(modifiedData);
       chart.render();
@@ -507,10 +476,7 @@
   //REMOVER vaga
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'confirmDeleteVacancy') {
-      console.log(
-        'Organograma recebeu evento de exclusão de vaga:',
-        event.data
-      );
+      console.log('Organograma recebeu evento de exclusão de vaga:', event.data);
       const nodeId = event.data.nodeId;
       deleteVacancy(nodeId);
     }
@@ -518,9 +484,7 @@
 
   function deleteVacancy(nodeId) {
     if (chart) {
-      const nodeIndex = modifiedData.findIndex(
-        (node) => String(node.id) === String(nodeId)
-      );
+      const nodeIndex = modifiedData.findIndex((node) => String(node.id) === String(nodeId));
       if (nodeIndex !== -1) {
         modifiedData.splice(nodeIndex, 1);
         chart.data(modifiedData);
@@ -552,16 +516,9 @@
     data.forEach((d) => {
       const name = d.name ? d.name.toLowerCase() : '';
       const position = d.position ? d.position.toLowerCase() : '';
-      const department = d.department_name
-        ? d.department_name.toLowerCase()
-        : '';
+      const department = d.department_name ? d.department_name.toLowerCase() : '';
 
-      if (
-        value !== '' &&
-        (name.includes(value) ||
-          position.includes(value) ||
-          department.includes(value))
-      ) {
+      if (value !== '' && (name.includes(value) || position.includes(value) || department.includes(value))) {
         d._highlighted = true;
         d._expanded = true;
       }
@@ -586,15 +543,15 @@
       localStorage.setItem(`orgChartData_${id}`, JSON.stringify(updatedData));
       const orgChartData = getOrgChartData();
       if (orgChartData) {
-      const newModifiedDate = new Date().toLocaleDateString();
-      window.parent.postMessage(
-        {
-          type: 'orgchart-modified',
-          id: id,
-          modifiedDate: newModifiedDate,
-        },
-        '*'
-      );
+        const newModifiedDate = new Date().toLocaleDateString();
+        window.parent.postMessage(
+          {
+            type: 'orgchart-modified',
+            id: id,
+            modifiedDate: newModifiedDate,
+          },
+          '*'
+        );
       } else {
         console.error('Erro ao obter dados do organograma');
       }
@@ -628,17 +585,7 @@
   }
 
   function generateRandomColor() {
-    const palette = [
-      '#414141',
-      '#D9D9D9',
-      '#0072CE',
-      '#460A78',
-      '#10B12D',
-      '#F58746',
-      '#FF3700',
-      '#BF2900',
-      '#7F1B00',
-    ];
+    const palette = ['#414141', '#D9D9D9', '#0072CE', '#460A78', '#10B12D', '#F58746', '#FF3700', '#BF2900', '#7F1B00'];
     return palette[Math.floor(Math.random() * palette.length)];
   }
 
@@ -728,9 +675,7 @@
   //remove and delete logic
   function deleteNode(nodeId) {
     if (chart) {
-      const nodeIndex = modifiedData.findIndex(
-        (node) => String(node.id) === String(nodeId)
-      );
+      const nodeIndex = modifiedData.findIndex((node) => String(node.id) === String(nodeId));
 
       if (nodeIndex !== -1) {
         const node = modifiedData[nodeIndex];
@@ -757,79 +702,59 @@
     const color = '#FFFFFF';
     const imageDiffVert = 27;
     return `
-      <div class="node-container" style='
-      width:${d.width}px;
-      height:${d.height}px;
-      padding-top:${imageDiffVert - 2}px;
-      padding-left:1px;
-      padding-right:1px'>
-              <div class="content-container"  onclick="Employee(${
-                d.data.id
-              }, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
-      d.width - 2
-    }px;height:${d.height - imageDiffVert}px;border-radius:10px;border: ${
-      d.data._highlighted || d.data._upToTheRootHighlighted
-        ? '5px solid #ff3700"'
-        : '1px solid #E4E2E9"'
-    }>
-                  <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(
-                    d
-                )};">
+        <div class="node-container" style='
+        width:${d.width}px;
+        height:${d.height}px;
+        padding-top:${imageDiffVert - 2}px;
+        padding-left:1px;
+        padding-right:1px'>
+                <div class="content-container"  onclick="Employee(${d.data.id}, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${d.width - 2}px;height:${
+      d.height - imageDiffVert
+    }px;border-radius:10px;border: ${d.data._highlighted || d.data._upToTheRootHighlighted ? '5px solid #ff3700"' : '1px solid #E4E2E9"'}>
+                  <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(d)};">
+                    </div>
                   </div>
+                    <div  style="margin-top:${-imageDiffVert - 20}px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" >
+                    </div>
+                    <div style="margin-top:${-imageDiffVert - 20}px;">
+                      <img src=" ${d.data.image}" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
+                    </div>
+                    <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${d.data.name}
+                    </div>
+                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.position} </div>
+                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.job_id} </div>
+                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.department_name} </div>
                 </div>
-                  <div  style="margin-top:${
-                    -imageDiffVert - 20
-                  }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" >
-                  </div>
-                  <div style="margin-top:${-imageDiffVert - 20}px;">
-                    <img src=" ${
-      d.data.image
-                    }" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
-                  </div>
-                  <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${
-                    d.data.name
-                  }
-                  </div>
-                  <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
-                    d.data.position
-                  } </div>
-                  <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
-                    d.data.job_id
-                  } </div>
-                  <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
-                    d.data.department_name
-                  } </div>
-              </div>
-               ${
-                 shouldShowButtons
-                   ? `
-      <div class="node-controls">
-                 <button class="control-btn" onclick="addJob(${d.data.id}, '${d.data.name}'); event.stopPropagation();">
-          <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
-          <span class="tooltip">Adicionar Vaga</span>
-        </button>
-                 <button class="control-btn" onclick="Employee(${d.data.id}, false); event.stopPropagation();">
-          <img src="src/assets/icons/person_add.png" alt="Adicionar Empregado" />
-          <span class="tooltip">Adicionar Empregado</span>
-        </button>
-                 <button class="control-btn" onclick="addDepartment(${d.data.id}); event.stopPropagation();">
-          <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
-          <span class="tooltip">Adicionar Departamento</span>
-        </button>
-                 <button class="control-btn" onclick="viewSuccessionPlan(${d.data.id}); event.stopPropagation();">
-          <img src="src/assets/icons/lan.png" alt="Ver Plano de Sucessão" />
-          <span class="tooltip">Ver Plano de Sucessão</span>
-        </button>
-                  <button class="control-btn" onclick="deleteNode(${d.data.id}); event.stopPropagation();">
+                 ${
+                   shouldShowButtons
+                     ? `
+                 <div class="node-controls">
+                   <button class="control-btn" onclick="addJob(${d.data.id}, '${d.data.name}'); event.stopPropagation();">
+                     <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
+                     <span class="tooltip">Adicionar Vaga</span>
+                   </button>
+                   <button class="control-btn" onclick="Employee(${d.data.id}, false); event.stopPropagation();">
+                     <img src="src/assets/icons/person_add.png" alt="Adicionar Empregado" />
+                     <span class="tooltip">Adicionar Empregado</span>
+                   </button>
+                   <button class="control-btn" onclick="addDepartment(${d.data.id}); event.stopPropagation();">
+                     <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
+                     <span class="tooltip">Adicionar Departamento</span>
+                   </button>
+                   <button class="control-btn" onclick="viewSuccessionPlan(${d.data.id}); event.stopPropagation();">
+                     <img src="src/assets/icons/lan.png" alt="Ver Plano de Sucessão" />
+                     <span class="tooltip">Ver Plano de Sucessão</span>
+                   </button>
+                    <button class="control-btn" onclick="deleteNode(${d.data.id}); event.stopPropagation();">
                      <img src="src/assets/icons/delete.png" alt="Remove" />
-                   <span class="tooltip">Remover</span>
-                 </button>
-      </div>
-               `
-                   : ''
-               }
-    </div>
-  `;
+                     <span class="tooltip">Remover</span>
+                   </button>
+                 </div>
+                 `
+                     : ''
+                 }
+               </div>
+    `;
   }
 </script>
 <div class="controls">
@@ -838,11 +763,7 @@
       <img src="src/assets/icons/map_search.png" alt="Organizar" />
       <span>Organizar</span>
     </button>
-    <button
-      id="filterButton"
-      class="icon-button"
-      onclick="openFilterDialog(); event.stopPropagation();"
-    >
+    <button id="filterButton" class="icon-button" onclick="openFilterDialog(); event.stopPropagation();">
       <img src="src/assets/icons/lan.png" alt="Filtros" />
       <span class="tooltip">Filtros</span>
     </button>
@@ -854,25 +775,15 @@
       <img src="src/assets/icons/zoom_out.png" alt="Zoom Out" />
       <span class="tooltip">Diminuir Zoom</span>
     </button>
-    <button id="resetViewButton" class="icon-button" onclick="resetView()">
-      Redefinir Visualização
-    </button>
+    <button id="resetViewButton" class="icon-button" onclick="resetView()">Redefinir Visualização</button>
   </div>
 </div>
 
 <div id="dragActions" class="hide">
-  <button id="finishDrag" class="icon-button" onclick="disableDrag()">
-    Salvar
-  </button>
-  <button id="undoButton" class="icon-button" disabled onclick="undo()">
-    Desfazer
-  </button>
-  <button id="redoButton" class="icon-button" disabled onclick="redo()">
-    Refazer
-  </button>
-  <button id="cancelDrag" class="icon-button" onclick="cancelDrag()">
-    Cancelar
-  </button>
+  <button id="finishDrag" class="icon-button" onclick="disableDrag()">Salvar</button>
+  <button id="undoButton" class="icon-button" disabled onclick="undo()">Desfazer</button>
+  <button id="redoButton" class="icon-button" disabled onclick="redo()">Refazer</button>
+  <button id="cancelDrag" class="icon-button" onclick="cancelDrag()">Cancelar</button>
 </div>
 
 <div class="chart-container"></div>

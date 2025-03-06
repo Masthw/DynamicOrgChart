@@ -12,24 +12,12 @@
           <span class="chip-close" @click.stop="removeOption(option)">×</span>
         </div>
       </div>
-      <img
-        :src="isOpen ? arrowUpIcon : arrowDownIcon"
-        alt="Arrow"
-        class="arrow-icon"
-      />
+      <img :src="isOpen ? arrowUpIcon : arrowDownIcon" alt="Arrow" class="arrow-icon" />
     </div>
     <!-- Lista de opções do dropdown -->
     <div v-if="isOpen" class="options-list">
-      <div v-if="options.length === 0" class="empty-option">
-        Nenhuma opção disponível
-      </div>
-      <div
-        v-for="option in options"
-        :key="option.value"
-        class="option-item"
-        :class="{ selected: isSelected(option) }"
-        @click="toggleOption(option)"
-      >
+      <div v-if="options.length === 0" class="empty-option">Nenhuma opção disponível</div>
+      <div v-for="option in options" :key="option.value" class="option-item" :class="{ selected: isSelected(option) }" @click="toggleOption(option)">
         <span class="option-bullet">
           <!-- Bolinha para indicar seleção -->
           <span v-if="isSelected(option)" class="selected-circle"></span>
@@ -73,9 +61,7 @@ export default {
   },
   computed: {
     selectedOptions() {
-      return this.options.filter((option) =>
-        this.modelValue.includes(option.value)
-      );
+      return this.options.filter((option) => this.modelValue.includes(option.value));
     },
   },
   methods: {

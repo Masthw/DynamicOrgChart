@@ -3,26 +3,12 @@
     <div class="modal-overlay"></div>
     <div class="side-modal">
       <div class="side-modal-header">
-        <SearchComponent
-          placeholder="Buscar Departamento"
-          class="search-component"
-        />
-        <q-btn
-          flat
-          dense
-          round
-          icon="close"
-          class="close-button"
-          @click="close"
-        />
+        <SearchComponent placeholder="Buscar Departamento" class="search-component" />
+        <q-btn flat dense round icon="close" class="close-button" @click="close" />
       </div>
       <div class="side-modal-tabs">
         <div class="tab-item active">
-          <img
-            src="src/assets/icons/contact_mail.png"
-            alt=""
-            class="tab-icon"
-          />
+          <img src="src/assets/icons/contact_mail.png" alt="" class="tab-icon" />
           <span class="tab-text">Sobre</span>
         </div>
       </div>
@@ -30,19 +16,10 @@
         <form @submit.prevent="confirm">
           <div class="tab-content">
             <div class="form-group">
-              <TextFieldComponent
-                label="Sigla"
-                v-model="formData.department_id"
-                placeholder="Sigla"
-                :required="true"
-              />
+              <TextFieldComponent label="Sigla" v-model="formData.department_id" placeholder="Sigla" :required="true" />
             </div>
             <div class="form-group">
-              <TextFieldComponent
-                label="Descrição"
-                v-model="formData.departmentDescription"
-                placeholder="Insira a descrição"
-              />
+              <TextFieldComponent label="Descrição" v-model="formData.departmentDescription" placeholder="Insira a descrição" />
             </div>
             <div class="form-group">
               <label>Cor</label>
@@ -59,12 +36,7 @@
             </div>
           </div>
           <div class="side-modal-footer">
-            <ButtonComponent
-              type="button"
-              variant="primary"
-              label="Cancelar"
-              @click="close"
-            />
+            <ButtonComponent type="button" variant="primary" label="Cancelar" @click="close" />
             <ButtonComponent type="submit" variant="secondary" label="Salvar" />
           </div>
         </form>
@@ -98,17 +70,7 @@ export default {
         departmentDescription: '',
         departmentColor: '',
       },
-      colors: [
-        '#414141',
-        '#D9D9D9',
-        '#0072CE',
-        '#460A78',
-        '#10B12D',
-        '#F58746',
-        '#FF3700',
-        '#BF2900',
-        '#7F1B00',
-      ],
+      colors: ['#414141', '#D9D9D9', '#0072CE', '#460A78', '#10B12D', '#F58746', '#FF3700', '#BF2900', '#7F1B00'],
     };
   },
   methods: {

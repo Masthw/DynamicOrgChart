@@ -7,60 +7,21 @@
         <strong>{{ orgchart.name }}</strong>
       </h1>
       <div class="button-group" v-if="orgchart.id !== 1">
-        <ButtonComponent
-          label="Visualizar Alterações"
-          icon="src/assets/icons/view.png"
-          variant="secondary"
-          @click="viewPdfAlteracoes"
-        />
-        <ButtonComponent
-          label="Registro de Alterações"
-          icon="src/assets/icons/monitoring.png"
-          variant="secondary"
-          @click="openChangeLogModal"
-        />
-        <ButtonComponent
-          label="Submeter Alterações"
-          icon="src/assets/icons/send.png"
-          variant="secondary"
-          @click="openSubmitChangesModal"
-        />
-        <ButtonComponent
-          label="Visualizar Portaria"
-          icon="src/assets/icons/inventory.png"
-          variant="secondary"
-          @click="viewPdfPortaria"
-        />
+        <ButtonComponent label="Visualizar Alterações" icon="src/assets/icons/view.png" variant="secondary" @click="viewPdfAlteracoes" />
+        <ButtonComponent label="Registro de Alterações" icon="src/assets/icons/monitoring.png" variant="secondary" @click="openChangeLogModal" />
+        <ButtonComponent label="Submeter Alterações" icon="src/assets/icons/send.png" variant="secondary" @click="openSubmitChangesModal" />
+        <ButtonComponent label="Visualizar Portaria" icon="src/assets/icons/inventory.png" variant="secondary" @click="viewPdfPortaria" />
       </div>
       <div class="button-group" v-else>
-        <ButtonComponent
-          label="Compartilhar"
-          icon="src/assets/icons/share.png"
-          variant="secondary"
-          @click="isShareModalOpen = true"
-        />
-        <ButtonComponent
-          label="Download"
-          icon="src/assets/icons/download.png"
-          variant="secondary"
-          @click="isExportModalOpen = true"
-        />
+        <ButtonComponent label="Compartilhar" icon="src/assets/icons/share.png" variant="secondary" @click="isShareModalOpen = true" />
+        <ButtonComponent label="Download" icon="src/assets/icons/download.png" variant="secondary" @click="isExportModalOpen = true" />
       </div>
     </div>
     <!-- Área do Organograma -->
     <div class="orgchart-wrapper">
       <OrgChart v-if="orgchart" :key="orgchart.id" :data="orgchart.data" />
-      <EmployeeModal
-        v-if="showEmployeeModal"
-        :employeeData="employeeData"
-        @close="closeEmployeeModal"
-        @confirm="handleEmployeeConfirm"
-      />
-      <AddDepartmentModal
-        v-if="showAddDepartmentModal"
-        @close="closeAddDepartmentModal"
-        @confirm="handleAddDepartmentConfirm"
-      />
+      <EmployeeModal v-if="showEmployeeModal" :employeeData="employeeData" @close="closeEmployeeModal" @confirm="handleEmployeeConfirm" />
+      <AddDepartmentModal v-if="showAddDepartmentModal" @close="closeAddDepartmentModal" @confirm="handleAddDepartmentConfirm" />
       <AddJobModal
         v-if="showAddJobModal"
         :initialData="addJobInitialData"
@@ -70,16 +31,11 @@
       />
       <ViewSuccessionPlanModal
         v-if="showViewSuccessionPlanModal"
-        :successionPlan="
-          Array.isArray(successionPlanData) ? successionPlanData : []
-        "
+        :successionPlan="Array.isArray(successionPlanData) ? successionPlanData : []"
         @close="closeViewSuccessionPlanModal"
         @confirm="handleViewSuccessionPlanConfirm"
       />
-      <ChangeLogModal
-        v-if="showChangeLogModal"
-        @close="showChangeLogModal = false"
-      />
+      <ChangeLogModal v-if="showChangeLogModal" @close="showChangeLogModal = false" />
       <FilterModal
         v-model:modelValue="showFilterModal"
         :positions="filterData.positions"
@@ -89,26 +45,10 @@
         @clear="handleClearFilters"
         @update:modelValue="showFilterModal = $event"
       />
-      <DeleteVacancyModal
-        v-model:modelValue="showDeleteVacancyModal"
-        :nodeData="vacancyToDelete"
-        @confirm="handleDeleteVacancyConfirm"
-      />
-      <DeleteEmployeeModal
-        v-model:modelValue="showDeleteEmployeeModal"
-        :nodeData="employeeToDelete"
-        @confirm="handleDeleteEmployeeConfirm"
-      />
-      <ShareModal
-        v-model="isShareModalOpen"
-        :orgchart="orgchart"
-        @share="handleShare"
-      />
-      <ExportModal
-        v-model="isExportModalOpen"
-        :orgchart="orgchart"
-        @export="handleExport"
-      />
+      <DeleteVacancyModal v-model:modelValue="showDeleteVacancyModal" :nodeData="vacancyToDelete" @confirm="handleDeleteVacancyConfirm" />
+      <DeleteEmployeeModal v-model:modelValue="showDeleteEmployeeModal" :nodeData="employeeToDelete" @confirm="handleDeleteEmployeeConfirm" />
+      <ShareModal v-model="isShareModalOpen" :orgchart="orgchart" @share="handleShare" />
+      <ExportModal v-model="isExportModalOpen" :orgchart="orgchart" @export="handleExport" />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -117,19 +57,14 @@
       </div>
       <div class="subtitle-item">
         <span class="subtitle-color subtitle-allowed-with-reason"></span>
-        <span class="subtitle-label"
-          >Simulação Permitida com Justificativa</span
-        >
+        <span class="subtitle-label">Simulação Permitida com Justificativa</span>
       </div>
       <div class="subtitle-item">
         <span class="subtitle-color subtitle-not-allowed"></span>
         <span class="subtitle-label">Simulação Não Permitida</span>
       </div>
     </div>
-    <SubmitChangesModal
-      v-model="showSubmitChangesModal"
-      @submit="handleSubmitChanges"
-    />
+    <SubmitChangesModal v-model="showSubmitChangesModal" @submit="handleSubmitChanges" />
   </div>
 </template>
 
@@ -290,29 +225,17 @@ export default {
 
       window.addEventListener('message', (event) => {
         console.log('Mensagem recebida no OrgChartPage:', event.data);
-        if (
-          event.data.type === 'openModal' &&
-          event.data.action === 'employee'
-        ) {
-          console.log(
-            'Evento openModal para Employee detectado. Dados:',
-            event.data.employee
-          );
+        if (event.data.type === 'openModal' && event.data.action === 'employee') {
+          console.log('Evento openModal para Employee detectado. Dados:', event.data.employee);
           employeeData.value = event.data.employee;
           showEmployeeModal.value = true;
         }
         if (event.data.action === 'addDepartment') {
-          console.log(
-            'Evento openModal para addDepartment detectado. NodeId:',
-            event.data.nodeId
-          );
+          console.log('Evento openModal para addDepartment detectado. NodeId:', event.data.nodeId);
           showAddDepartmentModal.value = true;
         }
         if (event.data.action === 'addJob') {
-          console.log(
-            'Evento openModal para addJob detectado. NodeId:',
-            event.data.nodeId
-          );
+          console.log('Evento openModal para addJob detectado. NodeId:', event.data.nodeId);
           addJobInitialData.value = {
             jobImmediateSuperior: event.data.name,
             nodeId: event.data.nodeId,
@@ -321,13 +244,8 @@ export default {
           showAddJobModal.value = true;
         }
         if (event.data.action === 'viewSuccessionPlan') {
-          console.log(
-            'Evento openModal para succession detectado. NodeId:',
-            event.data.nodeId
-          );
-          successionPlanData.value = Array.isArray(event.data.children)
-            ? event.data.children.slice(0, 4)
-            : [];
+          console.log('Evento openModal para succession detectado. NodeId:', event.data.nodeId);
+          successionPlanData.value = Array.isArray(event.data.children) ? event.data.children.slice(0, 4) : [];
           console.log(successionPlanData.value);
           showViewSuccessionPlanModal.value = true;
         }
@@ -340,10 +258,7 @@ export default {
           showFilterModal.value = true;
         }
 
-        if (
-          event.data.type === 'openModal' &&
-          event.data.action === 'deleteVacancy'
-        ) {
+        if (event.data.type === 'openModal' && event.data.action === 'deleteVacancy') {
           showDeleteVacancyModal.value = true;
           vacancyToDelete.value = {
             id: event.data.nodeId,
@@ -352,10 +267,7 @@ export default {
           };
         }
 
-        if (
-          event.data.type === 'openModal' &&
-          event.data.action === 'deleteEmployee'
-        ) {
+        if (event.data.type === 'openModal' && event.data.action === 'deleteEmployee') {
           showDeleteEmployeeModal.value = true;
           employeeToDelete.value = {
             id: event.data.nodeId,
@@ -499,13 +411,7 @@ export default {
 }
 
 .subtitle-allowed-with-reason {
-  border-image: linear-gradient(
-      to right,
-      $purple-gradient,
-      $red-gradient,
-      $orange-gradient
-    )
-    1;
+  border-image: linear-gradient(to right, $purple-gradient, $red-gradient, $orange-gradient) 1;
 }
 
 .subtitle-not-allowed {

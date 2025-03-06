@@ -3,55 +3,25 @@
     <img src="../assets/images/organiza_ai_logo.png" alt="Logo" class="logo" />
     <router-link to="/" class="home-icon">
       <div class="icon-button">
-        <img
-          src="../assets/icons/home_white.png"
-          alt="Home"
-          class="icon"
-          @click="clearSelection"
-        />
+        <img src="../assets/icons/home_white.png" alt="Home" class="icon" @click="clearSelection" />
         <span class="tooltip">Home</span>
       </div>
     </router-link>
-    <SelectComponent
-      v-model="selectedOption"
-      :options="options"
-      placeholder="Selecione a Simulação"
-    />
-    <SearchComponent
-      v-if="showSearch && shouldShowSearch"
-      @search-input="onSearchInput"
-    />
+    <SelectComponent v-model="selectedOption" :options="options" placeholder="Selecione a Simulação" />
+    <SearchComponent v-if="showSearch && shouldShowSearch" @search-input="onSearchInput" />
     <div class="icons">
       <div class="icon-button">
-        <img
-          src="../assets/icons/notifications_white.png"
-          alt="Notificações"
-          class="icon"
-          @click="toggleNotifications"
-        />
+        <img src="../assets/icons/notifications_white.png" alt="Notificações" class="icon" @click="toggleNotifications" />
         <span class="tooltip">Notificações</span>
         <div class="notifications-menu-container">
-          <q-menu
-            v-model="showNotifications"
-            anchor="bottom right"
-            self="top right"
-            class="relative-position"
-            style="border-radius: 18px"
-          >
+          <q-menu v-model="showNotifications" anchor="bottom right" self="top right" class="relative-position" style="border-radius: 18px">
             <q-card class="notifications-menu">
               <!-- Cabeçalho geral do menu -->
               <q-card-section class="notifications-menu-header">
                 <div class="header-content">
                   <span class="notifications-title">Notificações</span>
                 </div>
-                <q-btn
-                  flat
-                  dense
-                  round
-                  icon="close"
-                  class="close-button"
-                  @click="showNotifications = false"
-                />
+                <q-btn flat dense round icon="close" class="close-button" @click="showNotifications = false" />
               </q-card-section>
 
               <!-- Tabela de Notificações -->
@@ -64,27 +34,13 @@
                 </div>
                 <!-- Linhas de dados -->
                 <div class="notification-list">
-                  <div
-                    class="notification-row"
-                    v-for="(item, index) in notifications"
-                    :key="index"
-                  >
+                  <div class="notification-row" v-for="(item, index) in notifications" :key="index">
                     <div class="col col-name">{{ item.fileName }}</div>
                     <div class="col col-download">
-                      <img
-                        src="../assets/icons/download_green.png"
-                        alt="Download"
-                        class="action-icon"
-                        @click.stop="downloadFile(item)"
-                      />
+                      <img src="../assets/icons/download_green.png" alt="Download" class="action-icon" @click.stop="downloadFile(item)" />
                     </div>
                     <div class="col col-delete">
-                      <img
-                        src="../assets/icons/delete_red.png"
-                        alt="Excluir"
-                        class="action-icon"
-                        @click.stop="deleteFile(item)"
-                      />
+                      <img src="../assets/icons/delete_red.png" alt="Excluir" class="action-icon" @click.stop="deleteFile(item)" />
                     </div>
                   </div>
                 </div>
@@ -92,11 +48,7 @@
 
               <!-- Ações -->
               <q-card-actions class="notifications-actions" align="center">
-                <ButtonComponent
-                  label="OK"
-                  @click="closeNotifications"
-                  class="ok-button"
-                />
+                <ButtonComponent label="OK" @click="closeNotifications" class="ok-button" />
               </q-card-actions>
             </q-card>
           </q-menu>
@@ -104,33 +56,15 @@
       </div>
     </div>
     <div class="icon-button">
-      <img
-        src="../assets/icons/account_circle_white.png"
-        alt="Usuário"
-        class="user-icon"
-        @click="toggleUserMenu"
-      />
+      <img src="../assets/icons/account_circle_white.png" alt="Usuário" class="user-icon" @click="toggleUserMenu" />
       <span class="tooltip">Usuário</span>
 
       <div class="user-menu-container">
-        <q-menu
-          v-model="showUserMenu"
-          anchor="bottom right"
-          self="top right"
-          class="relative-position"
-          style="border-radius: 14px"
-        >
+        <q-menu v-model="showUserMenu" anchor="bottom right" self="top right" class="relative-position" style="border-radius: 14px">
           <q-card class="user-menu">
             <q-card-section class="user-menu-section">
               <span class="user-name">Nome Usuário</span>
-              <q-btn
-                flat
-                dense
-                round
-                icon="close"
-                class="close-button"
-                @click="showUserMenu = false"
-              />
+              <q-btn flat dense round icon="close" class="close-button" @click="showUserMenu = false" />
             </q-card-section>
             <q-card-section class="user-menu-section">
               <p class="user-email">nomeusuario@arcellor.org.br</p>
@@ -138,11 +72,7 @@
             <q-separator />
             <q-card-actions align="left" style="padding: 0">
               <q-btn flat @click="logout" class="logout-btn">
-                <img
-                  src="../assets/icons/logout.png"
-                  alt="Sair"
-                  class="logout-icon"
-                />
+                <img src="../assets/icons/logout.png" alt="Sair" class="logout-icon" />
                 <span class="logout-text">Sair</span>
               </q-btn>
             </q-card-actions>
@@ -203,8 +133,7 @@ export default {
 
   methods: {
     loadOrgCharts() {
-      const storedOrgCharts =
-        JSON.parse(localStorage.getItem('orgcharts')) || [];
+      const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
       if (storedOrgCharts.length > 0) {
         this.options = storedOrgCharts.map((orgchart) => ({
           value: orgchart.id,

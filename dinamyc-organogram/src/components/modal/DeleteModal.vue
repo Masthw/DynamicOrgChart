@@ -4,11 +4,7 @@
       <!-- Ícone centralizado no topo -->
       <div class="icon-wrapper">
         <div class="icon-container">
-          <img
-            src="/src/assets/icons/delete.png"
-            alt="Excluir"
-            class="modal-icon"
-          />
+          <img src="/src/assets/icons/delete.png" alt="Excluir" class="modal-icon" />
         </div>
       </div>
 
@@ -24,16 +20,8 @@
 
       <!-- Rodapé do Modal: Botões -->
       <q-card-actions class="button-container">
-        <ButtonComponent
-          label="Cancelar"
-          variant="primary"
-          @click="closeModal"
-        />
-        <ButtonComponent
-          label="Excluir"
-          variant="secondary"
-          @click="confirmDelete"
-        />
+        <ButtonComponent label="Cancelar" variant="primary" @click="closeModal" />
+        <ButtonComponent label="Excluir" variant="secondary" @click="confirmDelete" />
       </q-card-actions>
     </q-card>
   </q-dialog>
