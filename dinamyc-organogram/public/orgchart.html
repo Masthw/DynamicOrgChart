@@ -570,8 +570,6 @@
   }
 
   function resetView() {
-    clearFilters();
-
     if (chart.resetZoom) {
       chart.resetZoom();
     } else {
@@ -877,35 +875,7 @@
   </button>
 </div>
 
-<div id="appliedFilters" class="applied-filters"></div>
 <div class="chart-container"></div>
 <div id="overlay" class="overlay"></div>
 
-<!-- Filtro -->
-<div id="filterDialog" class="modal hidden">
-  <div class="modal-content">
-    <h3>Aplicar Filtros</h3>
-    <div>
-      <label for="positionFilter">Cargo:</label>
-      <select id="positionFilter">
-        <option value="">Todos</option>
-      </select>
-    </div>
-    <div>
-      <label for="departmentFilter">Departamento:</label>
-      <select id="departmentFilter">
-        <option value="">Todos</option>
-      </select>
-    </div>
-    <div>
-      <label for="locationFilter">Estado:</label>
-      <select id="locationFilter">
-        <option value="">Todos</option>
-      </select>
-    </div>
-    <button onclick="applyFilters()">Aplicar</button>
-    <button onclick="clearFilters()">Limpar Filtros</button>
-    <button onclick="closeFilterDialog()">Fechar</button>
-  </div>
-</div>
 <div id="modalOverlay" class="overlay"></div>
