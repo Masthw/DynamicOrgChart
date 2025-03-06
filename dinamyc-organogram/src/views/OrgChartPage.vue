@@ -32,6 +32,20 @@
           @click="viewPdfPortaria"
         />
       </div>
+      <div class="button-group" v-else>
+        <ButtonComponent
+          label="Compartilhar"
+          icon="src/assets/icons/share.png"
+          variant="secondary"
+          @click="isShareModalOpen = true"
+        />
+        <ButtonComponent
+          label="Download"
+          icon="src/assets/icons/download.png"
+          variant="secondary"
+          @click="isExportModalOpen = true"
+        />
+      </div>
     </div>
     <!-- Área do Organograma -->
     <div class="orgchart-wrapper">
@@ -75,6 +89,26 @@
         @clear="handleClearFilters"
         @update:modelValue="showFilterModal = $event"
       />
+      <DeleteVacancyModal
+        v-model:modelValue="showDeleteVacancyModal"
+        :nodeData="vacancyToDelete"
+        @confirm="handleDeleteVacancyConfirm"
+      />
+      <DeleteEmployeeModal
+        v-model:modelValue="showDeleteEmployeeModal"
+        :nodeData="employeeToDelete"
+        @confirm="handleDeleteEmployeeConfirm"
+      />
+      <ShareModal
+        v-model="isShareModalOpen"
+        :orgchart="orgchart"
+        @share="handleShare"
+      />
+      <ExportModal
+        v-model="isExportModalOpen"
+        :orgchart="orgchart"
+        @export="handleExport"
+      />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -113,6 +147,10 @@ import ViewSuccessionPlanModal from 'src/components/modal/ViewSuccessionPlanModa
 import SubmitChangesModal from 'src/components/modal/SubmitChangesModal.vue';
 import ChangeLogModal from 'src/components/modal/ChangeLogModal.vue';
 import FilterModal from 'src/components/modal/FilterModal.vue';
+import DeleteVacancyModal from 'src/components/modal/DeleteVacancyModal.vue';
+import DeleteEmployeeModal from 'src/components/modal/DeleteEmployeeModal.vue';
+import ShareModal from 'src/components/modal/ShareModal.vue';
+import ExportModal from 'src/components/modal/ExportModal.vue';
 
 export default {
   components: {
@@ -125,6 +163,10 @@ export default {
     SubmitChangesModal,
     ChangeLogModal,
     FilterModal,
+    DeleteEmployeeModal,
+    DeleteVacancyModal,
+    ShareModal,
+    ExportModal,
   },
   setup() {
     const route = useRoute();
@@ -136,10 +178,16 @@ export default {
     const showViewSuccessionPlanModal = ref(false);
     const showSubmitChangesModal = ref(false);
     const showChangeLogModal = ref(false);
+    const showDeleteVacancyModal = ref(false);
+    const showDeleteEmployeeModal = ref(false);
+    const isShareModalOpen = ref(false);
+    const isExportModalOpen = ref(false);
 
     const successionPlanData = ref([]);
     const employeeData = ref({});
     const addJobInitialData = ref({});
+    const vacancyToDelete = ref({});
+    const employeeToDelete = ref({});
 
     const showFilterModal = ref(false);
     const filterData = ref({
@@ -219,6 +267,24 @@ export default {
       closeViewSuccessionPlanModal();
     };
 
+    const handleDeleteVacancyConfirm = (nodeId) => {
+      console.log('chamando delete para vaga com ID:', nodeId);
+    };
+
+    const handleDeleteEmployeeConfirm = (nodeId) => {
+      console.log('Exclusão confirmada para funcionário com ID:', nodeId);
+    };
+
+    const handleShare = (email) => {
+      console.log('Compartilhar organograma com o email:', email);
+      isShareModalOpen.value = false;
+    };
+
+    const handleExport = (id) => {
+      console.log('Exportando organograma', id);
+      isExportModalOpen.value = false;
+    };
+
     onMounted(() => {
       loadOrgChart();
 
@@ -272,6 +338,30 @@ export default {
             job_ids: event.data.job_ids,
           };
           showFilterModal.value = true;
+        }
+
+        if (
+          event.data.type === 'openModal' &&
+          event.data.action === 'deleteVacancy'
+        ) {
+          showDeleteVacancyModal.value = true;
+          vacancyToDelete.value = {
+            id: event.data.nodeId,
+            name: event.data.nodeName,
+            position: event.data.position,
+          };
+        }
+
+        if (
+          event.data.type === 'openModal' &&
+          event.data.action === 'deleteEmployee'
+        ) {
+          showDeleteEmployeeModal.value = true;
+          employeeToDelete.value = {
+            id: event.data.nodeId,
+            name: event.data.nodeName,
+            position: event.data.position,
+          };
         }
 
         if (event.data && event.data.type === 'orgchart-modified') {
@@ -342,6 +432,16 @@ export default {
       filterData,
       handleApplyFilters,
       handleClearFilters,
+      showDeleteVacancyModal,
+      vacancyToDelete,
+      showDeleteEmployeeModal,
+      employeeToDelete,
+      handleDeleteEmployeeConfirm,
+      handleDeleteVacancyConfirm,
+      isShareModalOpen,
+      isExportModalOpen,
+      handleShare,
+      handleExport,
     };
   },
 };
