@@ -14,9 +14,9 @@
 
       <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
-        <h2 class="modal-title">Excluir Funcionário</h2>
+        <h2 class="modal-title">Remover Funcionário</h2>
         <p class="modal-text">
-          Deseja realmente excluir o funcionário
+          Deseja realmente remover o funcionário
           <strong>{{ nodeToDelete.name }}</strong
           >?
         </p>
@@ -30,7 +30,7 @@
           @click="closeModal"
         />
         <ButtonComponent
-          label="Excluir"
+          label="Remover"
           variant="secondary"
           @click="confirmDelete"
         />
