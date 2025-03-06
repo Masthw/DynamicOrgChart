@@ -121,9 +121,10 @@
       return;
     }
     if (orgChartId === '1') {
-      document.querySelectorAll('.controls .icon-button').forEach((button) => {
-        button.style.display = 'none';
-      });
+      const organizeButton = document.getElementById('enableDragButton');
+      if (organizeButton) {
+        organizeButton.style.display = 'none';
+      }
     }
 
     const orgChartData = getOrgChartData();
