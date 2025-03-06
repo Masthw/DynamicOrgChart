@@ -503,6 +503,33 @@
     }
   }
 
+  //REMOVER vaga
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'confirmDeleteVacancy') {
+      console.log(
+        'Organograma recebeu evento de exclusão de vaga:',
+        event.data
+      );
+      const nodeId = event.data.nodeId;
+      deleteVacancy(nodeId);
+    }
+  });
+
+  function deleteVacancy(nodeId) {
+    if (chart) {
+      const nodeIndex = modifiedData.findIndex(
+        (node) => String(node.id) === String(nodeId)
+      );
+      if (nodeIndex !== -1) {
+        modifiedData.splice(nodeIndex, 1);
+        chart.data(modifiedData);
+        chart.render();
+        saveChartState(getOrgChartIdFromURL());
+        console.log('Vaga removida:', nodeId);
+      }
+    }
+  }
+
   //BUSCA
   window.addEventListener('message', function (event) {
     if (typeof event.data === 'string') {
@@ -697,6 +724,32 @@
     );
   }
 
+  //remove and delete logic
+  function deleteNode(nodeId) {
+    if (chart) {
+      const nodeIndex = modifiedData.findIndex(
+        (node) => String(node.id) === String(nodeId)
+      );
+
+      if (nodeIndex !== -1) {
+        const node = modifiedData[nodeIndex];
+        const action = node.name === '?' ? 'deleteVacancy' : 'deleteEmployee';
+        window.parent.postMessage(
+          {
+            type: 'openModal',
+            action: action,
+            nodeId: nodeId,
+            nodeName: node.name,
+            position: node.position,
+          },
+          '*'
+        );
+      } else {
+        console.error(`Node com ID ${nodeId} não encontrado.`);
+      }
+    }
+  }
+
   function generateContent(d) {
     const orgChartId = getOrgChartIdFromURL();
     const shouldShowButtons = orgChartId !== '1';
@@ -767,7 +820,7 @@
           <span class="tooltip">Ver Plano de Sucessão</span>
         </button>
                   <button class="control-btn" onclick="deleteNode(${d.data.id}); event.stopPropagation();">
-                   <img src="src/assets/icons/delete.png" alt="Adicionar Departamento" />
+                     <img src="src/assets/icons/delete.png" alt="Remove" />
                    <span class="tooltip">Remover</span>
                  </button>
       </div>
