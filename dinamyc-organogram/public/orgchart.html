@@ -209,7 +209,13 @@
           bottom: d2.y + d2.height,
         };
 
-        if (cP.midX > cPInner.left && cP.midX < cPInner.right && cP.midY > cPInner.top && cP.midY < cPInner.bottom && this.classList.contains('droppable')) {
+        if (
+          cP.midX > cPInner.left &&
+          cP.midX < cPInner.right &&
+          cP.midY > cPInner.top &&
+          cP.midY < cPInner.bottom &&
+          this.classList.contains('droppable')
+        ) {
           dropNode = d2;
           return d2;
         }
@@ -708,10 +714,14 @@
         padding-top:${imageDiffVert - 2}px;
         padding-left:1px;
         padding-right:1px'>
-                <div class="content-container"  onclick="Employee(${d.data.id}, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${d.width - 2}px;height:${
+                <div class="content-container"  onclick="Employee(${
+                  d.data.id
+                }, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${d.width - 2}px;height:${
       d.height - imageDiffVert
     }px;border-radius:10px;border: ${d.data._highlighted || d.data._upToTheRootHighlighted ? '5px solid #ff3700"' : '1px solid #E4E2E9"'}>
-                  <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(d)};">
+                  <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(
+                    d
+                  )};">
                     </div>
                   </div>
                     <div  style="margin-top:${-imageDiffVert - 20}px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" >
