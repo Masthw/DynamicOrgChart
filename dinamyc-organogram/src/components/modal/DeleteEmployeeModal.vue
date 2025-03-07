@@ -1,24 +1,19 @@
 <template>
   <q-dialog v-model="isOpen" persistent>
     <q-card class="delete-modal">
-      <!-- Ícone centralizado no topo -->
       <div class="icon-wrapper">
         <div class="icon-container">
           <img src="/src/assets/icons/delete.png" alt="Excluir" class="modal-icon" />
         </div>
       </div>
-
-      <!-- Cabeçalho do Modal -->
       <q-card-section class="modal-header">
-        <h2 class="modal-title">Remover Funcionário</h2>
+        <h2 class="modal-title">Remover Empregado</h2>
         <p class="modal-text">
-          Deseja realmente remover o funcionário
+          Deseja realmente remover o empregado
           <strong>{{ nodeToDelete.name }}</strong
           >?
         </p>
       </q-card-section>
-
-      <!-- Rodapé do Modal: Botões -->
       <q-card-actions class="button-container">
         <ButtonComponent label="Cancelar" variant="primary" @click="closeModal" />
         <ButtonComponent label="Remover" variant="secondary" @click="confirmDelete" />
