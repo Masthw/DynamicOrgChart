@@ -49,6 +49,7 @@
       <DeleteEmployeeModal v-model:modelValue="showDeleteEmployeeModal" :nodeData="employeeToDelete" @confirm="handleDeleteEmployeeConfirm" />
       <ShareModal v-model="isShareModalOpen" :orgchart="orgchart" @share="handleShare" />
       <ExportModal v-model="isExportModalOpen" :orgchart="orgchart" @export="handleExport" />
+      <TutorialModal v-model:modelValue="showTutorialModal" @finish="handleTutorialFinish" />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -86,6 +87,7 @@ import DeleteVacancyModal from 'src/components/modal/DeleteVacancyModal.vue';
 import DeleteEmployeeModal from 'src/components/modal/DeleteEmployeeModal.vue';
 import ShareModal from 'src/components/modal/ShareModal.vue';
 import ExportModal from 'src/components/modal/ExportModal.vue';
+import TutorialModal from 'src/components/modal/TutorialModal.vue';
 
 export default {
   components: {
@@ -102,6 +104,7 @@ export default {
     DeleteVacancyModal,
     ShareModal,
     ExportModal,
+    TutorialModal,
   },
   setup() {
     const route = useRoute();
@@ -117,6 +120,7 @@ export default {
     const showDeleteEmployeeModal = ref(false);
     const isShareModalOpen = ref(false);
     const isExportModalOpen = ref(false);
+    const showTutorialModal = ref(false);
 
     const successionPlanData = ref([]);
     const employeeData = ref({});
@@ -220,8 +224,17 @@ export default {
       isExportModalOpen.value = false;
     };
 
+    function getOrgChartIdFromURL() {
+      return route.params.id;
+    }
+
     onMounted(() => {
       loadOrgChart();
+
+      const orgChartId = getOrgChartIdFromURL();
+      if (orgChartId && localStorage.getItem(`tutorialShown_${orgChartId}`) !== 'true') {
+        showTutorialModal.value = true;
+      }
 
       window.addEventListener('message', (event) => {
         console.log('Mensagem recebida no OrgChartPage:', event.data);
@@ -283,6 +296,14 @@ export default {
         }
       });
     });
+
+    const handleTutorialFinish = () => {
+      const orgChartId = getOrgChartIdFromURL();
+      if (orgChartId) {
+        localStorage.setItem(`tutorialShown_${orgChartId}`, 'true');
+      }
+      showTutorialModal.value = false;
+    };
 
     const handleApplyFilters = (filters) => {
       const iframe = document.querySelector('iframe.orgchart-iframe');
@@ -354,6 +375,8 @@ export default {
       isExportModalOpen,
       handleShare,
       handleExport,
+      showTutorialModal,
+      handleTutorialFinish,
     };
   },
 };
