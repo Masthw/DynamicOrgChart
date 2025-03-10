@@ -1,5 +1,5 @@
 <template>
-  <button :class="['custom-button', variant]" @click="$emit('click')">
+  <button :class="['custom-button', variant]" @click="$emit('click', $event)">
     <img v-if="icon" :src="icon" :alt="label" class="button-icon" />
     <span class="button-text">{{ label }}</span>
   </button>
