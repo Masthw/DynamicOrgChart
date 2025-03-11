@@ -11,11 +11,11 @@
           <div class="node-actions">
             <!-- Botões apenas com ícones e tooltip via title -->
             <div class="button-wrapper">
-              <ButtonComponent class="icon-only" icon="/src/assets/icons/arrow.png" variant="secondary" @click="handleReallocate(node)" />
+              <ButtonComponent class="icon-only" label="" icon="/src/assets/icons/arrow.png" variant="secondary" @click="handleReallocate(node)" />
               <span class="button-tooltip">Realocar</span>
             </div>
             <div class="button-wrapper">
-              <ButtonComponent class="icon-only" icon="/src/assets/icons/delete.png" variant="primary" @click="handleRemove(node)" />
+              <ButtonComponent class="icon-only" label="" icon="/src/assets/icons/delete.png" variant="primary" @click="handleRemove(node)" />
               <span class="button-tooltip">Desligar</span>
             </div>
           </div>
@@ -58,6 +58,7 @@ function handleRemove(node) {
   position: fixed;
   top: 0;
   right: 0;
+  left: 0;
   bottom: 0;
   display: flex;
   justify-content: flex-end;
@@ -72,9 +73,7 @@ function handleRemove(node) {
   border-radius: 8px;
   width: 350px;
   margin-right: 20px;
-  margin-left: 20px;
   max-width: 100%;
-  border: 1px solid $orange;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
 }
