@@ -50,6 +50,8 @@
       <ShareModal v-model="isShareModalOpen" :orgchart="orgchart" @share="handleShare" />
       <ExportModal v-model="isExportModalOpen" :orgchart="orgchart" @export="handleExport" />
       <TutorialModal v-model:modelValue="showTutorialModal" @finish="handleTutorialFinish" />
+      <div id="nodePool" @click="openPoolList"><img src="src/assets/icons/box.png" alt="Pool Icon" /></div>
+      <NodeModal v-if="modalVisible" :nodes="poolNodes" @close="closePoolModal" />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -88,6 +90,7 @@ import DeleteEmployeeModal from 'src/components/modal/DeleteEmployeeModal.vue';
 import ShareModal from 'src/components/modal/ShareModal.vue';
 import ExportModal from 'src/components/modal/ExportModal.vue';
 import TutorialModal from 'src/components/modal/TutorialModal.vue';
+import NodeModal from 'src/components/modal/NodeModal.vue';
 
 export default {
   components: {
@@ -105,6 +108,7 @@ export default {
     ShareModal,
     ExportModal,
     TutorialModal,
+    NodeModal,
   },
   setup() {
     const route = useRoute();
@@ -128,6 +132,28 @@ export default {
     const vacancyToDelete = ref({});
     const employeeToDelete = ref({});
 
+    //poolNode
+    const poolNodes = ref([]);
+    const modalVisible = ref(false);
+
+    function openPoolList() {
+      modalVisible.value = true;
+    }
+    function closePoolModal() {
+      modalVisible.value = false;
+    }
+
+    function addNodeToPool(nodeData) {
+      const completeData = {
+        id: nodeData.id,
+        name: nodeData.name,
+        image: nodeData.image,
+        ...nodeData,
+      };
+
+      poolNodes.value.push(completeData);
+      console.log('Pool atualizado:', poolNodes.value);
+    }
     const showFilterModal = ref(false);
     const filterData = ref({
       positions: [],
@@ -288,6 +314,42 @@ export default {
             position: event.data.position,
           };
         }
+        if (event.data && event.data.type === 'nodeDropped') {
+          const { nodeData, nodeLeft, nodeRight, nodeTop, nodeBottom } = event.data;
+          const nodePoolEl = document.getElementById('nodePool');
+
+          if (nodePoolEl) {
+            const poolRect = nodePoolEl.getBoundingClientRect();
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+
+            const extraWidth = 120;
+            const extraHeight = 50;
+
+            const poolLeft = poolRect.left + scrollX - extraWidth / 2;
+            const poolRight = poolRect.right + scrollX + extraWidth / 2;
+            const poolTop = poolRect.top + scrollY - extraHeight / 2;
+            const poolBottom = poolRect.bottom + scrollY + extraHeight / 2;
+
+            const iframeEl = document.querySelector('iframe.orgchart-iframe');
+            let absoluteNodeLeft = nodeLeft;
+            let absoluteNodeRight = nodeRight;
+            let absoluteNodeTop = nodeTop;
+            let absoluteNodeBottom = nodeBottom;
+
+            if (iframeEl) {
+              const iframeRect = iframeEl.getBoundingClientRect();
+              absoluteNodeLeft += iframeRect.left;
+              absoluteNodeRight += iframeRect.left;
+              absoluteNodeTop += iframeRect.top;
+              absoluteNodeBottom += iframeRect.top;
+            }
+
+            if (absoluteNodeRight >= poolLeft && absoluteNodeLeft <= poolRight && absoluteNodeBottom >= poolTop && absoluteNodeTop <= poolBottom) {
+              addNodeToPool(nodeData);
+            }
+          }
+        }
 
         if (event.data && event.data.type === 'orgchart-modified') {
           const { id, modifiedDate } = event.data;
@@ -377,6 +439,10 @@ export default {
       handleExport,
       showTutorialModal,
       handleTutorialFinish,
+      modalVisible,
+      openPoolList,
+      closePoolModal,
+      poolNodes,
     };
   },
 };
@@ -445,5 +511,29 @@ export default {
   font-size: 14px;
   color: $gray;
   font-weight: bold;
+}
+
+#nodePool {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 100px;
+  height: 100px;
+  background-color: $orange;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  font-weight: bold;
+}
+
+img {
+  height: 35px;
+  width: 35px;
+  filter: brightness(0) invert(1);
 }
 </style>

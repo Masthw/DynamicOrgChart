@@ -42,16 +42,16 @@
         const totalPeople = node.data._totalSubordinates;
         const totalDepartments = countDepartments(node);
         return `
-        <div class="button-content">
-          <span class="people">
-           <img src="src/assets/icons/person.png"/> ${totalPeople}
-          </span>
-          <span class="separator">|</span>
-          <span class="departments">
-           <img src="src/assets/icons/corporate_fare.png"/> ${totalDepartments}
-          </span>
-        </div>
-      `;
+          <div class="button-content">
+            <span class="people">
+             <img src="src/assets/icons/person.png"/> ${totalPeople}
+            </span>
+            <span class="separator">|</span>
+            <span class="departments">
+             <img src="src/assets/icons/corporate_fare.png"/> ${totalDepartments}
+            </span>
+          </div>
+        `;
       })
       .nodeEnter(function (node) {
         d3.select(this).call(
@@ -232,12 +232,27 @@
     document.querySelector('.chart-container').classList.remove('dragging-active');
     d3.select(element).classed('dragging', false);
 
-    if (!dropNode) {
-      chart.render();
-      return;
-    }
+    const nodeRect = element.getBoundingClientRect();
+    const nodeWidth = nodeRect.width;
+    const nodeHeight = nodeRect.height;
+    const nodeLeft = nodeRect.left;
+    const nodeRight = nodeRect.right;
+    const nodeTop = nodeRect.top;
+    const nodeBottom = nodeRect.bottom;
 
-    if (dragEvent.subject.parent.id === dropNode.id) {
+    window.parent.postMessage(
+      {
+        type: 'nodeDropped',
+        nodeData: dragEvent.subject.data,
+        nodeLeft,
+        nodeRight,
+        nodeTop,
+        nodeBottom,
+      },
+      '*'
+    );
+
+    if (!dropNode || dragEvent.subject.parent.id === dropNode.id) {
       chart.render();
       return;
     }
@@ -707,63 +722,63 @@
     const color = '#FFFFFF';
     const imageDiffVert = 27;
     return `
-        <div class="node-container" style='
-        width:${d.width}px;
-        height:${d.height}px;
-        padding-top:${imageDiffVert - 2}px;
-        padding-left:1px;
-        padding-right:1px'>
-                <div class="content-container"  onclick="Employee(${
-                  d.data.id
-                }, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${d.width - 2}px;height:${
+          <div class="node-container" style='
+          width:${d.width}px;
+          height:${d.height}px;
+          padding-top:${imageDiffVert - 2}px;
+          padding-left:1px;
+          padding-right:1px'>
+                  <div class="content-container"  onclick="Employee(${
+                    d.data.id
+                  }, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${d.width - 2}px;height:${
       d.height - imageDiffVert
     }px;border-radius:10px;border: ${d.data._highlighted || d.data._upToTheRootHighlighted ? '5px solid #ff3700"' : '1px solid #E4E2E9"'}>
-                  <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(
-                    d
-                  )};">
+                    <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(
+                      d
+                    )};">
+                      </div>
                     </div>
+                      <div  style="margin-top:${-imageDiffVert - 20}px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" >
+                      </div>
+                      <div style="margin-top:${-imageDiffVert - 20}px;">
+                        <img src=" ${d.data.image}" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
+                      </div>
+                      <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${d.data.name}
+                      </div>
+                      <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.position} </div>
+                      <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.job_id} </div>
+                      <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.department_name} </div>
                   </div>
-                    <div  style="margin-top:${-imageDiffVert - 20}px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" >
-                    </div>
-                    <div style="margin-top:${-imageDiffVert - 20}px;">
-                      <img src=" ${d.data.image}" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
-                    </div>
-                    <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${d.data.name}
-                    </div>
-                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.position} </div>
-                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.job_id} </div>
-                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.department_name} </div>
-                </div>
-                 ${
-                   shouldShowButtons
-                     ? `
-                 <div class="node-controls">
-                   <button class="control-btn" onclick="addJob(${d.data.id}, '${d.data.name}'); event.stopPropagation();">
-                     <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
-                     <span class="tooltip">Adicionar Vaga</span>
-                   </button>
-                   <button class="control-btn" onclick="Employee(${d.data.id}, false); event.stopPropagation();">
-                     <img src="src/assets/icons/person_add.png" alt="Adicionar Empregado" />
-                     <span class="tooltip">Adicionar Empregado</span>
-                   </button>
-                   <button class="control-btn" onclick="addDepartment(${d.data.id}); event.stopPropagation();">
-                     <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
-                     <span class="tooltip">Adicionar Departamento</span>
-                   </button>
-                   <button class="control-btn" onclick="viewSuccessionPlan(${d.data.id}); event.stopPropagation();">
-                     <img src="src/assets/icons/lan.png" alt="Ver Plano de Sucessão" />
-                     <span class="tooltip">Ver Plano de Sucessão</span>
-                   </button>
-                    <button class="control-btn" onclick="deleteNode(${d.data.id}); event.stopPropagation();">
-                     <img src="src/assets/icons/delete.png" alt="Remove" />
-                     <span class="tooltip">Remover</span>
-                   </button>
+                   ${
+                     shouldShowButtons
+                       ? `
+                   <div class="node-controls">
+                     <button class="control-btn" onclick="addJob(${d.data.id}, '${d.data.name}'); event.stopPropagation();">
+                       <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
+                       <span class="tooltip">Adicionar Vaga</span>
+                     </button>
+                     <button class="control-btn" onclick="Employee(${d.data.id}, false); event.stopPropagation();">
+                       <img src="src/assets/icons/person_add.png" alt="Adicionar Empregado" />
+                       <span class="tooltip">Adicionar Empregado</span>
+                     </button>
+                     <button class="control-btn" onclick="addDepartment(${d.data.id}); event.stopPropagation();">
+                       <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
+                       <span class="tooltip">Adicionar Departamento</span>
+                     </button>
+                     <button class="control-btn" onclick="viewSuccessionPlan(${d.data.id}); event.stopPropagation();">
+                       <img src="src/assets/icons/lan.png" alt="Ver Plano de Sucessão" />
+                       <span class="tooltip">Ver Plano de Sucessão</span>
+                     </button>
+                      <button class="control-btn" onclick="deleteNode(${d.data.id}); event.stopPropagation();">
+                       <img src="src/assets/icons/delete.png" alt="Remove" />
+                       <span class="tooltip">Remover</span>
+                     </button>
+                   </div>
+                   `
+                       : ''
+                   }
                  </div>
-                 `
-                     : ''
-                 }
-               </div>
-    `;
+      `;
   }
 </script>
 <div class="controls">
