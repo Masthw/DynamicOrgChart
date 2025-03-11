@@ -50,7 +50,7 @@
       <ShareModal v-model="isShareModalOpen" :orgchart="orgchart" @share="handleShare" />
       <ExportModal v-model="isExportModalOpen" :orgchart="orgchart" @export="handleExport" />
       <TutorialModal v-model:modelValue="showTutorialModal" @finish="handleTutorialFinish" />
-      <div id="nodePool" @click="openPoolList"><img src="src/assets/icons/box.png" alt="Pool Icon" /></div>
+      <div id="nodePool" @click="openPoolList" :class="{ active: poolActive }"><img src="src/assets/icons/box.png" alt="Pool Icon" /></div>
       <NodeModal v-if="modalVisible" :nodes="poolNodes" @close="closePoolModal" />
     </div>
     <div class="subtitle-container">
@@ -134,6 +134,7 @@ export default {
 
     //poolNode
     const poolNodes = ref([]);
+    const poolActive = ref(false);
     const modalVisible = ref(false);
 
     function openPoolList() {
@@ -346,7 +347,11 @@ export default {
             }
 
             if (absoluteNodeRight >= poolLeft && absoluteNodeLeft <= poolRight && absoluteNodeBottom >= poolTop && absoluteNodeTop <= poolBottom) {
+              poolActive.value = true;
               addNodeToPool(nodeData);
+              setTimeout(() => {
+                poolActive.value = false;
+              }, 1500);
             }
           }
         }
@@ -443,6 +448,7 @@ export default {
       openPoolList,
       closePoolModal,
       poolNodes,
+      poolActive,
     };
   },
 };
@@ -524,11 +530,36 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: $white;
   cursor: pointer;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   font-weight: bold;
+}
+
+#nodePool.active {
+  background-color: $white;
+  border: 1px solid $orange;
+  animation: rotatePulse 1.5s ease-in-out infinite;
+
+  img {
+    filter: brightness(0) saturate(100%) invert(28%) sepia(81%) saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
+  }
+}
+
+@keyframes rotatePulse {
+  0% {
+    transform: scale(1.1) rotate(0deg);
+    background-color: $white;
+  }
+  50% {
+    transform: scale(1.1) rotate(180deg);
+    background-color: $white;
+  }
+  100% {
+    transform: scale(1.1) rotate(360deg);
+    background-color: $orange;
+  }
 }
 
 img {
