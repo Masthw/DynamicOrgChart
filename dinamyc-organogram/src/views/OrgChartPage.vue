@@ -144,7 +144,14 @@ export default {
       modalVisible.value = false;
     }
 
+    function updatePoolStorage() {
+      const orgChartId = getOrgChartIdFromURL();
+      localStorage.setItem(`nodePool_${orgChartId}`, JSON.stringify(poolNodes.value));
+    }
+
     function addNodeToPool(nodeData) {
+      if (nodeData.name === '?') return;
+
       const completeData = {
         id: nodeData.id,
         name: nodeData.name,
@@ -154,6 +161,11 @@ export default {
 
       poolNodes.value.push(completeData);
       console.log('Pool atualizado:', poolNodes.value);
+      const orgchartIframe = window.parent.document.querySelector('iframe.orgchart-iframe');
+      if (orgchartIframe && orgchartIframe.contentWindow) {
+        orgchartIframe.contentWindow.postMessage({ type: 'nodeCleared', data: completeData }, '*');
+      }
+      updatePoolStorage();
     }
     const showFilterModal = ref(false);
     const filterData = ref({
@@ -261,6 +273,11 @@ export default {
       const orgChartId = getOrgChartIdFromURL();
       if (orgChartId && localStorage.getItem(`tutorialShown_${orgChartId}`) !== 'true') {
         showTutorialModal.value = true;
+      }
+      const storedPool = localStorage.getItem(`nodePool_${orgChartId}`);
+      if (storedPool) {
+        poolNodes.value = JSON.parse(storedPool);
+        console.log('Pool carregado do localStorage:', poolNodes.value);
       }
 
       window.addEventListener('message', (event) => {

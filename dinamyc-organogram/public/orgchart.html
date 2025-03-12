@@ -232,6 +232,11 @@
     document.querySelector('.chart-container').classList.remove('dragging-active');
     d3.select(element).classed('dragging', false);
 
+    if (dragEvent.subject.data.name === '?') {
+      chart.render();
+      return;
+    }
+
     const nodeRect = element.getBoundingClientRect();
     const nodeWidth = nodeRect.width;
     const nodeHeight = nodeRect.height;
@@ -452,6 +457,41 @@
       },
       '*'
     );
+  }
+
+  //Limpar pessoa da vaga
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'nodeCleared') {
+      console.log('Organograma recebeu nodeCleared:', event.data);
+      const clearedNodeData = event.data.data;
+      updateNodeAsVacancy(clearedNodeData);
+    }
+  });
+
+  function updateNodeAsVacancy(clearedNodeData) {
+    if (chart) {
+      let nodeFound = false;
+
+      const currentData = chart.data();
+      currentData.forEach((node) => {
+        if (node.id === clearedNodeData.id) {
+          node.name = '?';
+          node.image = 'src/assets/images/add_node.png';
+          node.email = '';
+          node.lastName = '';
+          node.hire_date = '';
+          nodeFound = true;
+        }
+      });
+      if (nodeFound) {
+        chart.data(currentData);
+        chart.render();
+        saveChartState(getOrgChartIdFromURL());
+        console.log('Node atualizado para vaga:', clearedNodeData.id);
+      } else {
+        console.warn('Node não encontrado para atualizar:', clearedNodeData.id);
+      }
+    }
   }
 
   //Adicionar vaga
