@@ -155,7 +155,6 @@ onMounted(() => {
     if (index !== -1) {
       orgcharts.value[index].modifiedDate = modifiedDate;
       localStorage.setItem('orgcharts', JSON.stringify(orgcharts.value, null, 0));
-      console.log(`HomePage atualizou o orgchart ${numId} com data ${modifiedDate}`);
     }
   };
 
