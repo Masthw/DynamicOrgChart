@@ -50,7 +50,13 @@
       <ShareModal v-model="isShareModalOpen" :orgchart="orgchart" @share="handleShare" />
       <ExportModal v-model="isExportModalOpen" :orgchart="orgchart" @export="handleExport" />
       <TutorialModal v-model:modelValue="showTutorialModal" @finish="handleTutorialFinish" />
-      <div id="nodePool" @click="openPoolList" :class="{ active: poolActive }"><img src="src/assets/icons/box.png" alt="Pool Icon" /></div>
+      <div id="nodePool" @click="openPoolList" :class="{ active: poolActive }">
+        <img src="src/assets/icons/box.png" alt="Pool Icon" />
+        <span class="pool-text"
+          >Não <br />
+          Designados</span
+        >
+      </div>
       <NodeModal v-if="modalVisible" :nodes="poolNodes" @close="closePoolModal" />
     </div>
     <div class="subtitle-container">
@@ -545,6 +551,7 @@ export default {
   background-color: $orange;
   border-radius: 50%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   color: $white;
@@ -552,36 +559,45 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   font-weight: bold;
+  perspective: 1000px;
+}
+
+.pool-text {
+  display: flex;
+  text-align: center;
+  font-size: 10px;
+  color: $white;
+}
+
+#nodePool.active .pool-text {
+  opacity: 0;
 }
 
 #nodePool.active {
   background-color: $white;
   border: 1px solid $orange;
-  animation: rotatePulse 1.5s ease-in-out infinite;
+  animation: coinFlip 1.5s ease-in-out infinite;
 
   img {
     filter: brightness(0) saturate(100%) invert(28%) sepia(81%) saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
   }
 }
 
-@keyframes rotatePulse {
+@keyframes coinFlip {
   0% {
-    transform: scale(1.1) rotate(0deg);
-    background-color: $white;
+    transform: rotateY(0deg);
   }
   50% {
-    transform: scale(1.1) rotate(180deg);
-    background-color: $white;
+    transform: rotateY(180deg);
   }
   100% {
-    transform: scale(1.1) rotate(360deg);
-    background-color: $orange;
+    transform: rotateY(360deg);
   }
 }
 
 img {
-  height: 35px;
-  width: 35px;
+  height: 40px;
+  width: 40px;
   filter: brightness(0) invert(1);
 }
 </style>
