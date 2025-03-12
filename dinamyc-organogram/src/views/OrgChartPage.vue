@@ -57,6 +57,7 @@
           Designados</span
         >
       </div>
+      <JustifyMoveModal v-model="isJustifyMoveModalOpen" :employeeData="selectedNode" @confirm="confirmMove" />
       <NodeModal v-if="modalVisible" :nodes="poolNodes" @close="closePoolModal" />
     </div>
     <div class="subtitle-container">
@@ -97,6 +98,7 @@ import ShareModal from 'src/components/modal/ShareModal.vue';
 import ExportModal from 'src/components/modal/ExportModal.vue';
 import TutorialModal from 'src/components/modal/TutorialModal.vue';
 import NodeModal from 'src/components/modal/NodeModal.vue';
+import JustifyMoveModal from 'src/components/modal/JustifyMoveModal.vue';
 
 export default {
   components: {
@@ -115,6 +117,7 @@ export default {
     ExportModal,
     TutorialModal,
     NodeModal,
+    JustifyMoveModal,
   },
   setup() {
     const route = useRoute();
@@ -131,6 +134,8 @@ export default {
     const isShareModalOpen = ref(false);
     const isExportModalOpen = ref(false);
     const showTutorialModal = ref(false);
+    const isJustifyMoveModalOpen = ref(false);
+    const selectedNode = ref(null);
 
     const successionPlanData = ref([]);
     const employeeData = ref({});
@@ -155,8 +160,26 @@ export default {
       localStorage.setItem(`nodePool_${orgChartId}`, JSON.stringify(poolNodes.value));
     }
 
+    function openMoveModal(nodeData) {
+      selectedNode.value = nodeData;
+      isJustifyMoveModalOpen.value = true;
+    }
+
+    function confirmMove({ justification }) {
+      if (!selectedNode.value) return;
+
+      const nodeWithJustification = {
+        ...selectedNode.value,
+        justification,
+      };
+      addNodeToPool(nodeWithJustification);
+      isJustifyMoveModalOpen.value = false;
+    }
+
     function addNodeToPool(nodeData) {
-      if (nodeData.name === '?') return;
+      if (nodeData.name === '?' || poolNodes.value.some((node) => node.id === nodeData.id)) {
+        return;
+      }
 
       const completeData = {
         id: nodeData.id,
@@ -164,14 +187,17 @@ export default {
         image: nodeData.image,
         ...nodeData,
       };
-
+      poolActive.value = true;
       poolNodes.value.push(completeData);
-      console.log('Pool atualizado:', poolNodes.value);
+
       const orgchartIframe = window.parent.document.querySelector('iframe.orgchart-iframe');
       if (orgchartIframe && orgchartIframe.contentWindow) {
         orgchartIframe.contentWindow.postMessage({ type: 'nodeCleared', data: completeData }, '*');
       }
       updatePoolStorage();
+      setTimeout(() => {
+        poolActive.value = false; // Remove a animação e o estilo ativo após 1.5 segundos
+      }, 1500);
     }
     const showFilterModal = ref(false);
     const filterData = ref({
@@ -370,18 +396,13 @@ export default {
             }
 
             if (absoluteNodeRight >= poolLeft && absoluteNodeLeft <= poolRight && absoluteNodeBottom >= poolTop && absoluteNodeTop <= poolBottom) {
-              poolActive.value = true;
-              addNodeToPool(nodeData);
-              setTimeout(() => {
-                poolActive.value = false;
-              }, 1500);
+              openMoveModal(nodeData);
             }
           }
         }
 
         if (event.data && event.data.type === 'orgchart-modified') {
           const { id, modifiedDate } = event.data;
-          console.log('OrgChartPage recebeu mensagem:', event.data);
           emitter.emit('orgchart-modified', { id, modifiedDate });
         }
       });
@@ -472,6 +493,10 @@ export default {
       closePoolModal,
       poolNodes,
       poolActive,
+      openMoveModal,
+      isJustifyMoveModalOpen,
+      confirmMove,
+      selectedNode,
     };
   },
 };
