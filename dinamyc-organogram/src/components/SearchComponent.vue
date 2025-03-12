@@ -1,6 +1,6 @@
 <template>
   <div class="search-component">
-    <input type="text" :placeholder="placeholder" @input="onInput" />
+    <input name="search" type="text" :placeholder="placeholder" @input="onInput" />
     <img src="src/assets/icons/search.png" alt="Buscar" class="search-icon" />
   </div>
 </template>
