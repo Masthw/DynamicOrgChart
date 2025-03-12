@@ -22,11 +22,14 @@
         </div>
       </div>
     </div>
+    <EmployeeTerminationModal v-model="showTerminationModal" :employeeData="selectedEmployee" @confirm="handleTerminationConfirm" />
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import ButtonComponent from '../ButtonComponent.vue';
+import EmployeeTerminationModal from './EmployeeTerminationModal.vue';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps({
@@ -38,6 +41,9 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'reallocate', 'remove']);
 
+const showTerminationModal = ref(false);
+const selectedEmployee = ref(null);
+
 function closeModal() {
   emit('close');
 }
@@ -48,8 +54,20 @@ function handleReallocate(node) {
 }
 
 function handleRemove(node) {
-  console.log('Remover node:', node);
-  emit('remove', node);
+  selectedEmployee.value = node;
+  showTerminationModal.value = true;
+}
+
+function handleTerminationConfirm({ justification }) {
+  console.log(justification);
+  if (selectedEmployee.value) {
+    emit('remove', {
+      ...selectedEmployee.value,
+      terminationReason: justification,
+    });
+    selectedEmployee.value = null;
+    showTerminationModal.value = false;
+  }
 }
 </script>
 
@@ -65,6 +83,14 @@ function handleRemove(node) {
   align-items: center;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.5);
+}
+
+.terminate-modal {
+  z-index: 10001;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .modal {

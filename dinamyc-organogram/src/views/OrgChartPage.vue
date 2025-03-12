@@ -58,7 +58,7 @@
         >
       </div>
       <JustifyMoveModal v-model="isJustifyMoveModalOpen" :employeeData="selectedNode" @confirm="confirmMove" />
-      <NodeModal v-if="modalVisible" :nodes="poolNodes" @close="closePoolModal" />
+      <NodeModal v-if="modalVisible" :nodes="poolNodes" @close="closePoolModal" @remove="handleRemovePoolNode" />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -153,6 +153,13 @@ export default {
     }
     function closePoolModal() {
       modalVisible.value = false;
+    }
+
+    function handleRemovePoolNode(employee) {
+      // Remove o empregado do poolNodes filtrando pelo id
+      poolNodes.value = poolNodes.value.filter((node) => node.id !== employee.id);
+      updatePoolStorage();
+      console.log('Empregado removido do pool:', employee.id);
     }
 
     function updatePoolStorage() {
@@ -497,6 +504,7 @@ export default {
       isJustifyMoveModalOpen,
       confirmMove,
       selectedNode,
+      handleRemovePoolNode,
     };
   },
 };
