@@ -196,9 +196,9 @@ export default {
 }
 
 .logo {
-  height: 40px;
+  height: 50px;
+  width: 180px;
   margin-right: 20px;
-  margin-bottom: 5px;
 }
 
 .home-icon {
