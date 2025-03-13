@@ -11,7 +11,13 @@
           <div class="node-actions">
             <!-- Botões apenas com ícones e tooltip via title -->
             <div class="button-wrapper">
-              <ButtonComponent class="icon-only" label="" icon="/src/assets/icons/arrow.png" variant="secondary" @click="handleReallocate(node)" />
+              <ButtonComponent
+                class="icon-only"
+                label=""
+                icon="/src/assets/icons/arrow.png"
+                variant="secondary"
+                @click="openReallocationModal(node)"
+              />
               <span class="button-tooltip">Realocar</span>
             </div>
             <div class="button-wrapper">
@@ -22,6 +28,12 @@
         </div>
       </div>
     </div>
+    <ReallocateModal
+      v-model="showReallocateModal"
+      :employee="selectedEmployeeForReallocation"
+      :vacancies="vacancies"
+      @confirm="handleReallocateConfirm"
+    />
     <EmployeeTerminationModal v-model="showTerminationModal" :employeeData="selectedEmployee" @confirm="handleTerminationConfirm" />
   </div>
 </template>
@@ -30,6 +42,7 @@
 import { ref } from 'vue';
 import ButtonComponent from '../ButtonComponent.vue';
 import EmployeeTerminationModal from './EmployeeTerminationModal.vue';
+import ReallocateModal from './ReallocateModal.vue';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps({
@@ -37,10 +50,13 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  vacancies: { type: Array, default: () => [] },
 });
 
 const emit = defineEmits(['close', 'reallocate', 'remove']);
 
+const showReallocateModal = ref(false);
+const selectedEmployeeForReallocation = ref(null);
 const showTerminationModal = ref(false);
 const selectedEmployee = ref(null);
 
@@ -48,9 +64,13 @@ function closeModal() {
   emit('close');
 }
 
-function handleReallocate(node) {
-  console.log('Realocar para node:', node);
-  emit('reallocate', node);
+function openReallocationModal(employee) {
+  selectedEmployeeForReallocation.value = employee;
+  showReallocateModal.value = true;
+}
+
+function handleReallocateConfirm({ employee, vacancyId }) {
+  emit('reallocate', { employee, vacancyId });
 }
 
 function handleRemove(node) {

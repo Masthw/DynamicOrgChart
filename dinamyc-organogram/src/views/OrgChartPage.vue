@@ -58,7 +58,14 @@
         >
       </div>
       <JustifyMoveModal v-model="isJustifyMoveModalOpen" :employeeData="selectedNode" @confirm="confirmMove" />
-      <NodeModal v-if="modalVisible" :nodes="poolNodes" @close="closePoolModal" @remove="handleRemovePoolNode" />
+      <NodeModal
+        v-if="modalVisible"
+        :nodes="poolNodes"
+        :vacancies="vacancyNodes"
+        @reallocate="handleReallocation"
+        @close="closePoolModal"
+        @remove="handleRemovePoolNode"
+      />
     </div>
     <div class="subtitle-container">
       <div class="subtitle-item">
@@ -143,6 +150,8 @@ export default {
     const vacancyToDelete = ref({});
     const employeeToDelete = ref({});
 
+    const vacancyNodes = ref([]);
+
     //poolNode
     const poolNodes = ref([]);
     const poolActive = ref(false);
@@ -150,8 +159,39 @@ export default {
 
     function openPoolList() {
       modalVisible.value = true;
+      const orgchartIframe = window.parent.document.querySelector('iframe.orgchart-iframe');
+      if (orgchartIframe && orgchartIframe.contentWindow) {
+        orgchartIframe.contentWindow.postMessage({ type: 'getVacancies' }, '*');
+      }
     }
     function closePoolModal() {
+      modalVisible.value = false;
+    }
+
+    //realocar
+    function handleReallocation({ employee, vacancyId }) {
+      console.log('Realocando funcionário:', employee, vacancyId);
+      const updatedNodeData = {
+        id: vacancyId,
+        name: employee.name,
+        image: employee.image,
+        email: employee.email,
+        lastName: employee.lastName,
+        hire_date: employee.hire_date,
+        type: 'employee',
+      };
+
+      // Envia o postMessage para o iframe do organograma
+      const orgchartIframe = window.parent.document.querySelector('iframe.orgchart-iframe');
+      if (orgchartIframe && orgchartIframe.contentWindow) {
+        orgchartIframe.contentWindow.postMessage({ type: 'updateNodeWithEmployee', data: updatedNodeData }, '*');
+        console.log('Enviando mensagem para atualizar o node com vacancyId:', vacancyId);
+      } else {
+        console.warn('Orgchart iframe não foi encontrado.');
+      }
+      poolNodes.value = poolNodes.value.filter((node) => node.id !== employee.id);
+      updatePoolStorage();
+
       modalVisible.value = false;
     }
 
@@ -321,7 +361,6 @@ export default {
       }
 
       window.addEventListener('message', (event) => {
-        console.log('Mensagem recebida no OrgChartPage:', event.data);
         if (event.data.type === 'openModal' && event.data.action === 'employee') {
           console.log('Evento openModal para Employee detectado. Dados:', event.data.employee);
           employeeData.value = event.data.employee;
@@ -408,7 +447,10 @@ export default {
             }
           }
         }
-
+        if (event.data && event.data.type === 'updateVacancies') {
+          console.log('Atualizando vagas no NodeModal:', event.data.vacancies);
+          vacancyNodes.value = event.data.vacancies;
+        }
         if (event.data && event.data.type === 'orgchart-modified') {
           const { id, modifiedDate } = event.data;
           emitter.emit('orgchart-modified', { id, modifiedDate });
@@ -513,6 +555,8 @@ export default {
       confirmMove,
       selectedNode,
       handleRemovePoolNode,
+      vacancyNodes,
+      handleReallocation,
     };
   },
 };

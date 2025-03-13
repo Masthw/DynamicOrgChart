@@ -459,6 +459,55 @@
     );
   }
 
+  function getVacancyNodes() {
+    if (!chart) return [];
+
+    return chart.data().filter((node) => node.name === '?' || node.type === 'vacancy');
+  }
+
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'getVacancies') {
+      console.log('Solicitação de vagas recebida');
+      const vacancies = getVacancyNodes();
+      window.parent.postMessage({ type: 'updateVacancies', vacancies }, '*');
+    }
+  });
+
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'updateNodeWithEmployee') {
+      console.log('Organograma recebeu updateNodeWithEmployee:', event.data.data);
+      const updatedNodeData = event.data.data;
+      updateNodeWithEmployee(updatedNodeData);
+    }
+  });
+
+  function updateNodeWithEmployee(updatedNodeData) {
+    if (chart) {
+      let nodeFound = false;
+      const currentData = chart.data();
+      currentData.forEach((node) => {
+        if (node.id === updatedNodeData.id) {
+          node.name = updatedNodeData.name;
+          node.image = updatedNodeData.image;
+          node.email = updatedNodeData.email;
+          node.lastName = updatedNodeData.lastName;
+          node.hire_date = updatedNodeData.hire_date;
+          node.type = 'employee';
+          nodeFound = true;
+        }
+      });
+      if (nodeFound) {
+        chart.data(currentData);
+        chart.render();
+        saveChartState(getOrgChartIdFromURL());
+        console.log('Node atualizado com dados do empregado:', updatedNodeData.id);
+        Employee(updatedNodeData.id, true);
+      } else {
+        console.warn('Node não encontrado para atualização:', updatedNodeData.id);
+      }
+    }
+  }
+
   //Limpar pessoa da vaga
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'nodeCleared') {
@@ -480,6 +529,7 @@
           node.email = '';
           node.lastName = '';
           node.hire_date = '';
+          node.type = 'vacancy';
           nodeFound = true;
         }
       });
@@ -671,6 +721,7 @@
 
   function Employee(nodeId, isEdit = false) {
     const employee = isEdit ? getEmployeeData(nodeId) : {};
+    console.log('Chamando Employee com nodeId:', nodeId, 'isEdit:', isEdit, 'employee:', employee);
     window.parent.postMessage(
       {
         type: 'openModal',
