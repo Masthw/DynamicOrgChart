@@ -50,7 +50,7 @@
       <ShareModal v-model="isShareModalOpen" :orgchart="orgchart" @share="handleShare" />
       <ExportModal v-model="isExportModalOpen" :orgchart="orgchart" @export="handleExport" />
       <TutorialModal v-model:modelValue="showTutorialModal" @finish="handleTutorialFinish" />
-      <div id="nodePool" @click="openPoolList" :class="{ active: poolActive }">
+      <div id="nodePool" v-if="orgchart && orgchart.id !== 1" @click="openPoolList" :class="{ active: poolActive }">
         <img src="src/assets/icons/box.png" alt="Pool Icon" />
         <span class="pool-text"
           >Não <br />
@@ -450,8 +450,15 @@ export default {
 
     watch(
       () => route.params.id,
-      () => {
+      (newId) => {
         loadOrgChart();
+        const storedPool = localStorage.getItem(`nodePool_${newId}`);
+        if (storedPool) {
+          poolNodes.value = JSON.parse(storedPool);
+          console.log('Pool carregado do localStorage:', poolNodes.value);
+        } else {
+          poolNodes.value = [];
+        }
       }
     );
 
