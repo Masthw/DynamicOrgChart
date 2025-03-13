@@ -193,6 +193,7 @@ export default {
         name: nodeData.name,
         image: nodeData.image,
         ...nodeData,
+        parentId: null,
       };
       poolActive.value = true;
       poolNodes.value.push(completeData);
@@ -203,7 +204,7 @@ export default {
       }
       updatePoolStorage();
       setTimeout(() => {
-        poolActive.value = false; // Remove a animação e o estilo ativo após 1.5 segundos
+        poolActive.value = false;
       }, 1500);
     }
     const showFilterModal = ref(false);
