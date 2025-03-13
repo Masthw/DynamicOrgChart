@@ -127,16 +127,18 @@ export default {
     this.loadOrgCharts();
     emitter.on('orgcharts-updated', this.loadOrgCharts);
     emitter.on('orgchart-selected', (id) => {
-      this.selectedOption = id;
+      this.selectedOption = Number(id);
     });
+    if (this.$route.params.id) {
+      this.selectedOption = Number(this.$route.params.id);
+    }
   },
-
   methods: {
     loadOrgCharts() {
       const storedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
       if (storedOrgCharts.length > 0) {
         this.options = storedOrgCharts.map((orgchart) => ({
-          value: orgchart.id,
+          value: Number(orgchart.id),
           label: orgchart.name,
         }));
       } else {
@@ -177,8 +179,13 @@ export default {
   watch: {
     selectedOption(newVal) {
       this.showSearch = newVal !== '';
-      if (newVal && this.$route.params.id !== newVal) {
+      if (newVal && this.$route.params.id != newVal) {
         this.$router.push({ path: `/orgchart/${newVal}`, force: true });
+      }
+    },
+    '$route.params.id'(newId) {
+      if (newId) {
+        this.selectedOption = Number(newId);
       }
     },
   },
