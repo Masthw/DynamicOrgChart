@@ -70,8 +70,8 @@ const selectedDepartmentIds = ref([]);
 const positionsOptions = computed(() => props.positions.map((p) => ({ label: p, value: p })));
 const departmentsOptions = computed(() =>
   props.departments.map((department) => ({
-    label: department,
-    value: department,
+    label: department.name,
+    value: department.name,
   }))
 );
 const departmentsIdsOptions = computed(() =>
@@ -82,7 +82,6 @@ const departmentsIdsOptions = computed(() =>
 );
 
 const isFormValid = computed(() => {
-  // Exemplo: formulário é válido mesmo sem seleção; ajuste conforme sua regra
   return true;
 });
 
@@ -115,7 +114,6 @@ function clearFilters() {
   emit('clear');
 }
 
-// Fecha o modal
 function closeModal() {
   emit('update:modelValue', false);
 }
