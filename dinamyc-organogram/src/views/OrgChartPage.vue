@@ -57,7 +57,7 @@
           Designados</span
         >
       </div>
-      <JustifyMoveModal v-model="isJustifyMoveModalOpen" :employeeData="selectedNode" @confirm="confirmMove" />
+      <JustifyMoveModal v-model="isJustifyMoveModalOpen" :employeeData="selectedNode" @confirm="handleJustifyConfirm" />
       <NodeModal
         v-if="modalVisible"
         :nodes="poolNodes"
@@ -142,7 +142,10 @@ export default {
     const isExportModalOpen = ref(false);
     const showTutorialModal = ref(false);
     const isJustifyMoveModalOpen = ref(false);
+
     const selectedNode = ref(null);
+    const selectedSourceNode = ref(null);
+    const selectedTargetNode = ref(null);
 
     const successionPlanData = ref([]);
     const employeeData = ref({});
@@ -166,6 +169,13 @@ export default {
     }
     function closePoolModal() {
       modalVisible.value = false;
+    }
+
+    function handleNodeSwapRequest(sourceNode, targetNode) {
+      selectedSourceNode.value = sourceNode;
+      selectedTargetNode.value = targetNode;
+      console.log(selectedTargetNode.value);
+      openMoveModal(selectedTargetNode.value);
     }
 
     //realocar
@@ -208,8 +218,16 @@ export default {
     }
 
     function openMoveModal(nodeData) {
-      selectedNode.value = nodeData;
+      selectedNode.value = { ...nodeData };
       isJustifyMoveModalOpen.value = true;
+    }
+
+    function handleJustifyConfirm({ justification }) {
+      if (selectedSourceNode.value && selectedTargetNode.value) {
+        confirmSwapMove({ justification });
+      } else {
+        confirmMove({ justification });
+      }
     }
 
     function confirmMove({ justification }) {
@@ -221,6 +239,41 @@ export default {
       };
       addNodeToPool(nodeWithJustification);
       isJustifyMoveModalOpen.value = false;
+    }
+
+    function confirmSwapMove({ justification }) {
+      console.log('chamando confirm swap', justification);
+      if (!selectedSourceNode.value || !selectedTargetNode.value) return;
+
+      const targetWithJustification = {
+        ...selectedTargetNode.value,
+        terminationReason: justification,
+      };
+      addNodeToPool(targetWithJustification);
+      isJustifyMoveModalOpen.value = false;
+
+      const updatedData = JSON.parse(
+        JSON.stringify({
+          id: selectedTargetNode.value.id,
+          name: selectedSourceNode.value.name,
+          image: selectedSourceNode.value.image,
+          email: selectedSourceNode.value.email,
+          lastName: selectedSourceNode.value.lastName,
+          hire_date: selectedSourceNode.value.hire_date,
+          type: 'employee',
+        })
+      );
+
+      const sourceNodeData = JSON.parse(JSON.stringify(selectedSourceNode.value));
+
+      const orgchartIframe = window.parent.document.querySelector('iframe.orgchart-iframe');
+      if (orgchartIframe && orgchartIframe.contentWindow) {
+        orgchartIframe.contentWindow.postMessage({ type: 'updateNodeWithEmployee', data: updatedData }, '*');
+        orgchartIframe.contentWindow.postMessage({ type: 'nodeCleared', data: sourceNodeData }, '*');
+      }
+
+      selectedSourceNode.value = null;
+      selectedTargetNode.value = null;
     }
 
     function addNodeToPool(nodeData) {
@@ -451,6 +504,11 @@ export default {
           console.log('Atualizando vagas no NodeModal:', event.data.vacancies);
           vacancyNodes.value = event.data.vacancies;
         }
+        if (event.data && event.data.type === 'nodeSwapRequest') {
+          console.log(event.data.sourceNode);
+          console.log(event.data.targetNode);
+          handleNodeSwapRequest(event.data.sourceNode, event.data.targetNode);
+        }
         if (event.data && event.data.type === 'orgchart-modified') {
           const { id, modifiedDate } = event.data;
           emitter.emit('orgchart-modified', { id, modifiedDate });
@@ -557,6 +615,10 @@ export default {
       handleRemovePoolNode,
       vacancyNodes,
       handleReallocation,
+      confirmSwapMove,
+      selectedTargetNode,
+      selectedSourceNode,
+      handleJustifyConfirm,
     };
   },
 };

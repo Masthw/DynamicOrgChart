@@ -236,6 +236,22 @@
       chart.render();
       return;
     }
+    const dropTarget = dropNode;
+
+    if ((dropTarget && dropTarget.data && dropTarget.data.name !== '?') || dropTarget.data.name !== undefined) {
+      window.parent.postMessage(
+        {
+          type: 'nodeSwapRequest',
+          sourceNode: dragEvent.subject.data,
+          targetNode: dropTarget.data,
+        },
+        '*'
+      );
+      dropNode = null;
+      dragNode = null;
+      chart.render();
+      return;
+    }
 
     const nodeRect = element.getBoundingClientRect();
     const nodeWidth = nodeRect.width;
@@ -501,7 +517,7 @@
         chart.render();
         saveChartState(getOrgChartIdFromURL());
         console.log('Node atualizado com dados do empregado:', updatedNodeData.id);
-        Employee(updatedNodeData.id, true);
+        /* Employee(updatedNodeData.id, true); */
       } else {
         console.warn('Node não encontrado para atualização:', updatedNodeData.id);
       }
