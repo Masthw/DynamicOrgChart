@@ -101,7 +101,11 @@ const saveChanges = () => {
   storedOrgCharts.push(duplicatedOrgChart);
   localStorage.setItem('orgcharts', JSON.stringify(storedOrgCharts));
 
-  console.log('Org chart duplicado:', duplicatedOrgChart);
+  const originalPoolNodes = JSON.parse(localStorage.getItem(`nodePool_${props.orgchart.id}`)) || [];
+  if (originalPoolNodes.length > 0) {
+    localStorage.setItem(`nodePool_${newId}`, JSON.stringify(originalPoolNodes));
+  }
+
   emit('save', duplicatedOrgChart);
   closeModal();
   isSaving.value = false;
