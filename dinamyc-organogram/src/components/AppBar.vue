@@ -156,11 +156,9 @@ export default {
     },
     toggleUserMenu() {
       this.showUserMenu = !this.showUserMenu;
-      console.log('showUserMenu:', this.showUserMenu);
     },
     toggleNotifications() {
       this.showNotifications = !this.showNotifications;
-      console.log('showNotifications:', this.showNotifications);
     },
     logout() {
       console.log('logout');

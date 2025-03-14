@@ -12,7 +12,6 @@
   let dragStartX;
   let dragStartY;
   let isDragStarting = false;
-
   let undoActions = [];
   let redoActions = [];
   let modifiedData = null;
@@ -69,7 +68,6 @@
       .container('.chart-container')
       .data(data)
       .render();
-
     addNodeEventListeners();
   }
 
@@ -79,7 +77,7 @@
       const savedData = localStorage.getItem(`orgChartData_${orgChartId}`);
       originalData = data;
       modifiedData = [...data];
-      initializeChart(data); // Inicializa o gráfico com os dados carregados
+      initializeChart(data);
     } else {
       console.error(`Dados do organograma com ID ${orgChartId} não encontrados.`);
     }
@@ -90,7 +88,6 @@
       updateChartData(event.data);
     }
   });
-
   function updateChartData(data) {
     chart.update();
   }
@@ -121,7 +118,6 @@
         organizeButton.style.display = 'none';
       }
     }
-
     const orgChartData = getOrgChartData();
     if (orgChartData) {
       initializeChart(orgChartData);
@@ -151,7 +147,6 @@
     dragStartX = x;
     dragStartY = parseFloat(dragEvent.y);
     isDragStarting = true;
-
     d3.select(element).classed('dragging', true);
   }
 
@@ -159,7 +154,6 @@
     if (!dragNode) {
       return;
     }
-
     const state = chart.getChartState();
     const g = d3.select(element);
 
@@ -171,7 +165,6 @@
       const descendants = dragEvent.subject.descendants();
       const linksToRemove = [...(descendants || []), dragEvent.subject];
       const nodesToRemove = descendants.filter((x) => x.data.id !== dragEvent.subject.id);
-
       state['linksWrapper']
         .selectAll('path.link')
         .data(linksToRemove, (d) => state.nodeId(d))
@@ -184,7 +177,6 @@
           .remove();
       }
     }
-
     dropNode = null;
     const cP = {
       width: dragEvent.subject.width,
@@ -238,15 +230,28 @@
     }
     const dropTarget = dropNode;
 
-    if ((dropTarget && dropTarget.data && dropTarget.data.name !== '?') || dropTarget.data.name !== undefined) {
-      window.parent.postMessage(
-        {
-          type: 'nodeSwapRequest',
-          sourceNode: dragEvent.subject.data,
-          targetNode: dropTarget.data,
-        },
-        '*'
-      );
+    if (dropTarget && dropTarget.data) {
+      //se já tiver uma pessoa
+      if (dropTarget.data.name === '?') {
+        window.parent.postMessage(
+          {
+            type: 'nodeSwapRequest',
+            sourceNode: dragEvent.subject.data,
+            targetNode: dropTarget.data,
+            skipJustifyModal: true,
+          },
+          '*'
+        );
+      } else {
+        window.parent.postMessage(
+          {
+            type: 'nodeSwapRequest',
+            sourceNode: dragEvent.subject.data,
+            targetNode: dropTarget.data,
+          },
+          '*'
+        );
+      }
       dropNode = null;
       dragNode = null;
       chart.render();
@@ -290,7 +295,6 @@
       id: dragEvent.subject.id,
       parentId: oldParentId,
     });
-
     dropNode = null;
     dragNode = null;
     chart.render();
@@ -328,7 +332,6 @@
       const node = data.find((x) => x.id === action.id);
       node.parentId = action.parentId;
     });
-
     disableDrag(false);
     chart.render();
   }
@@ -341,7 +344,6 @@
       const previousParentId = action.parentId;
       action.parentId = currentParentId;
       node.parentId = previousParentId;
-
       redoActions.push(action);
       chart.render();
       updateDragActions();
@@ -404,7 +406,6 @@
         traverse(child);
       });
     }
-
     return deptSet.size;
   }
 
@@ -453,8 +454,6 @@
     const positions = Array.from(positionsSet);
     const departments = Array.from(departmentsMap.values());
     const job_ids = Array.from(jobIdsSet);
-
-    console.log('Filter Data:', { positions, departments, job_ids });
     return { positions, departments, job_ids };
   }
 
@@ -483,7 +482,6 @@
 
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'getVacancies') {
-      console.log('Solicitação de vagas recebida');
       const vacancies = getVacancyNodes();
       window.parent.postMessage({ type: 'updateVacancies', vacancies }, '*');
     }
@@ -491,7 +489,6 @@
 
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'updateNodeWithEmployee') {
-      console.log('Organograma recebeu updateNodeWithEmployee:', event.data.data);
       const updatedNodeData = event.data.data;
       updateNodeWithEmployee(updatedNodeData);
     }
@@ -516,8 +513,7 @@
         chart.data(currentData);
         chart.render();
         saveChartState(getOrgChartIdFromURL());
-        console.log('Node atualizado com dados do empregado:', updatedNodeData.id);
-        /* Employee(updatedNodeData.id, true); */
+        Employee(updatedNodeData.id, true);
       } else {
         console.warn('Node não encontrado para atualização:', updatedNodeData.id);
       }
@@ -527,7 +523,6 @@
   //Limpar pessoa da vaga
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'nodeCleared') {
-      console.log('Organograma recebeu nodeCleared:', event.data);
       const clearedNodeData = event.data.data;
       updateNodeAsVacancy(clearedNodeData);
     }
@@ -553,7 +548,6 @@
         chart.data(currentData);
         chart.render();
         saveChartState(getOrgChartIdFromURL());
-        console.log('Node atualizado para vaga:', clearedNodeData.id);
       } else {
         console.warn('Node não encontrado para atualizar:', clearedNodeData.id);
       }
@@ -563,7 +557,6 @@
   //Adicionar vaga
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'confirmAddJob') {
-      console.log('Organograma recebeu:', event.data);
       const formData = event.data.data;
       const orgChartId = getOrgChartIdFromURL();
       addNode(formData, orgChartId);
@@ -590,8 +583,6 @@
         };
         chart.addNode(newNode);
         modifiedData.push(newNode);
-
-        console.log('Novo Node adicionado com ID:', newNodeId, 'ao Parent ID:', parentId, 'departamento:', department_name);
       }
       chart.data(modifiedData);
       chart.render();
@@ -602,7 +593,6 @@
   //REMOVER vaga
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'confirmDeleteVacancy') {
-      console.log('Organograma recebeu evento de exclusão de vaga:', event.data);
       const nodeId = event.data.nodeId;
       deleteVacancy(nodeId);
     }
@@ -616,7 +606,6 @@
         chart.data(modifiedData);
         chart.render();
         saveChartState(getOrgChartIdFromURL());
-        console.log('Vaga removida:', nodeId);
       }
     }
   }
@@ -737,7 +726,6 @@
 
   function Employee(nodeId, isEdit = false) {
     const employee = isEdit ? getEmployeeData(nodeId) : {};
-    console.log('Chamando Employee com nodeId:', nodeId, 'isEdit:', isEdit, 'employee:', employee);
     window.parent.postMessage(
       {
         type: 'openModal',
@@ -776,13 +764,9 @@
 
   function getChildren(nodeId) {
     const data = chart.getChartState().data;
-    console.log('Dados do organograma:', data);
-
     const children = data.filter((node) => {
       return String(node.parentId) === String(nodeId);
     });
-
-    console.log(`Filhos do nó ${nodeId}:`, children);
     return children;
   }
 
@@ -799,7 +783,7 @@
     );
   }
 
-  //remove and delete logic
+  //remove e delete
   function deleteNode(nodeId) {
     if (chart) {
       const nodeIndex = modifiedData.findIndex((node) => String(node.id) === String(nodeId));
@@ -909,15 +893,12 @@
     <button id="resetViewButton" class="icon-button" onclick="resetView()">Redefinir Visualização</button>
   </div>
 </div>
-
 <div id="dragActions" class="hide">
   <button id="finishDrag" class="icon-button" onclick="disableDrag()">Salvar</button>
   <button id="undoButton" class="icon-button" disabled onclick="undo()">Desfazer</button>
   <button id="redoButton" class="icon-button" disabled onclick="redo()">Refazer</button>
   <button id="cancelDrag" class="icon-button" onclick="cancelDrag()">Cancelar</button>
 </div>
-
 <div class="chart-container"></div>
 <div id="overlay" class="overlay"></div>
-
 <div id="modalOverlay" class="overlay"></div>

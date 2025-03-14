@@ -72,7 +72,6 @@ export default {
           justification: 'Possui os pré-requisitos.',
           date: '2025-02-18 11:15',
         },
-        // Adicione mais eventos conforme necessário
       ],
     };
   },

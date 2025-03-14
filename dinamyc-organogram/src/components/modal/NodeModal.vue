@@ -79,7 +79,6 @@ function handleRemove(node) {
 }
 
 function handleTerminationConfirm({ justification }) {
-  console.log(justification);
   if (selectedEmployee.value) {
     emit('remove', {
       ...selectedEmployee.value,

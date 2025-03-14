@@ -74,10 +74,8 @@ export default {
     toggleOption(option) {
       let newValue = [...this.modelValue];
       if (this.isSelected(option)) {
-        // Remove a opção se já estiver selecionada
         newValue = newValue.filter((val) => val !== option.value);
       } else {
-        // Adiciona a opção se não estiver selecionada
         newValue.push(option.value);
       }
       this.$emit('update:modelValue', newValue);

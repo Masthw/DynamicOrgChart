@@ -171,16 +171,18 @@ export default {
       modalVisible.value = false;
     }
 
-    function handleNodeSwapRequest(sourceNode, targetNode) {
+    function handleNodeSwapRequest(sourceNode, targetNode, skipJustifyModal = false) {
       selectedSourceNode.value = sourceNode;
       selectedTargetNode.value = targetNode;
-      console.log(selectedTargetNode.value);
-      openMoveModal(selectedTargetNode.value);
+      if (skipJustifyModal) {
+        confirmSwapMove({ justification: 'Movimento automático' });
+      } else {
+        openMoveModal(selectedTargetNode.value);
+      }
     }
 
     //realocar
     function handleReallocation({ employee, vacancyId }) {
-      console.log('Realocando funcionário:', employee, vacancyId);
       const updatedNodeData = {
         id: vacancyId,
         name: employee.name,
@@ -195,7 +197,6 @@ export default {
       const orgchartIframe = window.parent.document.querySelector('iframe.orgchart-iframe');
       if (orgchartIframe && orgchartIframe.contentWindow) {
         orgchartIframe.contentWindow.postMessage({ type: 'updateNodeWithEmployee', data: updatedNodeData }, '*');
-        console.log('Enviando mensagem para atualizar o node com vacancyId:', vacancyId);
       } else {
         console.warn('Orgchart iframe não foi encontrado.');
       }
@@ -206,10 +207,8 @@ export default {
     }
 
     function handleRemovePoolNode(employee) {
-      // Remove o empregado do poolNodes filtrando pelo id
       poolNodes.value = poolNodes.value.filter((node) => node.id !== employee.id);
       updatePoolStorage();
-      console.log('Empregado removido do pool:', employee.id);
     }
 
     function updatePoolStorage() {
@@ -242,7 +241,6 @@ export default {
     }
 
     function confirmSwapMove({ justification }) {
-      console.log('chamando confirm swap', justification);
       if (!selectedSourceNode.value || !selectedTargetNode.value) return;
 
       const targetWithJustification = {
@@ -331,7 +329,6 @@ export default {
 
     const openChangeLogModal = () => {
       showChangeLogModal.value = true;
-      console.log('estado do log modal:', showChangeLogModal.value);
     };
 
     const handleSubmitChanges = (email) => {
@@ -340,7 +337,6 @@ export default {
 
     const closeEmployeeModal = () => {
       showEmployeeModal.value = false;
-      console.log('Modal de Employee fechado');
     };
 
     const handleEmployeeConfirm = (data) => {
@@ -350,7 +346,6 @@ export default {
 
     const closeAddDepartmentModal = () => {
       showAddDepartmentModal.value = false;
-      console.log('Modal de AddDepartment fechado');
     };
 
     const handleAddDepartmentConfirm = (data) => {
@@ -360,7 +355,6 @@ export default {
 
     const closeAddJobModal = () => {
       showAddJobModal.value = false;
-      console.log('Modal de AddJob fechado');
     };
 
     const handleAddJobConfirm = (data) => {
@@ -370,7 +364,6 @@ export default {
 
     const closeViewSuccessionPlanModal = () => {
       showViewSuccessionPlanModal.value = false;
-      console.log('Modal succession fechado');
     };
 
     const handleViewSuccessionPlanConfirm = (data) => {
@@ -410,21 +403,17 @@ export default {
       const storedPool = localStorage.getItem(`nodePool_${orgChartId}`);
       if (storedPool) {
         poolNodes.value = JSON.parse(storedPool);
-        console.log('Pool carregado do localStorage:', poolNodes.value);
       }
 
       window.addEventListener('message', (event) => {
         if (event.data.type === 'openModal' && event.data.action === 'employee') {
-          console.log('Evento openModal para Employee detectado. Dados:', event.data.employee);
           employeeData.value = event.data.employee;
           showEmployeeModal.value = true;
         }
         if (event.data.action === 'addDepartment') {
-          console.log('Evento openModal para addDepartment detectado. NodeId:', event.data.nodeId);
           showAddDepartmentModal.value = true;
         }
         if (event.data.action === 'addJob') {
-          console.log('Evento openModal para addJob detectado. NodeId:', event.data.nodeId);
           addJobInitialData.value = {
             jobImmediateSuperior: event.data.name,
             nodeId: event.data.nodeId,
@@ -433,9 +422,7 @@ export default {
           showAddJobModal.value = true;
         }
         if (event.data.action === 'viewSuccessionPlan') {
-          console.log('Evento openModal para succession detectado. NodeId:', event.data.nodeId);
           successionPlanData.value = Array.isArray(event.data.children) ? event.data.children.slice(0, 4) : [];
-          console.log(successionPlanData.value);
           showViewSuccessionPlanModal.value = true;
         }
         if (event.data.action === 'filter') {
@@ -501,13 +488,10 @@ export default {
           }
         }
         if (event.data && event.data.type === 'updateVacancies') {
-          console.log('Atualizando vagas no NodeModal:', event.data.vacancies);
           vacancyNodes.value = event.data.vacancies;
         }
         if (event.data && event.data.type === 'nodeSwapRequest') {
-          console.log(event.data.sourceNode);
-          console.log(event.data.targetNode);
-          handleNodeSwapRequest(event.data.sourceNode, event.data.targetNode);
+          handleNodeSwapRequest(event.data.sourceNode, event.data.targetNode, event.data.skipJustifyModal || false);
         }
         if (event.data && event.data.type === 'orgchart-modified') {
           const { id, modifiedDate } = event.data;
@@ -556,7 +540,6 @@ export default {
         const storedPool = localStorage.getItem(`nodePool_${newId}`);
         if (storedPool) {
           poolNodes.value = JSON.parse(storedPool);
-          console.log('Pool carregado do localStorage:', poolNodes.value);
         } else {
           poolNodes.value = [];
         }

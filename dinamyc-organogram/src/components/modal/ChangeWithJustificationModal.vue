@@ -49,7 +49,7 @@ watch(
   (newVal) => {
     isOpen.value = newVal;
     if (newVal) {
-      justification.value = ''; // Reseta o campo ao abrir
+      justification.value = '';
     }
   },
   { immediate: true }

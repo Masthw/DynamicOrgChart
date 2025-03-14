@@ -146,7 +146,6 @@ onMounted(() => {
     modifiedDate: orgchart.modifiedDate || new Date().toLocaleDateString(),
     description: orgchart.description || '',
   }));
-  console.log(storedOrgCharts);
 
   const handleOrgchartModified = (data) => {
     const { id, modifiedDate } = data;
@@ -180,7 +179,6 @@ const addNewOrgChart = () => {
 };
 
 const openOrgChart = (id) => {
-  console.log(`Abrindo organograma com ID: ${id}`);
   emitter.emit('orgchart-selected', id);
   router.push(`/orgchart/${id}`);
 };
@@ -219,8 +217,7 @@ const updateOrgChart = ({ name, description, modifiedDate }) => {
   }
 };
 
-const handleDuplicate = (duplicatedOrgChart) => {
-  console.log('handleDuplicate chamado com:', duplicatedOrgChart);
+const handleDuplicate = () => {
   const updatedOrgCharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
   updateOrgCharts(updatedOrgCharts);
 };
@@ -233,7 +230,6 @@ const handleShare = (email) => {
 
 const handleExport = (id) => {
   console.log('Exportanto organograma', id);
-
   isExportModalOpen.value = false;
   selectedOrgChart.value = null;
 };
