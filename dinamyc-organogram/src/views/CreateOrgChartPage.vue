@@ -6,7 +6,7 @@
       <q-btn flat dense round icon="close" class="close-button" @click="goBack" />
 
       <!-- Logo -->
-      <img src="../assets/images/organiza_logo.png" alt="Logo" class="logo" />
+      <img src="../assets/images/organiza_ai_logo2.png" alt="Logo" class="logo" />
       <TextFieldComponent
         v-model="orgchartName"
         label="Nome da Simulação"
@@ -111,8 +111,6 @@ const goBack = () => {
 }
 
 .logo {
-  height: 100px;
-  margin: 0 auto 1rem;
   display: block;
   margin-bottom: 120px;
 }
