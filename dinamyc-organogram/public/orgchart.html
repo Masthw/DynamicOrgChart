@@ -17,6 +17,13 @@
   let modifiedData = null;
   let originalData = null;
 
+  /**
+   * Inicializa o organograma com os dados fornecidos.
+   * Aqui, também se configura a lógica de drag and drop e o layout.
+   *
+   * @param {Array} data - Dados do organograma.
+   */
+
   function initializeChart(data) {
     const chartContainer = document.querySelector('.chart-container');
     if (!chartContainer) {
@@ -28,6 +35,7 @@
     modifiedData = [...data];
     console.log(data);
 
+    // Configura o chart com dimensões, margens e funções de renderização
     chart = new d3.OrgChart()
       .nodeHeight((d) => 125)
       .nodeWidth((d) => 220 + 2)
@@ -41,18 +49,19 @@
         const totalPeople = node.data._totalSubordinates;
         const totalDepartments = countDepartments(node);
         return `
-          <div class="button-content">
-            <span class="people">
-             <img src="src/assets/icons/person.png"/> ${totalPeople}
-            </span>
-            <span class="separator">|</span>
-            <span class="departments">
-             <img src="src/assets/icons/corporate_fare.png"/> ${totalDepartments}
-            </span>
-          </div>
-        `;
+           <div class="button-content">
+             <span class="people">
+              <img src="src/assets/icons/person.png"/> ${totalPeople}
+             </span>
+             <span class="separator">|</span>
+             <span class="departments">
+              <img src="src/assets/icons/corporate_fare.png"/> ${totalDepartments}
+             </span>
+           </div>
+         `;
       })
       .nodeEnter(function (node) {
+        // Ativa o drag para nós quando o dragEnabled estiver true e o nó for marcado como 'draggable'
         d3.select(this).call(
           d3
             .drag()
@@ -63,12 +72,13 @@
         );
       })
       .nodeUpdate(function (d) {
+        // Por enquanto todos os nodes ficam droppable, isso deverá mudar de acordo com as regras de mudanças de posição do organgorama.
+        // no styles.css tem os outros estilos
         d3.select(this).classed('droppable', true).classed('draggable', true);
       })
       .container('.chart-container')
       .data(data)
       .render();
-    addNodeEventListeners();
   }
 
   window.addEventListener('hashchange', () => {
@@ -129,18 +139,10 @@
     }
   });
 
-  function addNodeEventListeners() {
-    const buttons = document.querySelectorAll('.node-options-btn');
-    buttons.forEach((button) => {
-      button.addEventListener('click', (event) => {
-        const nodeId = event.target.getAttribute('data-id');
-      });
-    });
-    chart.render();
-  }
-
   function onDragStart(element, dragEvent, node) {
     dragNode = node;
+
+    // Calcula a posição horizontal centralizada para o início do arrasto.
     const width = dragEvent.subject.width;
     const half = width / 2;
     const x = dragEvent.x - half;
@@ -150,6 +152,7 @@
     d3.select(element).classed('dragging', true);
   }
 
+  // Durante o arrasto, atualiza a posição do nó e verifica possíveis nós alvo.
   function onDrag(element, dragEvent) {
     if (!dragNode) {
       return;
@@ -178,6 +181,8 @@
       }
     }
     dropNode = null;
+
+    // Cria um objeto com as coordenadas atuais do nó arrastado.
     const cP = {
       width: dragEvent.subject.width,
       height: dragEvent.subject.height,
@@ -192,6 +197,8 @@
     const allNodes = d3.selectAll('g.node:not(.dragging)');
     allNodes.select('rect').attr('fill', 'none');
 
+    // Para cada nó que não está sendo arrastado, verifica se o centro do nó arrastado está sobre ele.
+    // Se estiver e o nó estiver marcado como droppable, define-o como dropNode e altera seu preenchimento.
     allNodes
       .filter(function (d2, i) {
         const cPInner = {
@@ -228,10 +235,12 @@
       chart.render();
       return;
     }
-    const dropTarget = dropNode;
 
+    // Se houve drop sobre outro nó (swap), processa a troca.
+    const dropTarget = dropNode;
     if (dropTarget && dropTarget.data) {
-      //se já tiver uma pessoa
+      // Se o nó de destino já está vazio, define a propriedade skipJustifyModal para evitar modal de justificativa.
+      // Porém isso deve ser de acordo com as regras de mudanã, se estiver vazio e for permitido.
       if (dropTarget.data.name === '?') {
         window.parent.postMessage(
           {
@@ -285,11 +294,19 @@
 
     d3.select(element).remove();
 
+    // Atualização padrão do chart após o drop, alterando o parentId do nó arrastado
+    // Note que essa funcionalidade não vai ser chamada pelas tratativas acima.
     const data = chart.getChartState().data;
     const node = data?.find((x) => x.id === dragEvent.subject.id);
     const oldParentId = node.parentId;
     node.parentId = dropNode.id;
 
+    // As ações de undo e redo abaixo são a implementação padrão da biblioteca d3-org-chart.
+    // Elas apenas registram as mudanças internas (parentId) e re-renderizam o chart.
+    // Note que essas ações NÃO refazem as mudanças externas que são emitidas via postMessage.
+    // Caso seja necessário implementar undo/redo para as atualizações externas (por exemplo,
+    // reverter a limpeza do nó enviado para o iframe), será preciso desenvolver uma nova funcionalidade,
+    // integrando com o backend para manter a consistência do estado.
     redoActions = [];
     undoActions.push({
       id: dragEvent.subject.id,
@@ -382,6 +399,8 @@
 
   function countDepartments(node) {
     const deptSet = new Set();
+
+    // Função recursiva para percorrer os filhos do nó.
     function traverse(n) {
       const children = n.children || n._children;
       if (children && children.length) {
@@ -409,6 +428,12 @@
     return deptSet.size;
   }
 
+  /**
+   * Recupera os dados do organograma armazenados no localStorage.
+   * Usa o ID do organograma (extraído da URL) como chave.
+   *
+   * @return {Array|null} Dados do organograma ou null se não encontrados.
+   */
   function getOrgChartData() {
     const orgChartId = getOrgChartIdFromURL();
     if (!orgChartId) {
@@ -424,6 +449,11 @@
     }
   }
 
+  /**
+   * Gera os dados de filtro (posições, departamentos e job_ids) a partir dos dados do organograma.
+   *
+   * @returns {Object} Objeto contendo arrays para positions, departments e job_ids.
+   */
   function getFilterData() {
     const data = getOrgChartData();
     if (!data || !Array.isArray(data)) {
@@ -462,6 +492,9 @@
     return filterData.departments || [];
   }
 
+  /**
+   * Abre o diálogo de filtro enviando os dados de filtro para a OrgChartPage.vue via postMessage.
+   */
   function openFilterDialog() {
     const filterData = getFilterData();
     window.parent.postMessage(
@@ -474,9 +507,13 @@
     );
   }
 
+  /**
+   * Retorna os nós que representam vagas, identificados por nome "?" ou tipo 'vacancy'.
+   *
+   * @returns {Array} Array de nós de vaga.
+   */
   function getVacancyNodes() {
     if (!chart) return [];
-
     return chart.data().filter((node) => node.name === '?' || node.type === 'vacancy');
   }
 
@@ -487,13 +524,12 @@
     }
   });
 
-  window.addEventListener('message', function (event) {
-    if (event.data && event.data.type === 'updateNodeWithEmployee') {
-      const updatedNodeData = event.data.data;
-      updateNodeWithEmployee(updatedNodeData);
-    }
-  });
-
+  /**
+   * Listener que atualiza um nó com as informações de um empregado.
+   * Essa função substitui os dados pessoais do nó e define seu tipo como 'employee'.
+   *
+   * @param {Object} updatedNodeData - Dados atualizados do empregado.
+   */
   function updateNodeWithEmployee(updatedNodeData) {
     if (chart) {
       let nodeFound = false;
@@ -513,21 +549,26 @@
         chart.data(currentData);
         chart.render();
         saveChartState(getOrgChartIdFromURL());
+        // Chama employee para exibir as informações do emprego e por exemplo, mudar o salário após a movimentação.
         Employee(updatedNodeData.id, true);
       } else {
         console.warn('Node não encontrado para atualização:', updatedNodeData.id);
       }
     }
   }
-
-  //Limpar pessoa da vaga
   window.addEventListener('message', function (event) {
-    if (event.data && event.data.type === 'nodeCleared') {
-      const clearedNodeData = event.data.data;
-      updateNodeAsVacancy(clearedNodeData);
+    if (event.data && event.data.type === 'updateNodeWithEmployee') {
+      const updatedNodeData = event.data.data;
+      updateNodeWithEmployee(updatedNodeData);
     }
   });
 
+  /**
+   * Atualiza um nó para representar uma vaga aberta.
+   * Limpa os dados pessoais e define o tipo como 'vacancy'.
+   *
+   * @param {Object} clearedNodeData - Dados do nó a ser limpo.
+   */
   function updateNodeAsVacancy(clearedNodeData) {
     if (chart) {
       let nodeFound = false;
@@ -553,16 +594,19 @@
       }
     }
   }
-
-  //Adicionar vaga
   window.addEventListener('message', function (event) {
-    if (event.data && event.data.type === 'confirmAddJob') {
-      const formData = event.data.data;
-      const orgChartId = getOrgChartIdFromURL();
-      addNode(formData, orgChartId);
+    if (event.data && event.data.type === 'nodeCleared') {
+      const clearedNodeData = event.data.data;
+      updateNodeAsVacancy(clearedNodeData);
     }
   });
 
+  /**
+   * Adiciona novas vagas ao organograma com base nos dados do formulário.
+   *
+   * @param {Object} formData - Dados do formulário para criação de vagas.
+   * @param {string|number} chartID - ID do organograma.
+   */
   function addNode(formData, chartID) {
     if (chart) {
       const parentId = formData.nodeId;
@@ -589,15 +633,19 @@
       saveChartState(chartID);
     }
   }
-
-  //REMOVER vaga
   window.addEventListener('message', function (event) {
-    if (event.data && event.data.type === 'confirmDeleteVacancy') {
-      const nodeId = event.data.nodeId;
-      deleteVacancy(nodeId);
+    if (event.data && event.data.type === 'confirmAddJob') {
+      const formData = event.data.data;
+      const orgChartId = getOrgChartIdFromURL();
+      addNode(formData, orgChartId);
     }
   });
 
+  /**
+   * Remove uma vaga do organograma com base no ID.
+   *
+   * @param {string|number} nodeId - ID do nó a ser removido.
+   */
   function deleteVacancy(nodeId) {
     if (chart) {
       const nodeIndex = modifiedData.findIndex((node) => String(node.id) === String(nodeId));
@@ -609,15 +657,23 @@
       }
     }
   }
-
-  //BUSCA
   window.addEventListener('message', function (event) {
-    if (typeof event.data === 'string') {
-      const searchTerm = event.data;
-      filterChart(searchTerm);
+    if (event.data && event.data.type === 'confirmDeleteVacancy') {
+      const nodeId = event.data.nodeId;
+      deleteVacancy(nodeId);
     }
   });
 
+  /**
+   * Filtra o organograma com base no termo de busca.
+   * - Converte o termo para minúsculas.
+   * - Limpa o destaque de todos os nós.
+   * - Percorre os dados do chart para marcar nós cujo nome, posição ou departamento
+   *   contenham o termo de busca.
+   * - Re-renderiza o chart e ajusta a visualização para caber no container.
+   *
+   * @param {string} searchTerm - O termo a ser buscado.
+   */
   function filterChart(searchTerm) {
     const value = searchTerm.toLowerCase();
     chart.clearHighlighting();
@@ -640,15 +696,23 @@
     });
     chart.render().fit();
   }
+  window.addEventListener('message', function (event) {
+    if (typeof event.data === 'string') {
+      const searchTerm = event.data;
+      filterChart(searchTerm);
+    }
+  });
 
   function resetView() {
-    if (chart.resetZoom) {
-      chart.resetZoom();
-    } else {
-      chart.data(originalData).render().fit();
-    }
+    chart.data(originalData).render().fit();
   }
 
+  /**
+   * Salva o estado atual do organograma no localStorage.
+   * Remove flags temporários (_highlighted) antes de salvar para manter os dados limpos.
+   *
+   * @param {string} id - ID do organograma (usado na chave do localStorage).
+   */
   function saveChartState(id) {
     if (chart) {
       const updatedData = [...modifiedData];
@@ -673,6 +737,12 @@
     }
   }
 
+  /**
+   * Retorna a cor do nó, buscando a cor do líder ou herdando a cor do pai.
+   *
+   * @param {Object} d - Nó do organograma.
+   * @returns {string} A cor definida para o nó.
+   */
   function getNodeColor(d) {
     if (!d.parent) {
       return '#000000';
@@ -686,6 +756,13 @@
     }
   }
 
+  /**
+   * Obtém ou gera uma cor para o líder com base em seu ID.
+   * Persiste as cores em localStorage para manter a consistência.
+   *
+   * @param {string} leaderId - ID do líder.
+   * @returns {string} Cor associada ao líder.
+   */
   function getLeaderColor(leaderId) {
     const storedColors = JSON.parse(localStorage.getItem('leaderColors')) || {};
 
@@ -719,11 +796,23 @@
     });
   });
 
+  /**
+   * Recupera os dados do empregado para um determinado nó, usando o ID.
+   *
+   * @param {string} nodeId - ID do nó.
+   * @returns {Object} Dados do empregado encontrado.
+   */
   function getEmployeeData(nodeId) {
     const data = chart.getChartState().data;
     return data.find((node) => String(node.id) === String(nodeId));
   }
 
+  /**
+   * Envia uma mensagem para abrir o modal do empregado.
+   *
+   * @param {string} nodeId - ID do nó.
+   * @param {boolean} isEdit - Indica se é para editar.
+   */
   function Employee(nodeId, isEdit = false) {
     const employee = isEdit ? getEmployeeData(nodeId) : {};
     window.parent.postMessage(
@@ -737,6 +826,11 @@
     );
   }
 
+  /**
+   * Envia uma mensagem para abrir o modal de adicionar departamento.
+   *
+   * @param {string} nodeId - ID do nó.
+   */
   function addDepartment(nodeId) {
     window.parent.postMessage(
       {
@@ -748,6 +842,13 @@
     );
   }
 
+  /**
+   * Envia uma mensagem para abrir o modal de adicionar vaga (job),
+   * passando também a lista de departamentos disponíveis.
+   *
+   * @param {string} nodeId - ID do nó.
+   * @param {string} name - Nome do nó (para referência).
+   */
   function addJob(nodeId, name) {
     const departments = getDepartments();
     window.parent.postMessage(
@@ -762,6 +863,12 @@
     );
   }
 
+  /**
+   * Retorna os filhos de um nó com base no parentId.
+   *
+   * @param {string} nodeId - ID do nó pai.
+   * @returns {Array} Array com os nós filhos.
+   */
   function getChildren(nodeId) {
     const data = chart.getChartState().data;
     const children = data.filter((node) => {
@@ -770,6 +877,12 @@
     return children;
   }
 
+  /**
+   * Envia uma mensagem para abrir o modal do plano de sucessão,
+   * passando os filhos do nó como candidatos.
+   *
+   * @param {string} nodeId - ID do nó.
+   */
   function viewSuccessionPlan(nodeId) {
     const children = getChildren(nodeId);
     window.parent.postMessage(
@@ -783,7 +896,12 @@
     );
   }
 
-  //remove e delete
+  /**
+   * Envia uma mensagem para abrir o modal de exclusão para um nó.
+   * O modal exibido dependerá se o nó representa uma vaga ou um empregado.
+   *
+   * @param {string} nodeId - ID do nó a ser removido.
+   */
   function deleteNode(nodeId) {
     if (chart) {
       const nodeIndex = modifiedData.findIndex((node) => String(node.id) === String(nodeId));
@@ -807,69 +925,76 @@
     }
   }
 
+  /**
+   * Gera o HTML para o conteúdo de cada nó do organograma.
+   * Utiliza as dimensões do nó e chama funções auxiliares para cores e demais informações.
+   *
+   * @param {Object} d - Dados do nó.
+   * @returns {string} HTML gerado para o nó.
+   */
   function generateContent(d) {
     const orgChartId = getOrgChartIdFromURL();
     const shouldShowButtons = orgChartId !== '1';
     const color = '#FFFFFF';
     const imageDiffVert = 27;
     return `
-          <div class="node-container" style='
-          width:${d.width}px;
-          height:${d.height}px;
-          padding-top:${imageDiffVert - 2}px;
-          padding-left:1px;
-          padding-right:1px'>
-                  <div class="content-container"  onclick="Employee(${
-                    d.data.id
-                  }, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${d.width - 2}px;height:${
+           <div class="node-container" style='
+           width:${d.width}px;
+           height:${d.height}px;
+           padding-top:${imageDiffVert - 2}px;
+           padding-left:1px;
+           padding-right:1px'>
+                   <div class="content-container"  onclick="Employee(${
+                     d.data.id
+                   }, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${d.width - 2}px;height:${
       d.height - imageDiffVert
     }px;border-radius:10px;border: ${d.data._highlighted || d.data._upToTheRootHighlighted ? '5px solid #ff3700"' : '1px solid #E4E2E9"'}>
-                    <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(
-                      d
-                    )};">
-                      </div>
-                    </div>
-                      <div  style="margin-top:${-imageDiffVert - 20}px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" >
-                      </div>
-                      <div style="margin-top:${-imageDiffVert - 20}px;">
-                        <img src=" ${d.data.image}" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
-                      </div>
-                      <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${d.data.name}
-                      </div>
-                      <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.position} </div>
-                      <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.job_id} </div>
-                      <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.department_name} </div>
-                  </div>
-                   ${
-                     shouldShowButtons
-                       ? `
-                   <div class="node-controls">
-                     <button class="control-btn" onclick="addJob(${d.data.id}, '${d.data.name}'); event.stopPropagation();">
-                       <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
-                       <span class="tooltip">Adicionar Vaga</span>
-                     </button>
-                     <button class="control-btn" onclick="Employee(${d.data.id}, false); event.stopPropagation();">
-                       <img src="src/assets/icons/person_add.png" alt="Adicionar Empregado" />
-                       <span class="tooltip">Adicionar Empregado</span>
-                     </button>
-                     <button class="control-btn" onclick="addDepartment(${d.data.id}); event.stopPropagation();">
-                       <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
-                       <span class="tooltip">Adicionar Departamento</span>
-                     </button>
-                     <button class="control-btn" onclick="viewSuccessionPlan(${d.data.id}); event.stopPropagation();">
-                       <img src="src/assets/icons/lan.png" alt="Ver Plano de Sucessão" />
-                       <span class="tooltip">Ver Plano de Sucessão</span>
-                     </button>
-                      <button class="control-btn" onclick="deleteNode(${d.data.id}); event.stopPropagation();">
-                       <img src="src/assets/icons/delete.png" alt="Remove" />
-                       <span class="tooltip">Remover</span>
-                     </button>
+                     <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(
+                       d
+                     )};">
+                       </div>
+                     </div>
+                       <div  style="margin-top:${-imageDiffVert - 20}px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" >
+                       </div>
+                       <div style="margin-top:${-imageDiffVert - 20}px;">
+                         <img src=" ${d.data.image}" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
+                       </div>
+                       <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${d.data.name}
+                       </div>
+                       <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.position} </div>
+                       <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.job_id} </div>
+                       <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.department_name} </div>
                    </div>
-                   `
-                       : ''
-                   }
-                 </div>
-      `;
+                    ${
+                      shouldShowButtons
+                        ? `
+                    <div class="node-controls">
+                      <button class="control-btn" onclick="addJob(${d.data.id}, '${d.data.name}'); event.stopPropagation();">
+                        <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
+                        <span class="tooltip">Adicionar Vaga</span>
+                      </button>
+                      <button class="control-btn" onclick="Employee(${d.data.id}, false); event.stopPropagation();">
+                        <img src="src/assets/icons/person_add.png" alt="Adicionar Empregado" />
+                        <span class="tooltip">Adicionar Empregado</span>
+                      </button>
+                      <button class="control-btn" onclick="addDepartment(${d.data.id}); event.stopPropagation();">
+                        <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
+                        <span class="tooltip">Adicionar Departamento</span>
+                      </button>
+                      <button class="control-btn" onclick="viewSuccessionPlan(${d.data.id}); event.stopPropagation();">
+                        <img src="src/assets/icons/lan.png" alt="Ver Plano de Sucessão" />
+                        <span class="tooltip">Ver Plano de Sucessão</span>
+                      </button>
+                       <button class="control-btn" onclick="deleteNode(${d.data.id}); event.stopPropagation();">
+                        <img src="src/assets/icons/delete.png" alt="Remove" />
+                        <span class="tooltip">Remover</span>
+                      </button>
+                    </div>
+                    `
+                        : ''
+                    }
+                  </div>
+       `;
   }
 </script>
 <div class="controls">
@@ -900,5 +1025,12 @@
   <button id="cancelDrag" class="icon-button" onclick="cancelDrag()">Cancelar</button>
 </div>
 <div class="chart-container"></div>
-<div id="overlay" class="overlay"></div>
-<div id="modalOverlay" class="overlay"></div>
+<svg width="0" height="0" style="position: absolute">
+  <defs>
+    <linearGradient id="justificationGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="13%" style="stop-color: #460a78; stop-opacity: 1" />
+      <stop offset="50%" style="stop-color: #e63c41; stop-opacity: 1" />
+      <stop offset="100%" style="stop-color: #f58746; stop-opacity: 1" />
+    </linearGradient>
+  </defs>
+</svg>
