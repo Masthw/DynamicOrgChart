@@ -155,13 +155,13 @@ export default {
 
     const vacancyNodes = ref([]);
 
-    //poolNode
     const poolNodes = ref([]);
     const poolActive = ref(false);
     const modalVisible = ref(false);
 
     function openPoolList() {
       modalVisible.value = true;
+      // Solicita ao iframe que retorne as vagas atuais para sincronização
       const orgchartIframe = window.parent.document.querySelector('iframe.orgchart-iframe');
       if (orgchartIframe && orgchartIframe.contentWindow) {
         orgchartIframe.contentWindow.postMessage({ type: 'getVacancies' }, '*');
@@ -181,7 +181,6 @@ export default {
       }
     }
 
-    //realocar
     function handleReallocation({ employee, vacancyId }) {
       const updatedNodeData = {
         id: vacancyId,
@@ -193,7 +192,6 @@ export default {
         type: 'employee',
       };
 
-      // Envia o postMessage para o iframe do organograma
       const orgchartIframe = window.parent.document.querySelector('iframe.orgchart-iframe');
       if (orgchartIframe && orgchartIframe.contentWindow) {
         orgchartIframe.contentWindow.postMessage({ type: 'updateNodeWithEmployee', data: updatedNodeData }, '*');
@@ -206,21 +204,28 @@ export default {
       modalVisible.value = false;
     }
 
-    function handleRemovePoolNode(employee) {
-      poolNodes.value = poolNodes.value.filter((node) => node.id !== employee.id);
-      updatePoolStorage();
-    }
-
+    /**
+     * Persiste o estado atual dos nós do pool no localStorage,
+     * usando o ID do organograma para identificar os dados.
+     */
     function updatePoolStorage() {
       const orgChartId = getOrgChartIdFromURL();
       localStorage.setItem(`nodePool_${orgChartId}`, JSON.stringify(poolNodes.value));
     }
 
+    /**
+     * Prepara o modal de justificativa para mover o empregado para o pool.
+     * Define o empregado selecionado e abre o modal de justificativa.
+     */
     function openMoveModal(nodeData) {
       selectedNode.value = { ...nodeData };
       isJustifyMoveModalOpen.value = true;
     }
 
+    /**
+     * Processa a confirmação do modal de justificativa para mover o empregado.
+     * Insere a justificativa no objeto do empregado e prossegue com a adição ao pool.
+     */
     function handleJustifyConfirm({ justification }) {
       if (selectedSourceNode.value && selectedTargetNode.value) {
         confirmSwapMove({ justification });
@@ -229,6 +234,10 @@ export default {
       }
     }
 
+    /**
+     * Adiciona o empregado (com justificativa) ao pool de nós,
+     * e desativa temporariamente a animação do pool.
+     */
     function confirmMove({ justification }) {
       if (!selectedNode.value) return;
 
@@ -240,6 +249,11 @@ export default {
       isJustifyMoveModalOpen.value = false;
     }
 
+    /**
+     * Processa a troca (swap) entre um nó fonte e um nó destino.
+     * Move o empregado do nó de destino para o pool e atualiza o nó destino com os dados do nó fonte,
+     * emitindo as mensagens para o iframe e limpando o nó fonte.
+     */
     function confirmSwapMove({ justification }) {
       if (!selectedSourceNode.value || !selectedTargetNode.value) return;
 
@@ -274,6 +288,10 @@ export default {
       selectedTargetNode.value = null;
     }
 
+    /**
+     * Adiciona o empregado ao pool, se ainda não estiver presente.
+     * Emite um postMessage para atualizar o iframe e persiste o novo estado.
+     */
     function addNodeToPool(nodeData) {
       if (nodeData.name === '?' || poolNodes.value.some((node) => node.id === nodeData.id)) {
         return;
@@ -304,6 +322,19 @@ export default {
       departments: [],
       job_ids: [],
     });
+
+    /**
+     * Remove um empregado do pool com base no ID e atualiza o armazenamento.
+     * Esse handler é acionado quando o NodeModal emite o evento "remove".
+     */
+    function handleRemovePoolNode(employee) {
+      poolNodes.value = poolNodes.value.filter((node) => node.id !== employee.id);
+      updatePoolStorage();
+    }
+
+    // ========================================================================
+    // Funções para manipulação do organograma e interações via postMessage
+    // ========================================================================
 
     const loadOrgChart = () => {
       const orgcharts = JSON.parse(localStorage.getItem('orgcharts')) || [];
@@ -389,13 +420,16 @@ export default {
       isExportModalOpen.value = false;
     };
 
+    /**
+     * Extrai o ID do organograma a partir da URL (hash).
+     * Retorna o ID como string ou null se inválido.
+     */
     function getOrgChartIdFromURL() {
       return route.params.id;
     }
 
     onMounted(() => {
       loadOrgChart();
-
       const orgChartId = getOrgChartIdFromURL();
       if (orgChartId && localStorage.getItem(`tutorialShown_${orgChartId}`) !== 'true') {
         showTutorialModal.value = true;
@@ -404,7 +438,7 @@ export default {
       if (storedPool) {
         poolNodes.value = JSON.parse(storedPool);
       }
-
+      // Listener para mensagens do iframe, processando diversas ações
       window.addEventListener('message', (event) => {
         if (event.data.type === 'openModal' && event.data.action === 'employee') {
           employeeData.value = event.data.employee;
@@ -433,7 +467,6 @@ export default {
           };
           showFilterModal.value = true;
         }
-
         if (event.data.type === 'openModal' && event.data.action === 'deleteVacancy') {
           showDeleteVacancyModal.value = true;
           vacancyToDelete.value = {
@@ -442,7 +475,6 @@ export default {
             position: event.data.position,
           };
         }
-
         if (event.data.type === 'openModal' && event.data.action === 'deleteEmployee') {
           showDeleteEmployeeModal.value = true;
           employeeToDelete.value = {
@@ -459,10 +491,8 @@ export default {
             const poolRect = nodePoolEl.getBoundingClientRect();
             const scrollX = window.scrollX || window.pageXOffset;
             const scrollY = window.scrollY || window.pageYOffset;
-
             const extraWidth = 120;
             const extraHeight = 50;
-
             const poolLeft = poolRect.left + scrollX - extraWidth / 2;
             const poolRight = poolRect.right + scrollX + extraWidth / 2;
             const poolTop = poolRect.top + scrollY - extraHeight / 2;
