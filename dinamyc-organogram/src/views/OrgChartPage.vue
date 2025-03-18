@@ -67,7 +67,7 @@
         @remove="handleRemovePoolNode"
       />
     </div>
-    <div class="subtitle-container">
+    <div class="subtitle-container" v-if="orgchart && orgchart.id !== 1">
       <div class="subtitle-item">
         <span class="subtitle-color subtitle-allowed"></span>
         <span class="subtitle-label">Simulação Permitida</span>
