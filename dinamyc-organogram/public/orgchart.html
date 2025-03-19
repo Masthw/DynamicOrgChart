@@ -65,7 +65,11 @@
         d3.select(this).call(
           d3
             .drag()
-            .filter(() => dragEnabled && this.classList.contains('draggable'))
+            .filter(function () {
+              // Verifica se o drag está habilitado, se o nó possui a classe 'draggable'
+              // e se o alvo do evento não está dentro de um elemento com classe "node-controls".
+              return dragEnabled && this.classList.contains('draggable') && !event.target.closest('.node-controls');
+            })
             .on('start', (d, node) => onDragStart(this, d, node))
             .on('drag', (dragEvent, node) => onDrag(this, dragEvent))
             .on('end', (d) => onDragEnd(this, d))
