@@ -7,7 +7,7 @@
         </div>
       </div>
       <q-card-section class="modal-header">
-        <h2 class="modal-title">Terminar Empregado</h2>
+        <h2 class="modal-title">Encerrar o Vínculo Empregatício</h2>
         <p class="modal-text">
           Deseja realmente encerrar o vínculo deste empregado com a empresa?<br />
           Informe a justificativa para essa decisão:
