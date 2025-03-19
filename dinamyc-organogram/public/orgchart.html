@@ -614,9 +614,12 @@
   function addNode(formData, chartID) {
     if (chart) {
       const parentId = formData.nodeId;
+      const existingVacancies = modifiedData.filter((node) => node.parentId === parentId && node.type === 'vacancy');
+
       const department_name = formData.job_department_name;
       for (let i = 0; i < formData.vacanciesCount; i++) {
         const newNodeId = String(Date.now() + i);
+        if (!existingVacancies.some((node) => node.id === newNodeId)) {
         const newNode = {
           id: newNodeId,
           parentId: parentId,
@@ -629,14 +632,16 @@
           type: 'vacancy',
           job_id: formData.job_id,
         };
-        chart.addNode(newNode);
         modifiedData.push(newNode);
+        }
       }
       chart.data(modifiedData);
       chart.render();
       saveChartState(chartID);
     }
   }
+  if (!window.hasEventListener) {
+    window.hasEventListener = true;
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'confirmAddJob') {
       const formData = event.data.data;
@@ -644,6 +649,7 @@
       addNode(formData, orgChartId);
     }
   });
+  }
 
   /**
    * Remove uma vaga do organograma com base no ID.
