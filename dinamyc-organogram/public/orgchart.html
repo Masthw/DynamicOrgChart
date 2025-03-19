@@ -231,6 +231,10 @@
     g.attr('transform', 'translate(' + dragStartX + ',' + dragStartY + ')');
   }
 
+  // Função que trata o fim do evento de arrasto.
+  // ATENÇÃO: Ainda é necessário implementar a lógica para exibição dos modais de simulação não permitida e simulação permitida com justificativa.
+  // Os modais podem ser localizados no diretório src/components/modal/
+  // Atualmente, a função apenas processa a troca de nós e emite eventos para o iframe.
   function onDragEnd(element, dragEvent) {
     document.querySelector('.chart-container').classList.remove('dragging-active');
     d3.select(element).classed('dragging', false);
