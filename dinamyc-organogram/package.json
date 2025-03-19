@@ -2,7 +2,7 @@
   "name": "dinamyc-orgchart",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "Dynamic OrgChart",
+  "productName": "Organiza.ai",
   "author": "Matheus dos Santos Soares <maverick17xd@gmail.com>",
   "private": true,
   "scripts": {
