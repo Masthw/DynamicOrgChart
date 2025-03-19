@@ -620,19 +620,19 @@
       for (let i = 0; i < formData.vacanciesCount; i++) {
         const newNodeId = String(Date.now() + i);
         if (!existingVacancies.some((node) => node.id === newNodeId)) {
-        const newNode = {
-          id: newNodeId,
-          parentId: parentId,
-          name: '?',
-          position: formData.job_title || '',
-          image: 'src/assets/images/add_node.png',
-          department_name: formData.job_department.name,
-          department_id: formData.job_department.id,
-          _centered: true,
-          type: 'vacancy',
-          job_id: formData.job_id,
-        };
-        modifiedData.push(newNode);
+          const newNode = {
+            id: newNodeId,
+            parentId: parentId,
+            name: '?',
+            position: formData.job_title || '',
+            image: 'src/assets/images/add_node.png',
+            department_name: formData.job_department.name,
+            department_id: formData.job_department.id,
+            _centered: true,
+            type: 'vacancy',
+            job_id: formData.job_id,
+          };
+          modifiedData.push(newNode);
         }
       }
       chart.data(modifiedData);
@@ -642,13 +642,13 @@
   }
   if (!window.hasEventListener) {
     window.hasEventListener = true;
-  window.addEventListener('message', function (event) {
-    if (event.data && event.data.type === 'confirmAddJob') {
-      const formData = event.data.data;
-      const orgChartId = getOrgChartIdFromURL();
-      addNode(formData, orgChartId);
-    }
-  });
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.type === 'confirmAddJob') {
+        const formData = event.data.data;
+        const orgChartId = getOrgChartIdFromURL();
+        addNode(formData, orgChartId);
+      }
+    });
   }
 
   /**
@@ -979,7 +979,7 @@
                       shouldShowButtons
                         ? `
                     <div class="node-controls">
-                      <button class="control-btn" onclick="addJob(${d.data.id}, '${d.data.name}'); event.stopPropagation();">
+                      <button class="control-btn" onclick="event.stopPropagation(); addJob(${d.data.id}, '${d.data.name}')">
                         <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
                         <span class="tooltip">Adicionar Vaga</span>
                       </button>
@@ -1035,6 +1035,7 @@
   <button id="cancelDrag" class="icon-button" onclick="cancelDrag()">Cancelar</button>
 </div>
 <div class="chart-container"></div>
+<!-- Svg para possibilitar o "import" do gradiente de mudanças permitidas com justificativa para o styles.css -->
 <svg width="0" height="0" style="position: absolute">
   <defs>
     <linearGradient id="justificationGradient" x1="0%" y1="0%" x2="100%" y2="0%">
