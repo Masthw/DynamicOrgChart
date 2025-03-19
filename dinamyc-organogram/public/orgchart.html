@@ -326,6 +326,8 @@
     dragEnabled = true;
     document.querySelector('.chart-container').classList.add('drag-enabled');
     document.getElementById('dragActions').classList.remove('hide');
+
+    updateNodeControlsVisibility();
   }
 
   function disableDrag(saveState = true) {
@@ -935,6 +937,15 @@
     }
   }
 
+  function updateNodeControlsVisibility() {
+    const chartContainer = document.querySelector('.chart-container');
+    if (dragEnabled) {
+      chartContainer.classList.add('drag-enabled');
+    } else {
+      chartContainer.classList.remove('drag-enabled');
+    }
+  }
+
   /**
    * Gera o HTML para o conteúdo de cada nó do organograma.
    * Utiliza as dimensões do nó e chama funções auxiliares para cores e demais informações.
@@ -978,7 +989,7 @@
                     ${
                       shouldShowButtons
                         ? `
-                    <div class="node-controls">
+                    <div class="node-controls node-controls-container">
                       <button class="control-btn" onclick="event.stopPropagation(); addJob(${d.data.id}, '${d.data.name}')">
                         <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
                         <span class="tooltip">Adicionar Vaga</span>

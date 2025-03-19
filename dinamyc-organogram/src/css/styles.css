@@ -52,7 +52,7 @@ svg:not(:root) {
   gap: 4px;
 }
 
-.node-container:hover .node-controls,
+.drag-enabled .node-container:hover .node-controls,
 .node-controls:hover {
   display: flex;
 }
