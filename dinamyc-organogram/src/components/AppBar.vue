@@ -1,6 +1,8 @@
 <template>
   <div class="app-bar">
-    <img src="../assets/images/organiza_ai_logo.png" alt="Logo" class="logo" />
+    <router-link to="/" class="logo-link">
+      <img src="../assets/images/organiza_ai_logo.png" alt="Logo" class="logo" @click="clearSelection" />
+    </router-link>
     <router-link to="/" class="home-icon">
       <div class="icon-button">
         <img src="../assets/icons/home_white.png" alt="Home" class="icon" @click="clearSelection" />
@@ -105,7 +107,7 @@ export default {
       notifications: [
         { fileName: 'Arquivo1' },
         { fileName: 'Relatório' },
-        { fileName: 'Simulação aaaaaaaaaaaaaaaaaaaa3333333333' },
+        { fileName: 'Simulação' },
         { fileName: 'Arquivo1' },
         { fileName: 'Arquivo1' },
         { fileName: 'Arquivo1' },
