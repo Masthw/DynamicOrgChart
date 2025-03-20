@@ -739,7 +739,7 @@ export default {
   animation: coinFlip 1.5s ease-in-out infinite;
 
   img {
-    filter: brightness(0) saturate(100%) invert(28%) sepia(81%) saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
+    filter: brightness(0) saturate(100%) invert(55%) sepia(73%) saturate(552%) hue-rotate(3deg) brightness(94%) contrast(97%);
   }
 }
 

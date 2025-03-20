@@ -56,6 +56,7 @@ export default {
     height: 20px;
     margin-right: 10px;
     cursor: pointer;
+    filter: brightness(0) saturate(100%) invert(55%) sepia(73%) saturate(552%) hue-rotate(3deg) brightness(94%) contrast(97%);
   }
 }
 </style>

@@ -6,7 +6,6 @@
       <q-btn flat dense round icon="close" class="close-button" @click="goBack" />
 
       <!-- Logo -->
-      <img src="../assets/images/organiza_ai_logo2.png" alt="Logo" class="logo" />
       <TextFieldComponent
         v-model="orgchartName"
         label="Nome da Simulação"

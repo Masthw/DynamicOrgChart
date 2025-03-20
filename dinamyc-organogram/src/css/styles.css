@@ -59,7 +59,7 @@ svg:not(:root) {
 
 .control-btn {
   background-color: #fff;
-  border: 1px dashed #ff3700;
+  border: 1px dashed #d4a017;
   border-radius: 4px;
   padding: 2px;
   width: 34px;
@@ -76,12 +76,12 @@ svg:not(:root) {
   width: 14px;
   height: 14px;
 
-  filter: brightness(0) saturate(100%) invert(28%) sepia(81%) saturate(4237%) hue-rotate(3deg) brightness(104%) contrast(106%);
+  filter: brightness(0) saturate(100%) invert(55%) sepia(73%) saturate(552%) hue-rotate(3deg) brightness(94%) contrast(97%);
 }
 
 .control-btn:hover {
-  background-color: #ff3700;
-  border-color: #ff3700;
+  background-color: #d4a017;
+  border-color: #d4a017;
 }
 
 .control-btn:hover img {
@@ -93,7 +93,7 @@ svg:not(:root) {
   bottom: -110%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #ff3700;
+  background-color: #d4a017;
   color: #fff;
   padding: 4px 8px;
   border-radius: 4px;
@@ -164,7 +164,7 @@ svg:not(:root) {
   bottom: -110%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #ff3700;
+  background-color: #d4a017;
   color: #fff;
   padding: 4px 8px;
   border-radius: 4px;
@@ -195,7 +195,7 @@ svg:not(:root) {
 }
 
 .left-buttons button:hover {
-  background-color: #ff3700;
+  background-color: #d4a017;
   color: #fff;
 }
 
@@ -231,7 +231,7 @@ svg:not(:root) {
 }
 
 #dragActions button:hover {
-  background-color: #ff3700;
+  background-color: #d4a017;
   color: #fff;
 }
 

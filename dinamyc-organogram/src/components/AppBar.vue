@@ -1,8 +1,5 @@
 <template>
   <div class="app-bar">
-    <router-link to="/" class="logo-link">
-      <img src="../assets/images/organiza_ai_logo.png" alt="Logo" class="logo" @click="clearSelection" />
-    </router-link>
     <router-link to="/" class="home-icon">
       <div class="icon-button">
         <img src="../assets/icons/home_white.png" alt="Home" class="icon" @click="clearSelection" />
@@ -69,7 +66,7 @@
               <q-btn flat dense round icon="close" class="close-button" @click="showUserMenu = false" />
             </q-card-section>
             <q-card-section class="user-menu-section">
-              <p class="user-email">nomeusuario@arcellor.org.br</p>
+              <p class="user-email">nomeusuario@email.com</p>
             </q-card-section>
             <q-separator />
             <q-card-actions align="left" style="padding: 0">
