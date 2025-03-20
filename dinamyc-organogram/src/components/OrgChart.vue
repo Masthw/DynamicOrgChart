@@ -1,29 +1,33 @@
 <template>
   <div class="orgchart-container">
     <!-- Iframe que carrega o arquivo orgchart.html -->
-    <iframe
-      v-bind:src="orgChartUrl"
-      width="100%"
-      height="100%"
-      frameborder="0"
-      title="Org Chart"
-    ></iframe>
+    <iframe class="orgchart-iframe" :key="orgChartId" :src="orgChartUrl" frameborder="0" title="Org Chart" @load="onIframeLoad"></iframe>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'OrgChart',
-  setup() {
-    const orgChartUrl = '/orgchart.html';
-    return {
-      orgChartUrl,
-    };
-  },
+<script setup>
+import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const orgChartId = ref(route.params.id);
+const orgChartUrl = ref(`/orgchart.html#${orgChartId.value}`);
+const iframeLoaded = ref(false);
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    orgChartId.value = newId;
+    orgChartUrl.value = `/orgchart.html#${newId}`;
+  }
+);
+
+const onIframeLoad = () => {
+  iframeLoaded.value = true;
 };
 </script>
 
-<style>
+<style scoped lang="scss">
 html,
 body {
   height: 100%;
@@ -33,11 +37,21 @@ body {
 }
 
 .orgchart-container {
-  margin: 0;
+  margin-top: 3rem;
   padding: 0;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 48px);
   display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.chart-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
 }
 
 iframe {
@@ -46,5 +60,13 @@ iframe {
   border: none;
   margin: 0;
   padding: 0;
+  background-color: $white;
+  box-sizing: border-box;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 </style>

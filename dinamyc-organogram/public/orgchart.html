@@ -2,329 +2,7 @@
 <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.js"></script>
 
-<style type="text/css">
-  .hide {
-    display: none;
-  }
-  svg:not(:root) {
-    overflow: visible !important;
-  }
-
-  .drag-enabled:not(.dragging-active) .node.draggable {
-    stroke: grey;
-    stroke-width: 3px;
-    stroke-dasharray: 5px;
-  }
-
-  .drag-enabled.dragging-active .droppable {
-    stroke: green;
-    stroke-width: 3px;
-    stroke-dasharray: 5px;
-  }
-
-  .node.dragging {
-    stroke-dasharray: 0 !important;
-    stroke-width: 0 !important;
-  }
-
-  .node.dragging .content-container {
-    background-color: #ffffff;
-  }
-
-  .node-options-btn {
-    font-size: 16px;
-    color: #333;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
-  }
-
-  .node-options-btn:hover {
-    color: #007bff;
-  }
-
-  .options-menu {
-    z-index: 9999 !important;
-  }
-
-  .options-menu button {
-    width: 100%;
-    padding: 10px;
-    background-color: white;
-    border: none;
-    font-size: 14px;
-    text-align: left;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-  }
-
-  .options-menu button:hover {
-    background-color: #4999ee;
-  }
-
-  .node-container {
-    position: absolute;
-    overflow: visible;
-  }
-
-  button {
-    font-size: 14px;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-  }
-
-  .node-options-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 0;
-    transition: none;
-  }
-
-  .node-options-btn:not([disabled]) {
-    color: #666;
-  }
-
-  .info-btn:not([disabled]) {
-    background-color: white;
-    color: #333;
-  }
-  .add-child-btn:not([disabled]) {
-    background-color: white;
-    color: #333;
-  }
-
-  .node-options-btn:hover {
-    color: #007bff;
-  }
-
-  button:not([disabled]) {
-    background-color: #4999ee;
-    color: white;
-  }
-
-  button:hover:not([disabled]) {
-    background-color: #357ab7;
-    transform: scale(1.05);
-  }
-
-  button:active:not([disabled]) {
-    background-color: #2d5f8a;
-    transform: scale(0.98);
-  }
-
-  button[disabled] {
-    background-color: #ddd;
-    color: #aaa;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .controls {
-    display: flex;
-    justify-content: space-between; /* Espaço entre grupos de botões */
-    align-items: center;
-    margin-bottom: 10px;
-    padding: 0 15px;
-  }
-
-  /* Botões relacionados ao Drag */
-  .drag-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Espaçamento entre o botão "Organize" e os outros */
-  }
-
-  /* Estilos para o botão "Organize" */
-  #enableDragButton {
-    background-color: #28a745;
-    margin-right: 10px;
-  }
-
-  #enableDragButton:hover {
-    background-color: #218838;
-  }
-
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    display: none;
-  }
-  .overlay.active {
-    display: block;
-  }
-
-  /* Sidebar */
-  .sidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 500px;
-    height: 100%;
-    background-color: #f9f9f9;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-    transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
-  }
-
-  .sidebar.active {
-    transform: translateX(0);
-  }
-
-  .sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background-color: #e9ecef;
-    border-bottom: 1px solid #ccc;
-  }
-
-  .sidebar-content {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
-
-  .sidebar-footer {
-    padding: 15px;
-    background-color: #e9ecef;
-    border-top: 1px solid #ccc;
-    text-align: right;
-  }
-
-  input[type='text'] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-
-  .save-btn {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .save-btn:hover {
-    background-color: #218838;
-  }
-
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-  }
-
-  /* Filtro */
-  .right-buttons {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .filterButton button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 12px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-
-  .filterButton button:hover {
-    background-color: #0056b3;
-  }
-  .modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 10000;
-    padding: 20px;
-    width: 300px;
-    display: none;
-  }
-  .modal-content h3 {
-    margin-top: 0;
-  }
-
-  .modal-content select {
-    width: 100%;
-    padding: 8px 12px;
-    margin: 10px 0;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-    outline: none;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.2s ease-in-out;
-  }
-
-  .modal-content select:focus {
-    border-color: #007bff;
-    background-color: #fff;
-  }
-
-  .modal .hidden {
-    display: none;
-  }
-  .overlay.hidden {
-    display: none;
-  }
-
-  .applied-filters {
-    justify-content: flex-end;
-    margin-top: 5px;
-    margin-right: 5px;
-    font-size: 14px;
-    color: #555;
-    padding: 0; /* Remove padding */
-    border: none; /* Remove borda */
-    display: flex;
-    gap: 10px; /* Espaço entre os filtros */
-    flex-wrap: wrap; /* Ajusta os filtros em múltiplas linhas, se necessário */
-  }
-
-  .applied-filters span {
-    display: inline-flex;
-    align-items: center;
-    color: #007bff;
-    font-size: 13px;
-    cursor: default;
-  }
-
-  .applied-filters span i {
-    margin-left: 5px;
-    font-style: normal;
-    font-weight: bold;
-    color: #ff4d4f;
-    cursor: pointer;
-  }
-</style>
+<link rel="stylesheet" href="src/css/styles.css" />
 
 <script>
   var chart = null;
@@ -334,113 +12,171 @@
   let dragStartX;
   let dragStartY;
   let isDragStarting = false;
-
   let undoActions = [];
   let redoActions = [];
-
+  let modifiedData = null;
   let originalData = null;
 
-  // This is the data used
-  d3.csv(
-    'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
-  ).then((data) => {
+  /**
+   * Inicializa o organograma com os dados fornecidos.
+   * Aqui, também se configura a lógica de drag and drop e o layout.
+   *
+   * @param {Array} data - Dados do organograma.
+   */
+
+  function initializeChart(data) {
+    const chartContainer = document.querySelector('.chart-container');
+    if (!chartContainer) {
+      console.error('Erro: Contêiner ".chart-container" não encontrado no DOM.');
+      return;
+    }
+
     originalData = data;
-
-    initializeFilters(data);
-
+    modifiedData = [...data];
     console.log(data);
+
+    // Configura o chart com dimensões, margens e funções de renderização
     chart = new d3.OrgChart()
-      .nodeHeight((d) => 85 + 25)
+      .nodeHeight((d) => 125)
       .nodeWidth((d) => 220 + 2)
-      .childrenMargin((d) => 50)
-      .compactMarginBetween((d) => 35)
-      .compactMarginPair((d) => 30)
-      .neighbourMargin((a, b) => 20)
-      .nodeContent(function (d, i, arr, state) {
-        return generateContent(d);
+      .childrenMargin((d) => 100)
+      .compactMarginBetween((d) => 85)
+      .compactMarginPair((d) => 80)
+      .neighbourMargin((a, b) => 60)
+      .siblingsMargin((d) => 80)
+      .nodeContent((d, i, arr, state) => generateContent(d))
+      .buttonContent(({ node, state }) => {
+        const totalPeople = node.data._totalSubordinates;
+        const totalDepartments = countDepartments(node);
+        return `
+           <div class="button-content">
+             <span class="people">
+              <img src="src/assets/icons/person.png"/> ${totalPeople}
+             </span>
+             <span class="separator">|</span>
+             <span class="departments">
+              <img src="src/assets/icons/corporate_fare.png"/> ${totalDepartments}
+             </span>
+           </div>
+         `;
       })
       .nodeEnter(function (node) {
+        // Ativa o drag para nós quando o dragEnabled estiver true e o nó for marcado como 'draggable'
         d3.select(this).call(
           d3
             .drag()
-            .filter(function (x, node) {
-              return dragEnabled && this.classList.contains('draggable');
+            .filter(function () {
+              // Verifica se o drag está habilitado, se o nó possui a classe 'draggable'
+              // e se o alvo do evento não está dentro de um elemento com classe "node-controls".
+              return dragEnabled && this.classList.contains('draggable') && !event.target.closest('.node-controls');
             })
-            .on('start', function (d, node) {
-              onDragStart(this, d, node);
-            })
-            .on('drag', function (dragEvent, node) {
-              onDrag(this, dragEvent);
-            })
-            .on('end', function (d) {
-              onDragEnd(this, d);
-            })
+            .on('start', (d, node) => onDragStart(this, d, node))
+            .on('drag', (dragEvent, node) => onDrag(this, dragEvent))
+            .on('end', (d) => onDragEnd(this, d))
         );
       })
       .nodeUpdate(function (d) {
-        d3.select(this).classed('droppable', true);
-        d3.select(this).classed('draggable', true);
+        // Por enquanto todos os nodes ficam droppable, isso deverá mudar de acordo com as regras de mudanças de posição do organgorama.
+        // no styles.css tem os outros estilos
+        d3.select(this).classed('droppable', true).classed('draggable', true);
       })
       .container('.chart-container')
       .data(data)
       .render();
-    addNodeEventListeners();
+  }
+
+  window.addEventListener('hashchange', () => {
+    const orgChartId = getOrgChartIdFromURL();
+    if (orgChartId) {
+      const savedData = localStorage.getItem(`orgChartData_${orgChartId}`);
+      originalData = data;
+      modifiedData = [...data];
+      initializeChart(data);
+    } else {
+      console.error(`Dados do organograma com ID ${orgChartId} não encontrados.`);
+    }
   });
 
-  function addNodeEventListeners() {
-    const buttons = document.querySelectorAll('.node-options-btn');
-    buttons.forEach((button) => {
-      button.addEventListener('click', (event) => {
-        const nodeId = event.target.getAttribute('data-id');
-        showOptionsMenu(nodeId);
-      });
-    });
-    chart.render();
+  window.addEventListener('message', (event) => {
+    if (event.data.type === 'updateChart') {
+      updateChartData(event.data);
+    }
+  });
+  function updateChartData(data) {
+    chart.update();
   }
+
+  function getOrgChartIdFromURL() {
+    const hash = window.location.hash;
+    if (!hash) {
+      console.error('Hash ausente ou inválido na URL');
+      return null;
+    }
+    const orgChartId = hash.substring(1);
+    if (/^\d+$/.test(orgChartId)) {
+      return orgChartId;
+    }
+    console.error('ID inválido encontrado no hash:', orgChartId);
+    return null;
+  }
+  // Inicialização do organograma
+  document.addEventListener('DOMContentLoaded', () => {
+    const orgChartId = getOrgChartIdFromURL();
+    if (!orgChartId) {
+      console.error('ID do organograma não encontrado na URL');
+      return;
+    }
+    if (orgChartId === '1') {
+      const organizeButton = document.getElementById('enableDragButton');
+      if (organizeButton) {
+        organizeButton.style.display = 'none';
+      }
+    }
+    const orgChartData = getOrgChartData();
+    if (orgChartData) {
+      initializeChart(orgChartData);
+    } else {
+      d3.csv('https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv').then((data) => {
+        localStorage.setItem(`orgChartData_${orgChartId}`, JSON.stringify(data));
+        initializeChart(data);
+      });
+    }
+  });
 
   function onDragStart(element, dragEvent, node) {
     dragNode = node;
+
+    // Calcula a posição horizontal centralizada para o início do arrasto.
     const width = dragEvent.subject.width;
     const half = width / 2;
     const x = dragEvent.x - half;
     dragStartX = x;
     dragStartY = parseFloat(dragEvent.y);
     isDragStarting = true;
-
     d3.select(element).classed('dragging', true);
   }
 
+  // Durante o arrasto, atualiza a posição do nó e verifica possíveis nós alvo.
   function onDrag(element, dragEvent) {
     if (!dragNode) {
       return;
     }
-
     const state = chart.getChartState();
     const g = d3.select(element);
 
-    // This condition is designed to run at the start of a drag only
     if (isDragStarting) {
       isDragStarting = false;
-      document
-        .querySelector('.chart-container')
-        .classList.add('dragging-active');
-
-      // This sets the Z-Index above all other nodes, by moving the dragged node to be the last-child.
+      document.querySelector('.chart-container').classList.add('dragging-active');
       g.raise();
 
       const descendants = dragEvent.subject.descendants();
       const linksToRemove = [...(descendants || []), dragEvent.subject];
-      const nodesToRemove = descendants.filter(
-        (x) => x.data.id !== dragEvent.subject.id
-      );
-
-      // Remove all links associated with the dragging node
+      const nodesToRemove = descendants.filter((x) => x.data.id !== dragEvent.subject.id);
       state['linksWrapper']
         .selectAll('path.link')
         .data(linksToRemove, (d) => state.nodeId(d))
         .remove();
 
-      // Remove all descendant nodes associated with the dragging node
       if (nodesToRemove) {
         state['nodesWrapper']
           .selectAll('g.node')
@@ -448,8 +184,9 @@
           .remove();
       }
     }
-
     dropNode = null;
+
+    // Cria um objeto com as coordenadas atuais do nó arrastado.
     const cP = {
       width: dragEvent.subject.width,
       height: dragEvent.subject.height,
@@ -461,10 +198,11 @@
       midY: dragEvent.y + dragEvent.subject.height / 2,
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const allNodes = d3.selectAll('g.node:not(.dragging)');
     allNodes.select('rect').attr('fill', 'none');
 
+    // Para cada nó que não está sendo arrastado, verifica se o centro do nó arrastado está sobre ele.
+    // Se estiver e o nó estiver marcado como droppable, define-o como dropNode e altera seu preenchimento.
     allNodes
       .filter(function (d2, i) {
         const cPInner = {
@@ -493,40 +231,95 @@
     g.attr('transform', 'translate(' + dragStartX + ',' + dragStartY + ')');
   }
 
+  // Função que trata o fim do evento de arrasto.
+  // ATENÇÃO: Ainda é necessário implementar a lógica para exibição dos modais de simulação não permitida e simulação permitida com justificativa.
+  // Os modais podem ser localizados no diretório src/components/modal/
+  // Atualmente, a função apenas processa a troca de nós e emite eventos para o iframe.
   function onDragEnd(element, dragEvent) {
-    document
-      .querySelector('.chart-container')
-      .classList.remove('dragging-active');
-
-    if (!dragNode) {
-      return;
-    }
-
+    document.querySelector('.chart-container').classList.remove('dragging-active');
     d3.select(element).classed('dragging', false);
 
-    if (!dropNode) {
+    if (dragEvent.subject.data.name === '?') {
       chart.render();
       return;
     }
 
-    if (dragEvent.subject.parent.id === dropNode.id) {
+    // Se houve drop sobre outro nó (swap), processa a troca.
+    const dropTarget = dropNode;
+    if (dropTarget && dropTarget.data) {
+      // Se o nó de destino já está vazio, define a propriedade skipJustifyModal para evitar modal de justificativa.
+      // Porém isso deve ser de acordo com as regras de mudança, se estiver vazio e for permitido.
+      if (dropTarget.data.name === '?') {
+        window.parent.postMessage(
+          {
+            type: 'nodeSwapRequest',
+            sourceNode: dragEvent.subject.data,
+            targetNode: dropTarget.data,
+            skipJustifyModal: true,
+          },
+          '*'
+        );
+      } else {
+        window.parent.postMessage(
+          {
+            type: 'nodeSwapRequest',
+            sourceNode: dragEvent.subject.data,
+            targetNode: dropTarget.data,
+          },
+          '*'
+        );
+      }
+      dropNode = null;
+      dragNode = null;
+      chart.render();
+      return;
+    }
+
+    const nodeRect = element.getBoundingClientRect();
+    const nodeWidth = nodeRect.width;
+    const nodeHeight = nodeRect.height;
+    const nodeLeft = nodeRect.left;
+    const nodeRight = nodeRect.right;
+    const nodeTop = nodeRect.top;
+    const nodeBottom = nodeRect.bottom;
+
+    window.parent.postMessage(
+      {
+        type: 'nodeDropped',
+        nodeData: dragEvent.subject.data,
+        nodeLeft,
+        nodeRight,
+        nodeTop,
+        nodeBottom,
+      },
+      '*'
+    );
+
+    if (!dropNode || dragEvent.subject.parent.id === dropNode.id) {
       chart.render();
       return;
     }
 
     d3.select(element).remove();
 
+    // Atualização padrão do chart após o drop, alterando o parentId do nó arrastado
+    // Note que essa funcionalidade não vai ser chamada pelas tratativas acima.
     const data = chart.getChartState().data;
     const node = data?.find((x) => x.id === dragEvent.subject.id);
     const oldParentId = node.parentId;
     node.parentId = dropNode.id;
 
+    // As ações de undo e redo abaixo são a implementação padrão da biblioteca d3-org-chart.
+    // Elas apenas registram as mudanças internas (parentId) e re-renderizam o chart.
+    // Note que essas ações NÃO refazem as mudanças externas que são emitidas via postMessage.
+    // Caso seja necessário implementar undo/redo para as atualizações externas (por exemplo,
+    // reverter a limpeza do nó enviado para o iframe), será preciso desenvolver uma nova funcionalidade,
+    // integrando com o backend para manter a consistência do estado.
     redoActions = [];
     undoActions.push({
       id: dragEvent.subject.id,
       parentId: oldParentId,
     });
-
     dropNode = null;
     dragNode = null;
     chart.render();
@@ -536,23 +329,28 @@
   function enableDrag() {
     dragEnabled = true;
     document.querySelector('.chart-container').classList.add('drag-enabled');
-    document.getElementById('enableDragButton').classList.add('hide');
     document.getElementById('dragActions').classList.remove('hide');
+
+    updateNodeControlsVisibility();
   }
 
-  function disableDrag() {
+  function disableDrag(saveState = true) {
     dragEnabled = false;
     document.querySelector('.chart-container').classList.remove('drag-enabled');
-    document.getElementById('enableDragButton').classList.remove('hide');
     document.getElementById('dragActions').classList.add('hide');
     undoActions = [];
     redoActions = [];
+
+    if (saveState) {
+      const orgChartId = getOrgChartIdFromURL();
+      saveChartState(orgChartId);
+    }
     updateDragActions();
   }
 
   function cancelDrag() {
     if (undoActions.length === 0) {
-      disableDrag();
+      disableDrag(false);
       return;
     }
 
@@ -561,8 +359,7 @@
       const node = data.find((x) => x.id === action.id);
       node.parentId = action.parentId;
     });
-
-    disableDrag();
+    disableDrag(false);
     chart.render();
   }
 
@@ -574,7 +371,6 @@
       const previousParentId = action.parentId;
       action.parentId = currentParentId;
       node.parentId = previousParentId;
-
       redoActions.push(action);
       chart.render();
       updateDragActions();
@@ -611,459 +407,656 @@
     }
   }
 
-  let activeMenu = null;
+  function countDepartments(node) {
+    const deptSet = new Set();
 
-  function showOptionsMenu(nodeId) {
-    const nodeData = chart
-      .getChartState()
-      .data.find((node) => node.id === nodeId);
-
-    if (!nodeData) {
-      alert('Erro: Node não encontrado');
-      return;
-    }
-
-    const button = document.querySelector(
-      `.node-options-btn[data-id="${nodeId}"]`
-    );
-    if (!button) {
-      console.error('Botão não encontrado!');
-      return;
-    }
-
-    if (activeMenu && activeMenu.button === button) {
-      activeMenu.menuElement.remove();
-      activeMenu = null;
-      return;
-    }
-
-    if (activeMenu) {
-      activeMenu.menuElement.remove();
-      activeMenu = null;
-    }
-
-    const existingMenu = button.parentNode.querySelector('.options-menu');
-    if (existingMenu) {
-      existingMenu.remove();
-      return;
-    }
-
-    const buttonRect = button.getBoundingClientRect();
-
-    const menuHtml = `
-       <div class="options-menu" style="
-      position: absolute;
-      top: ${buttonRect.bottom + window.scrollY}px;
-      left: ${buttonRect.left + window.scrollX}px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: 10px;
-      min-width: 150px;
-      width: auto;
-      z-index: 9999;
-    ">
-      <div style="margin-bottom: 8px;">
-        <button class="info-btn">Informações</button>
-      </div>
-      <div>
-        <button class="add-child-btn">Adicionar</button>
-      </div>
-    </div>
-  `;
-
-    const menuElement = document.createElement('div');
-    menuElement.innerHTML = menuHtml;
-    document.body.appendChild(menuElement);
-
-    activeMenu = { menuElement, button };
-
-    const infoButton = menuElement.querySelector('.info-btn');
-    const addChildButton = menuElement.querySelector('.add-child-btn');
-
-    infoButton.addEventListener('click', () => {
-      showPersonInfo(nodeId);
-      menuElement.remove();
-      activeMenu = null;
-    });
-
-    addChildButton.addEventListener('click', () => {
-      addChild(nodeId);
-      menuElement.remove();
-      activeMenu = null;
-    });
-
-    // Fecha o menu ao clicar fora dele
-    document.addEventListener(
-      'click',
-      (event) => {
-        if (!menuElement.contains(event.target) && event.target !== button) {
-          menuElement.remove();
-          activeMenu = null;
-        }
-      },
-      { once: true }
-    );
-  }
-
-  function showPersonInfo(nodeId) {
-    const person = chart
-      .getChartState()
-      .data.find((node) => node.id === nodeId);
-
-    if (!person) {
-      alert('Erro: Node não encontrado!');
-      return;
-    }
-    const sidebar = document.getElementById('person-info-sidebar');
-    const content = document.getElementById('person-info-content');
-    const overlay = document.getElementById('overlay');
-
-    document.getElementById('person-photo').src =
-      person.image || 'https://via.placeholder.com/50';
-    const fullName = `${person.name} ${person.lastName || ''}`;
-    document.getElementById('person-name').textContent = fullName;
-
-    const personInfoHtml = `
-     <input type="hidden" id="id" value="${person.id}" />
-      <div>
-        <label>Nome:</label>
-        <input type="text" id="name" value="${fullName.trim()}" />
-      </div>
-      <div>
-        <label>Cargo:</label>
-        <input type="text" id="position" value="${person.position}" />
-      </div>
-      <div>
-        <label>Email:</label>
-        <input type="text" id="email" value="${person.email}" />
-      </div>
-      <div>
-        <label>Telefone:</label>
-        <input type="text" id="phone" value="${person.phone_number}" />
-      </div>
-      <div>
-      </div>
-      `;
-
-    content.innerHTML = personInfoHtml;
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('close-sidebar').addEventListener('click', () => {
-      document.getElementById('person-info-sidebar').classList.remove('active');
-      document.getElementById('overlay').classList.remove('active');
-    });
-
-    document.getElementById('save-info').addEventListener('click', () => {
-      const updatedPerson = {
-        id: document.getElementById('id')?.value || '',
-        name: document.getElementById('name')?.value || '',
-        position: document.getElementById('position')?.value || '',
-        email: document.getElementById('email')?.value || '',
-        phone_number: document.getElementById('phone')?.value || '',
-      };
-
-      const chartData = chart.getChartState().data;
-      const personIndex = chartData.findIndex(
-        (node) => node.id === updatedPerson.id
-      );
-      if (personIndex !== -1) {
-        chartData[personIndex] = {
-          ...chartData[personIndex],
-          ...updatedPerson,
-        };
-        chart.data(chartData).render(); // Atualiza o organograma
-        alert('Alterações aplicadas com sucesso!');
-      } else {
-        alert('Erro: Pessoa não encontrada!');
+    // Função recursiva para percorrer os filhos do nó.
+    function traverse(n) {
+      const children = n.children || n._children;
+      if (children && children.length) {
+        children.forEach((child) => {
+          if (child.data && child.data.department_id) {
+            deptSet.add(child.data.department_id);
+          }
+          traverse(child);
+        });
       }
+    }
+    let initialChildren = node.children || node._children;
+    if (!initialChildren && node.data && node.data.children) {
+      initialChildren = node.data.children;
+    }
 
-      document.getElementById('person-info-sidebar').classList.remove('active');
-      document.getElementById('overlay').classList.remove('active');
+    if (initialChildren && initialChildren.length) {
+      initialChildren.forEach((child) => {
+        if (child.data && child.data.department_id) {
+          deptSet.add(child.data.department_id);
+        }
+        traverse(child);
+      });
+    }
+    return deptSet.size;
+  }
+
+  /**
+   * Recupera os dados do organograma armazenados no localStorage.
+   * Usa o ID do organograma (extraído da URL) como chave.
+   *
+   * @return {Array|null} Dados do organograma ou null se não encontrados.
+   */
+  function getOrgChartData() {
+    const orgChartId = getOrgChartIdFromURL();
+    if (!orgChartId) {
+      console.error('ID do organograma não encontrado na URL');
+      return null;
+    }
+
+    const savedData = localStorage.getItem(`orgChartData_${orgChartId}`);
+    if (savedData) {
+      return JSON.parse(savedData);
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Gera os dados de filtro (posições, departamentos e job_ids) a partir dos dados do organograma.
+   *
+   * @returns {Object} Objeto contendo arrays para positions, departments e job_ids.
+   */
+  function getFilterData() {
+    const data = getOrgChartData();
+    if (!data || !Array.isArray(data)) {
+      return { positions: [], departments: [], job_ids: [] };
+    }
+    const positionsSet = new Set();
+    const departmentsMap = new Map();
+    const jobIdsSet = new Set();
+
+    data.forEach((item) => {
+      if (item.position) {
+        positionsSet.add(item.position);
+      }
+      if (item.department_name) {
+        const deptId = item.department_id ? item.department_id : item.department_name;
+        if (!departmentsMap.has(deptId)) {
+          departmentsMap.set(deptId, {
+            id: deptId,
+            name: item.department_name,
+          });
+        }
+      }
+      if (item.job_id) {
+        jobIdsSet.add(item.job_id);
+      }
+    });
+
+    const positions = Array.from(positionsSet);
+    const departments = Array.from(departmentsMap.values());
+    const job_ids = Array.from(jobIdsSet);
+    return { positions, departments, job_ids };
+  }
+
+  function getDepartments() {
+    const filterData = getFilterData();
+    return filterData.departments || [];
+  }
+
+  /**
+   * Abre o diálogo de filtro enviando os dados de filtro para a OrgChartPage.vue via postMessage.
+   */
+  function openFilterDialog() {
+    const filterData = getFilterData();
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'filter',
+        ...filterData,
+      },
+      '*'
+    );
+  }
+
+  /**
+   * Retorna os nós que representam vagas, identificados por nome "?" ou tipo 'vacancy'.
+   *
+   * @returns {Array} Array de nós de vaga.
+   */
+  function getVacancyNodes() {
+    if (!chart) return [];
+    return chart.data().filter((node) => node.name === '?' || node.type === 'vacancy');
+  }
+
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'getVacancies') {
+      const vacancies = getVacancyNodes();
+      window.parent.postMessage({ type: 'updateVacancies', vacancies }, '*');
+    }
+  });
+
+  /**
+   * Listener que atualiza um nó com as informações de um empregado.
+   * Essa função substitui os dados pessoais do nó e define seu tipo como 'employee'.
+   *
+   * @param {Object} updatedNodeData - Dados atualizados do empregado.
+   */
+  function updateNodeWithEmployee(updatedNodeData) {
+    if (chart) {
+      let nodeFound = false;
+      const currentData = chart.data();
+      currentData.forEach((node) => {
+        if (node.id === updatedNodeData.id) {
+          node.name = updatedNodeData.name;
+          node.image = updatedNodeData.image;
+          node.email = updatedNodeData.email;
+          node.lastName = updatedNodeData.lastName;
+          node.hire_date = updatedNodeData.hire_date;
+          node.type = 'employee';
+          nodeFound = true;
+        }
+      });
+      if (nodeFound) {
+        chart.data(currentData);
+        chart.render();
+        saveChartState(getOrgChartIdFromURL());
+        // Chama employee para exibir as informações do emprego e por exemplo, mudar o salário após a movimentação.
+        Employee(updatedNodeData.id, true);
+      } else {
+        console.warn('Node não encontrado para atualização:', updatedNodeData.id);
+      }
+    }
+  }
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'updateNodeWithEmployee') {
+      const updatedNodeData = event.data.data;
+      updateNodeWithEmployee(updatedNodeData);
+    }
+  });
+
+  /**
+   * Atualiza um nó para representar uma vaga aberta.
+   * Limpa os dados pessoais e define o tipo como 'vacancy'.
+   *
+   * @param {Object} clearedNodeData - Dados do nó a ser limpo.
+   */
+  function updateNodeAsVacancy(clearedNodeData) {
+    if (chart) {
+      let nodeFound = false;
+
+      const currentData = chart.data();
+      currentData.forEach((node) => {
+        if (node.id === clearedNodeData.id) {
+          node.name = '?';
+          node.image = 'src/assets/images/add_node.png';
+          node.email = '';
+          node.lastName = '';
+          node.hire_date = '';
+          node.type = 'vacancy';
+          nodeFound = true;
+        }
+      });
+      if (nodeFound) {
+        chart.data(currentData);
+        chart.render();
+        saveChartState(getOrgChartIdFromURL());
+      } else {
+        console.warn('Node não encontrado para atualizar:', clearedNodeData.id);
+      }
+    }
+  }
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'nodeCleared') {
+      const clearedNodeData = event.data.data;
+      updateNodeAsVacancy(clearedNodeData);
+    }
+  });
+
+  /**
+   * Adiciona novas vagas ao organograma com base nos dados do formulário.
+   *
+   * @param {Object} formData - Dados do formulário para criação de vagas.
+   * @param {string|number} chartID - ID do organograma.
+   */
+  function addNode(formData, chartID) {
+    if (chart) {
+      const parentId = formData.nodeId;
+      const existingVacancies = modifiedData.filter((node) => node.parentId === parentId && node.type === 'vacancy');
+
+      const department_name = formData.job_department_name;
+      for (let i = 0; i < formData.vacanciesCount; i++) {
+        const newNodeId = String(Date.now() + i);
+        if (!existingVacancies.some((node) => node.id === newNodeId)) {
+          const newNode = {
+            id: newNodeId,
+            parentId: parentId,
+            name: '?',
+            position: formData.job_title || '',
+            image: 'src/assets/images/add_node.png',
+            department_name: formData.job_department.name,
+            department_id: formData.job_department.id,
+            _centered: true,
+            type: 'vacancy',
+            job_id: formData.job_id,
+          };
+          modifiedData.push(newNode);
+        }
+      }
+      chart.data(modifiedData);
+      chart.render();
+      saveChartState(chartID);
+    }
+  }
+  if (!window.hasEventListener) {
+    window.hasEventListener = true;
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.type === 'confirmAddJob') {
+        const formData = event.data.data;
+        const orgChartId = getOrgChartIdFromURL();
+        addNode(formData, orgChartId);
+      }
+    });
+  }
+
+  /**
+   * Remove uma vaga do organograma com base no ID.
+   *
+   * @param {string|number} nodeId - ID do nó a ser removido.
+   */
+  function deleteVacancy(nodeId) {
+    if (chart) {
+      const nodeIndex = modifiedData.findIndex((node) => String(node.id) === String(nodeId));
+      if (nodeIndex !== -1) {
+        modifiedData.splice(nodeIndex, 1);
+        chart.data(modifiedData);
+        chart.render();
+        saveChartState(getOrgChartIdFromURL());
+      }
+    }
+  }
+  window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'confirmDeleteVacancy') {
+      const nodeId = event.data.nodeId;
+      deleteVacancy(nodeId);
+    }
+  });
+
+  /**
+   * Filtra o organograma com base no termo de busca.
+   * - Converte o termo para minúsculas.
+   * - Limpa o destaque de todos os nós.
+   * - Percorre os dados do chart para marcar nós cujo nome, posição ou departamento
+   *   contenham o termo de busca.
+   * - Re-renderiza o chart e ajusta a visualização para caber no container.
+   *
+   * @param {string} searchTerm - O termo a ser buscado.
+   */
+  function filterChart(searchTerm) {
+    const value = searchTerm.toLowerCase();
+    chart.clearHighlighting();
+
+    const data = chart.data();
+
+    data.forEach((d) => {
+      (d._expanded = false), (d._highlighted = false);
+    });
+
+    data.forEach((d) => {
+      const name = d.name ? d.name.toLowerCase() : '';
+      const position = d.position ? d.position.toLowerCase() : '';
+      const department = d.department_name ? d.department_name.toLowerCase() : '';
+
+      if (value !== '' && (name.includes(value) || position.includes(value) || department.includes(value))) {
+        d._highlighted = true;
+        d._expanded = true;
+      }
+    });
+    chart.render().fit();
+  }
+  window.addEventListener('message', function (event) {
+    if (typeof event.data === 'string') {
+      const searchTerm = event.data;
+      filterChart(searchTerm);
+    }
+  });
+
+  function resetView() {
+    chart.data(originalData).render().fit();
+  }
+
+  /**
+   * Salva o estado atual do organograma no localStorage.
+   * Remove flags temporários (_highlighted) antes de salvar para manter os dados limpos.
+   *
+   * @param {string} id - ID do organograma (usado na chave do localStorage).
+   */
+  function saveChartState(id) {
+    if (chart) {
+      const updatedData = [...modifiedData];
+      updatedData.forEach((d) => {
+        delete d._highlighted;
+      });
+      localStorage.setItem(`orgChartData_${id}`, JSON.stringify(updatedData));
+      const orgChartData = getOrgChartData();
+      if (orgChartData) {
+        const newModifiedDate = new Date().toLocaleDateString();
+        window.parent.postMessage(
+          {
+            type: 'orgchart-modified',
+            id: id,
+            modifiedDate: newModifiedDate,
+          },
+          '*'
+        );
+      } else {
+        console.error('Erro ao obter dados do organograma');
+      }
+    }
+  }
+
+  /**
+   * Retorna a cor do nó, buscando a cor do líder ou herdando a cor do pai.
+   *
+   * @param {Object} d - Nó do organograma.
+   * @returns {string} A cor definida para o nó.
+   */
+  function getNodeColor(d) {
+    if (!d.parent) {
+      return '#000000';
+    } else if (!d.parent.parent) {
+      if (!d.data.circleColor) {
+        d.data.circleColor = getLeaderColor(d.data.id);
+      }
+      return d.data.circleColor;
+    } else {
+      return d.parent.data.circleColor || getNodeColor(d.parent);
+    }
+  }
+
+  /**
+   * Obtém ou gera uma cor para o líder com base em seu ID.
+   * Persiste as cores em localStorage para manter a consistência.
+   *
+   * @param {string} leaderId - ID do líder.
+   * @returns {string} Cor associada ao líder.
+   */
+  function getLeaderColor(leaderId) {
+    const storedColors = JSON.parse(localStorage.getItem('leaderColors')) || {};
+
+    if (storedColors[leaderId]) {
+      return storedColors[leaderId];
+    }
+
+    const newColor = generateRandomColor();
+    storedColors[leaderId] = newColor;
+    localStorage.setItem('leaderColors', JSON.stringify(storedColors));
+    return newColor;
+  }
+
+  function generateRandomColor() {
+    const palette = ['#414141', '#D9D9D9', '#0072CE', '#460A78', '#10B12D', '#F58746', '#FF3700', '#BF2900', '#7F1B00'];
+    return palette[Math.floor(Math.random() * palette.length)];
+  }
+
+  document.querySelectorAll('.node-container').forEach((node) => {
+    node.addEventListener('click', (e) => {
+      if (e.target.closest('.control-btn')) return;
+      const nodeId = node.id;
+      window.parent.postMessage(
+        {
+          type: 'openModal',
+          action: 'nodeClick',
+          nodeId: nodeId,
+        },
+        '*'
+      );
     });
   });
 
-  function addChild(nodeId) {
-    const newChild = {
-      id: Date.now().toString(), // ID único
-      parentId: nodeId, // Define o ID do pai
-      name: 'Novo Filho',
-      position: 'Cargo Padrão',
-      image: 'https://via.placeholder.com/150', // Imagem padrão
-    };
-    const chartState = chart.getChartState();
-    chartState.data.push(newChild); // Adiciona o novo nó aos dados
-    chart.data(chartState.data).render();
+  /**
+   * Recupera os dados do empregado para um determinado nó, usando o ID.
+   *
+   * @param {string} nodeId - ID do nó.
+   * @returns {Object} Dados do empregado encontrado.
+   */
+  function getEmployeeData(nodeId) {
+    const data = chart.getChartState().data;
+    return data.find((node) => String(node.id) === String(nodeId));
   }
 
-  //Filtro
-  function getAncestors(
-    data,
-    nodeId,
-    parentIdField = 'parentId',
-    idField = 'id'
-  ) {
-    const ancestors = [];
-    let currentId = nodeId;
+  /**
+   * Envia uma mensagem para abrir o modal do empregado.
+   *
+   * @param {string} nodeId - ID do nó.
+   * @param {boolean} isEdit - Indica se é para editar.
+   */
+  function Employee(nodeId, isEdit = false) {
+    const employee = isEdit ? getEmployeeData(nodeId) : {};
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'employee',
+        nodeId: nodeId,
+        employee: employee,
+      },
+      '*'
+    );
+  }
 
-    while (currentId) {
-      const parent = data.find((item) => item[idField] === currentId);
-      if (parent) {
-        ancestors.push(parent);
-        currentId = parent[parentIdField];
+  /**
+   * Envia uma mensagem para abrir o modal de adicionar departamento.
+   *
+   * @param {string} nodeId - ID do nó.
+   */
+  function addDepartment(nodeId) {
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'addDepartment',
+        nodeId: nodeId,
+      },
+      '*'
+    );
+  }
+
+  /**
+   * Envia uma mensagem para abrir o modal de adicionar vaga (job),
+   * passando também a lista de departamentos disponíveis.
+   *
+   * @param {string} nodeId - ID do nó.
+   * @param {string} name - Nome do nó (para referência).
+   */
+  function addJob(nodeId, name) {
+    const departments = getDepartments();
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'addJob',
+        nodeId: nodeId,
+        name: name,
+        departments: departments,
+      },
+      '*'
+    );
+  }
+
+  /**
+   * Retorna os filhos de um nó com base no parentId.
+   *
+   * @param {string} nodeId - ID do nó pai.
+   * @returns {Array} Array com os nós filhos.
+   */
+  function getChildren(nodeId) {
+    const data = chart.getChartState().data;
+    const children = data.filter((node) => {
+      return String(node.parentId) === String(nodeId);
+    });
+    return children;
+  }
+
+  /**
+   * Envia uma mensagem para abrir o modal do plano de sucessão,
+   * passando os filhos do nó como candidatos.
+   *
+   * @param {string} nodeId - ID do nó.
+   */
+  function viewSuccessionPlan(nodeId) {
+    const children = getChildren(nodeId);
+    window.parent.postMessage(
+      {
+        type: 'openModal',
+        action: 'viewSuccessionPlan',
+        nodeId: nodeId,
+        children: children,
+      },
+      '*'
+    );
+  }
+
+  /**
+   * Envia uma mensagem para abrir o modal de exclusão para um nó.
+   * O modal exibido dependerá se o nó representa uma vaga ou um empregado.
+   *
+   * @param {string} nodeId - ID do nó a ser removido.
+   */
+  function deleteNode(nodeId) {
+    if (chart) {
+      const nodeIndex = modifiedData.findIndex((node) => String(node.id) === String(nodeId));
+
+      if (nodeIndex !== -1) {
+        const node = modifiedData[nodeIndex];
+        const action = node.name === '?' ? 'deleteVacancy' : 'deleteEmployee';
+        window.parent.postMessage(
+          {
+            type: 'openModal',
+            action: action,
+            nodeId: nodeId,
+            nodeName: node.name,
+            position: node.position,
+          },
+          '*'
+        );
       } else {
-        break; // Sem mais ancestrais
+        console.error(`Node com ID ${nodeId} não encontrado.`);
       }
     }
-
-    return ancestors;
   }
 
-  function openFilterDialog() {
-    document.getElementById('filterDialog').style.display = 'block';
-    document.getElementById('modalOverlay').style.display = 'block';
-  }
-
-  function closeFilterDialog() {
-    document.getElementById('filterDialog').style.display = 'none';
-    document.getElementById('modalOverlay').style.display = 'none';
-  }
-
-  function applyFilters() {
-    const positionFilter = document.getElementById('positionFilter').value;
-    const departmentFilter = document.getElementById('departmentFilter').value;
-    const locationFilter = document.getElementById('locationFilter').value;
-
-    // Filtra os nós com base nas seleções
-    const filteredNodes = originalData.filter((item) => {
-      return (
-        (positionFilter === '' || item.position === positionFilter) &&
-        (departmentFilter === '' ||
-          item.department_name === departmentFilter) &&
-        (locationFilter === '' || item.location_state === locationFilter)
-      );
-    });
-
-    // Adiciona ancestrais de cada nó filtrado
-    const ancestors = new Set();
-    filteredNodes.forEach((node) => {
-      const nodeAncestors = getAncestors(originalData, node.id);
-      nodeAncestors.forEach((ancestor) => ancestors.add(ancestor));
-    });
-
-    // Converte o Set para array e renderiza
-    const filteredDataWithAncestors = [...ancestors];
-    chart.data(filteredDataWithAncestors).render();
-
-    const appliedFilters = [];
-    if (positionFilter) appliedFilters.push(`Cargo: ${positionFilter}`);
-    if (departmentFilter)
-      appliedFilters.push(`Departamento: ${departmentFilter}`);
-    if (locationFilter) appliedFilters.push(`Local: ${locationFilter}`);
-
-    const appliedFiltersDiv = document.getElementById('appliedFilters');
-    if (appliedFilters.length > 0) {
-      appliedFiltersDiv.style.display = 'flex'; // Mostra a lista de filtros
-      appliedFiltersDiv.innerHTML = appliedFilters
-        .map(
-          (filter) =>
-            `<span>${filter} <i onclick="clearSpecificFilter('${filter}')">&times;</i></span>`
-        )
-        .join('');
+  function updateNodeControlsVisibility() {
+    const chartContainer = document.querySelector('.chart-container');
+    if (dragEnabled) {
+      chartContainer.classList.add('drag-enabled');
     } else {
-      appliedFiltersDiv.style.display = 'none'; // Oculta se não houver filtros
+      chartContainer.classList.remove('drag-enabled');
     }
-    closeFilterDialog();
   }
 
-  // Limpa os filtros e reseta o organograma
-  function clearSpecificFilter(filter) {
-    if (filter.startsWith('Cargo:')) {
-      document.getElementById('positionFilter').value = '';
-    } else if (filter.startsWith('Departamento:')) {
-      document.getElementById('departmentFilter').value = '';
-    } else if (filter.startsWith('Local:')) {
-      document.getElementById('locationFilter').value = '';
-    }
-
-    applyFilters(); // Atualiza o organograma e exibição dos filtros
-  }
-
-  function getUniqueValues(data, field) {
-    return [
-      ...new Set(data.map((item) => item[field]).filter((value) => value)),
-    ];
-  }
-
-  // Popula um select com opções
-  function populateSelect(selectElement, options) {
-    selectElement.innerHTML = '<option value="">Todos</option>'; // Reseta opções
-    options.forEach((option) => {
-      const opt = document.createElement('option');
-      opt.value = option;
-      opt.textContent = option;
-      selectElement.appendChild(opt);
-    });
-  }
-
-  // Inicializa os filtros dinamicamente
-  function initializeFilters(data) {
-    const positionFilter = document.getElementById('positionFilter');
-    const departmentFilter = document.getElementById('departmentFilter');
-    const locationFilter = document.getElementById('locationFilter');
-
-    // Obtém valores únicos para cada filtro
-    const uniquePositions = getUniqueValues(data, 'position');
-    const uniqueDepartments = getUniqueValues(data, 'department_name');
-    const uniqueLocations = getUniqueValues(data, 'location_state');
-
-    // Preenche os selects
-    populateSelect(positionFilter, uniquePositions);
-    populateSelect(departmentFilter, uniqueDepartments);
-    populateSelect(locationFilter, uniqueLocations);
-  }
-
-  function clearSpecificFilter(filter) {
-    if (filter.startsWith('Cargo:')) {
-      document.getElementById('positionFilter').value = '';
-    } else if (filter.startsWith('Departamento:')) {
-      document.getElementById('departmentFilter').value = '';
-    } else if (filter.startsWith('Local:')) {
-      document.getElementById('locationFilter').value = '';
-    }
-
-    applyFilters(); // Atualiza o organograma
-  }
-
+  /**
+   * Gera o HTML para o conteúdo de cada nó do organograma.
+   * Utiliza as dimensões do nó e chama funções auxiliares para cores e demais informações.
+   *
+   * @param {Object} d - Dados do nó.
+   * @returns {string} HTML gerado para o nó.
+   */
   function generateContent(d) {
+    const orgChartId = getOrgChartIdFromURL();
+    const shouldShowButtons = orgChartId !== '1';
     const color = '#FFFFFF';
-    const imageDiffVert = 25 + 2;
+    const imageDiffVert = 27;
     return `
-        <div class="node-container" style='
-        width:${d.width}px;
-        height:${d.height}px;
-        padding-top:${imageDiffVert - 2}px;
-        padding-left:1px;
-        padding-right:1px'>
-                <div class="content-container" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
-                  d.width - 2
-                }px;height:${
+           <div class="node-container" style='
+           width:${d.width}px;
+           height:${d.height}px;
+           padding-top:${imageDiffVert - 2}px;
+           padding-left:1px;
+           padding-right:1px'>
+                   <div class="content-container"  onclick="Employee(${
+                     d.data.id
+                   }, true);" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${d.width - 2}px;height:${
       d.height - imageDiffVert
-    }px;border-radius:10px;border: ${
-      d.data._highlighted || d.data._upToTheRootHighlighted
-        ? '5px solid #E27396"'
-        : '1px solid #E4E2E9"'
-    } >
-               <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px;position:relative;">
-         <button class="node-options-btn" data-id="${d.data.id}" style="
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-  " onclick="showOptionsMenu('${d.data.id}')">...</button>
-        </div>
-                    <div  style="margin-top:${
-                      -imageDiffVert - 20
-                    }px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" ></div>
-                    <div style="margin-top:${
-                      -imageDiffVert - 20
-                    }px;">   <img src=" ${
-      d.data.image
-    }" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" /></div>
-                    <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${
-                      d.data.name
-                    } </div>
-                    <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${
-                      d.data.position
-                    } </div>
-
-                </div>
-            </div>
-        `;
+    }px;border-radius:10px;border: ${d.data._highlighted || d.data._upToTheRootHighlighted ? '5px solid #d4a017"' : '1px solid #E4E2E9"'}>
+                     <div style="display:flex;justify-content:flex-end;margin-top:5px;margin-right:8px"> <div style="width:12px; height:12px; border-radius:50%; background-color:${getNodeColor(
+                       d
+                     )};">
+                       </div>
+                     </div>
+                       <div  style="margin-top:${-imageDiffVert - 20}px;margin-left:${15}px;border-radius:100px;width:50px;height:50px;" >
+                       </div>
+                       <div style="margin-top:${-imageDiffVert - 20}px;">
+                         <img src=" ${d.data.image}" style="margin-left:${20}px;border-radius:100px;width:40px;height:40px;" />
+                       </div>
+                       <div style="font-size:15px;color:#08011E;margin-left:20px;margin-top:10px">  ${d.data.name}
+                       </div>
+                       <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.position} </div>
+                       <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.job_id} </div>
+                       <div style="color:#716E7B;margin-left:20px;margin-top:3px;font-size:10px;"> ${d.data.department_name} </div>
+                   </div>
+                    ${
+                      shouldShowButtons
+                        ? `
+                    <div class="node-controls node-controls-container">
+                      <button class="control-btn" onclick="event.stopPropagation(); addJob(${d.data.id}, '${d.data.name}')">
+                        <img src="src/assets/icons/chair.png" alt="Adicionar Vaga" />
+                        <span class="tooltip">Adicionar Vaga</span>
+                      </button>
+                      <button class="control-btn" onclick="Employee(${d.data.id}, false); event.stopPropagation();">
+                        <img src="src/assets/icons/person_add.png" alt="Adicionar Empregado" />
+                        <span class="tooltip">Adicionar Empregado</span>
+                      </button>
+                      <button class="control-btn" onclick="addDepartment(${d.data.id}); event.stopPropagation();">
+                        <img src="src/assets/icons/domain_add.png" alt="Adicionar Departamento" />
+                        <span class="tooltip">Adicionar Departamento</span>
+                      </button>
+                      <button class="control-btn" onclick="viewSuccessionPlan(${d.data.id}); event.stopPropagation();">
+                        <img src="src/assets/icons/lan.png" alt="Ver Plano de Sucessão" />
+                        <span class="tooltip">Ver Plano de Sucessão</span>
+                      </button>
+                       <button class="control-btn" onclick="deleteNode(${d.data.id}); event.stopPropagation();">
+                        <img src="src/assets/icons/delete.png" alt="Remove" />
+                        <span class="tooltip">Remover</span>
+                      </button>
+                    </div>
+                    `
+                        : ''
+                    }
+                  </div>
+       `;
   }
 </script>
-
-<!--
-  This is the code which is used to show of feature , other parts of the code are part of the boilerplate
-
--->
-
 <div class="controls">
-  <div class="drag-controls">
-    <button id="enableDragButton" onclick="enableDrag()">Organize</button>
-    <div id="dragActions" class="hide">
-      <button id="finishDrag" onclick="disableDrag()">Done</button>
-      <button id="undoButton" disabled onclick="undo()">Undo</button>
-      <button id="redoButton" disabled onclick="redo()">Redo</button>
-      <button id="cancelDrag" onclick="cancelDrag()">Cancel</button>
-    </div>
-  </div>
-  <div class="right-buttons">
-    <button id="filterButton" onclick="openFilterDialog()">Filtros</button>
+  <div class="left-buttons">
+    <button id="enableDragButton" class="icon-button" onclick="enableDrag()">
+      <img src="src/assets/icons/map_search.png" alt="Organizar" />
+      <span>Organizar</span>
+    </button>
+    <button id="filterButton" class="icon-button" onclick="openFilterDialog(); event.stopPropagation();">
+      <img src="src/assets/icons/lan.png" alt="Filtros" />
+      <span class="tooltip">Filtros</span>
+    </button>
+    <button class="icon-button" onclick="chart.zoomIn()">
+      <img src="src/assets/icons/zoom_in.png" alt="Zoom In" />
+      <span class="tooltip">Aumentar Zoom</span>
+    </button>
+    <button class="icon-button" onclick="chart.zoomOut()">
+      <img src="src/assets/icons/zoom_out.png" alt="Zoom Out" />
+      <span class="tooltip">Diminuir Zoom</span>
+    </button>
+    <button id="resetViewButton" class="icon-button" onclick="resetView()">Redefinir Visualização</button>
   </div>
 </div>
-<div id="appliedFilters" class="applied-filters"></div>
-
-<!--
-  End of adding node functionality
--->
+<div id="dragActions" class="hide">
+  <button id="finishDrag" class="icon-button" onclick="disableDrag()">Salvar</button>
+  <button id="undoButton" class="icon-button" disabled onclick="undo()">Desfazer</button>
+  <button id="redoButton" class="icon-button" disabled onclick="redo()">Refazer</button>
+  <button id="cancelDrag" class="icon-button" onclick="cancelDrag()">Cancelar</button>
+</div>
 <div class="chart-container"></div>
-
-<div id="person-info-sidebar" class="sidebar hidden">
-  <div class="sidebar-header">
-    <div style="display: flex; align-items: center">
-      <img
-        id="person-photo"
-        src=""
-        alt="Foto da Pessoa"
-        style="
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          margin-right: 10px;
-        "
-      />
-      <h3 id="person-name">Nome da Pessoa</h3>
-    </div>
-    <button id="close-sidebar" class="close-btn">&times;</button>
-  </div>
-  <div id="person-info-content" class="sidebar-content">
-    <!-- Informações serão carregadas dinamicamente aqui -->
-  </div>
-  <div class="sidebar-footer">
-    <button id="save-info" class="save-btn">Salvar</button>
-  </div>
-</div>
-<div id="overlay" class="overlay"></div>
-
-<!-- Filtro -->
-<div id="filterDialog" class="modal hidden">
-  <div class="modal-content">
-    <h3>Aplicar Filtros</h3>
-    <div>
-      <label for="positionFilter">Cargo:</label>
-      <select id="positionFilter">
-        <option value="">Todos</option>
-      </select>
-    </div>
-    <div>
-      <label for="departmentFilter">Departamento:</label>
-      <select id="departmentFilter">
-        <option value="">Todos</option>
-      </select>
-    </div>
-    <div>
-      <label for="locationFilter">Estado:</label>
-      <select id="locationFilter">
-        <option value="">Todos</option>
-      </select>
-    </div>
-    <button onclick="applyFilters()">Aplicar</button>
-    <button onclick="clearFilters()">Limpar Filtros</button>
-    <button onclick="closeFilterDialog()">Fechar</button>
-  </div>
-</div>
-<div id="modalOverlay" class="overlay"></div>
+<!-- Svg para possibilitar o "import" do gradiente de mudanças permitidas com justificativa para o styles.css -->
+<svg width="0" height="0" style="position: absolute">
+  <defs>
+    <linearGradient id="justificationGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="13%" style="stop-color: #460a78; stop-opacity: 1" />
+      <stop offset="50%" style="stop-color: #e63c41; stop-opacity: 1" />
+      <stop offset="100%" style="stop-color: #f58746; stop-opacity: 1" />
+    </linearGradient>
+  </defs>
+</svg>

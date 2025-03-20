@@ -1,8 +1,8 @@
 {
-  "name": "dinamyc-organogram",
+  "name": "dinamyc-orgchart",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "Dynamic Organogram",
+  "productName": "Dynamic OrgChart",
   "author": "Matheus dos Santos Soares <maverick17xd@gmail.com>",
   "private": true,
   "scripts": {
@@ -20,6 +20,8 @@
     "d3": "^7.9.0",
     "d3-flextree": "^2.1.2",
     "d3-org-chart": "^3.1.1",
+    "mitt": "^3.0.1",
+    "primevue": "^4.2.5",
     "quasar": "^2.17.4",
     "vue": "^3.4.18",
     "vue-router": "^4.0.12"
