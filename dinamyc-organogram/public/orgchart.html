@@ -248,7 +248,7 @@
     const dropTarget = dropNode;
     if (dropTarget && dropTarget.data) {
       // Se o nó de destino já está vazio, define a propriedade skipJustifyModal para evitar modal de justificativa.
-      // Porém isso deve ser de acordo com as regras de mudanã, se estiver vazio e for permitido.
+      // Porém isso deve ser de acordo com as regras de mudança, se estiver vazio e for permitido.
       if (dropTarget.data.name === '?') {
         window.parent.postMessage(
           {
